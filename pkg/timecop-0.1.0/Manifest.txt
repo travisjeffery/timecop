@@ -1,7 +1,0 @@
-History.txt
-Manifest.txt
-README.txt
-Rakefile
-bin/timecop
-lib/timecop.rb
-test/test_timecop.rb

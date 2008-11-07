@@ -2,6 +2,9 @@ History.txt
 Manifest.txt
 README.txt
 Rakefile
-bin/timecop
 lib/timecop.rb
+lib/timecop/time_extensions.rb
+lib/timecop/timecop.rb
+lib/timecop/version.rb
 test/test_timecop.rb
+timecop.gemspec
