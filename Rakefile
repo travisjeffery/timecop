@@ -2,7 +2,6 @@
 
 require 'rubygems'
 require 'hoe'
-require './lib/timecop.rb'
 require './lib/timecop/version.rb'
 
 PKG_NAME      = "timecop"
@@ -31,3 +30,4 @@ Hoe.new(PKG_NAME, PKG_VERSION) do |p|
 end
 
 # vim: syntax=Ruby
+

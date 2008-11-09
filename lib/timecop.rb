@@ -1,1 +1,3 @@
 # place gem dependencies here...
+#require 'timecop/timecop'
+require File.join(File.dirname(__FILE__), 'timecop', 'timecop')
