@@ -1,6 +1,9 @@
-=== 1.0.0 / 2008-11-07
+=== 0.1.0 / 2008-11-09
 
-* 1 major enhancement
+* Initial Feature Set
 
-  * Birthday!
+  * Temporarily (or permanently if you prefer) change the concept of Time.now, DateTime.now (if defined), and Date.today (if defined)
+  * Timecop#travel api allows an argument to be passed in as one of: 1) Time instance, 2) DateTime instance, 3) Date instance,
+    4) individual arguments (year, month, day, hour, minute, second)
+  * Nested calls to Timecop#travel are supported -- each block will maintain it's interpretation of now.
 
