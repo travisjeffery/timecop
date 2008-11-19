@@ -85,7 +85,7 @@ class Timecop
         year, month, day, hour, minute, second = arg.year, arg.month, arg.day, arg.hour, arg.min, arg.sec
       elsif Object.const_defined?(:Date) && arg.is_a?(Date)
         year, month, day, hour, minute, second = arg.year, arg.month, arg.day, 0, 0, 0
-        puts "#{year}-#{month}-#{day} #{hour}:#{minute}:#{second}"
+        #puts "#{year}-#{month}-#{day} #{hour}:#{minute}:#{second}"
       else # we'll just assume it's a list of y/m/h/d/m/s
         year   = arg        || 0
         month  = args.shift || 1
