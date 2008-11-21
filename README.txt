@@ -6,12 +6,19 @@
 
 A gem providing simple ways to (temporarily) override Time.now, Date.today, and DateTime.now.  It provides "time travel" capabilities, making it dead simple to write test time-dependent code.
 
-== FEATURES/PROBLEMS:
+== FEATURES:
 
 * Temporarily (or permanently if you prefer) change the concept of Time.now, DateTime.now (if defined), and Date.today (if defined)
 * Timecop#travel api allows an argument to be passed in as one of: 1) Time instance, 2) DateTime instance, 3) Date instance,
   4) individual arguments (year, month, day, hour, minute, second)
 * Nested calls to Timecop#travel are supported -- each block will maintain it's interpretation of now.
+
+== SHORTCOMINGS:
+
+* Currently, time will stand still during a call to #travel.  The following scheme (when implemented) should be able to provide this functionality:
+  1) Take the new time/date from the #travel() function and store it.
+  2) Compute deltas (offsets) for Time.now, DateTime.now and Date.today as compared to the instance passed in #travel
+  3) Mock Time.now, DateTime.now and Date.today to return the current time + those deltas (rather than just returning the original mock)
 
 == SYNOPSIS:
 
