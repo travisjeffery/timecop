@@ -1,38 +1,25 @@
 require File.join(File.dirname(__FILE__), 'time_extensions')
+require 'singleton'
 
 # 1. Wrapper class for manipulating the extensions to the Time, Date, and DateTime objects
 # 2. Allows us to "freeze" time in our Ruby applications.
-# 3. This is very useful when your app's functionality is dependent on time (e.g. 
+# 3. Optionally allows time travel to simulate a running clock, such time is not technically frozen.
+# 4. This is very useful when your app's functionality is dependent on time (e.g. 
 # anything that might expire).  This will allow us to alter the return value of
 # Date.today, Time.now, and DateTime.now, such that our application code _never_ has to change.
-class Timecop
+class StackItem
   
-  # Re-bases Time.now, Date.today and DateTime.now (if it exists) to use the time passed in.
-  # When using this method directly, it is up to the developer to call unset_all to return us
-  # to sanity.
-  #
-  # * If being consumed in a rails app, Time.zone.local will be used to instantiate the time.
-  #   Otherwise, Time.local will be used.
-  def self.set_all(year, month, day, hour=0, minute=0, second=0)
-    if Time.respond_to?(:zone) && !Time.zone.nil?
-      # ActiveSupport loaded
-      time = Time.zone.local(year, month, day, hour, minute, second)
-    else 
-      # ActiveSupport not loaded
-      time = Time.local(year, month, day, hour, minute, second)
-    end
-    
-    Time.mock_time = time
-    Date.mock_date = Date.new(time.year, time.month, time.day) if Object.const_defined?(:Date)
-    DateTime.mock_time = DateTime.new(time.year, time.month, time.day, time.hour, time.min, time.sec) if Object.const_defined?(:DateTime)
+  attr_reader :mock_type, :year, :month, :day, :hour, :minute, :second
+  def initialize(mock_type, year, month, day, hour, minute, second)
+    @mock_type, @year, @month, @day, @hour, @minute, @second = mock_type, year, month, day, hour, minute, second
   end
+end
+
+class Timecop
+  include Singleton
   
-  # Reverts back to system's Time.now, Date.today and DateTime.now (if it exists). If set_all
-  # was never called in the first place, this method will have no effect.
-  def self.unset_all
-    Date.mock_date = nil
-    DateTime.mock_time = nil if Object.const_defined?(:Date)
-    Time.mock_time = nil if Object.const_defined?(:DateTime)
+  def initialize
+    @_stack = []
   end
   
   # Allows you to run a block of code and "fake" a time throughout the execution of that block.
@@ -57,29 +44,87 @@ class Timecop
   # When a block is also passed, the Time.now, DateTime.now and Date.today are all reset to their
   # previous values.  This allows us to nest multiple calls to Timecop.travel and have each block
   # maintain it's concept of "now."
-  #def self.travel(year, month, day, hour=0, minute=0, second=0, &block)
   def self.travel(*args, &block)
+    instance().travel(:freeze, *args, &block)
+  end
+  
+  def self.rebase(*args, &block)
+    instance().travel(:move, *args, &block)
+  end
+  
+  # Reverts back to system's Time.now, Date.today and DateTime.now (if it exists). If freeze_all or rebase_all
+  # was never called in the first place, this method will have no effect.
+  def self.unset_all
+    instance().unmock!
+  end
+  
+  
+  def travel(mock_type, *args, &block)
     year, month, day, hour, minute, second = parse_travel_args(*args)
 
-    old_time = Time.mock_time
-    old_date = Date.mock_date if Object.const_defined?(:Date)
-    old_datetime = DateTime.mock_time if Object.const_defined?(:DateTime)
-
-    set_all(year, month, day, hour, minute, second)
+    if mock_type == :freeze
+      freeze_all(year, month, day, hour, minute, second)
+    else
+      move_all(year, month, day, hour, minute, second)
+    end
+    @_stack << StackItem.new(mock_type, year, month, day, hour, minute, second)
     
     if block_given?
       begin
         yield
       ensure
-        Time.mock_time = old_time
-        Date.mock_date = old_date if Object.const_defined?(:Date)
-        DateTime.mock_time = old_datetime if Object.const_defined?(:DateTime)
+        stack_item = @_stack.pop
+        if @_stack.size == 0
+          unmock!
+        else
+          new_top = @_stack.last
+          if new_top.mock_type == :freeze
+            freeze_all(new_top.year, new_top.month, new_top.day, new_top.hour, new_top.minute, new_top.second)
+          else
+            move_all(new_top.year, new_top.month, new_top.day, new_top.hour, new_top.minute, new_top.second)
+          end
+        end
       end
     end
   end
   
+  def unmock!
+    Time.unmock!
+  end
+  
   private
-    def self.parse_travel_args(*args)
+  
+    # Re-bases Time.now, Date.today and DateTime.now (if it exists) to use the time passed in.
+    # When using this method directly, it is up to the developer to call unset_all to return us
+    # to sanity.
+    #
+    # * If being consumed in a rails app, Time.zone.local will be used to instantiate the time.
+    #   Otherwise, Time.local will be used.
+    def freeze_all(year, month, day, hour=0, minute=0, second=0)
+      if Time.respond_to?(:zone) && !Time.zone.nil?
+        # ActiveSupport loaded
+        time = Time.zone.local(year, month, day, hour, minute, second)
+      else 
+        # ActiveSupport not loaded
+        time = Time.local(year, month, day, hour, minute, second)
+      end
+    
+      Time.freeze_time(time)
+    end
+
+    def move_all(year, month, day, hour=0, minute=0, second=0)
+      if Time.respond_to?(:zone) && !Time.zone.nil?
+        # ActiveSupport loaded
+        time = Time.zone.local(year, month, day, hour, minute, second)
+      else 
+        # ActiveSupport not loaded
+        time = Time.local(year, month, day, hour, minute, second)
+      end
+    
+      Time.move_time(time)
+    end
+    
+    def parse_travel_args(*args)
       arg = args.shift
       if arg.is_a?(Time) || (Object.const_defined?(:DateTime) && arg.is_a?(DateTime))
         year, month, day, hour, minute, second = arg.year, arg.month, arg.day, arg.hour, arg.min, arg.sec

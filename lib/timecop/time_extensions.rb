@@ -7,11 +7,33 @@
 class Time
   class << self
     # Time we might be behaving as
-    attr_reader :mock_time
+    #attr_reader :mock_time
+    
+    @@mock_offset = nil
+    @@mock_time = nil
+    
+    def mock_time
+      if !@@mock_offset.nil?
+        now_without_mock_time - @@mock_offset
+      else
+        @@mock_time
+      end
+    end
     
     # Set new time to pretend we are.
-    def mock_time=(new_now)
-      @mock_time = new_now
+    def freeze_time(new_now)
+      @@mock_time = new_now
+      @@mock_offset = nil
+    end
+    
+    def move_time(new_now)
+      @@mock_offset = new_now.nil? ? nil : (now_without_mock_time - new_now)
+      @@mock_time = nil
+    end
+    
+    # Restores Time to system clock
+    def unmock!
+      move_time(nil)
     end
     
     # Alias the original now
@@ -30,14 +52,12 @@ end
 if Object.const_defined?(:Date)
   class Date
     class << self
-      # Date we might be behaving as
-      attr_reader :mock_date
-    
-      # Set new date to pretend we are.
-      def mock_date=(new_date)
-        @mock_date = new_date
+      def mock_date
+        now = Time.mock_time
+        return nil if now.nil?
+        Date.new(now.year, now.month, now.day)
       end
-    
+        
       # Alias the original today
       alias_method :today_without_mock_date, :today
     
@@ -55,22 +75,20 @@ end
 if Object.const_defined?(:DateTime)
   class DateTime
     class << self
-      # Time we might be behaving as
-      attr_reader :mock_time
-    
-      # Set new time to pretend we are.
-      def mock_time=(new_now)
-        @mock_time = new_now
+      def mock_time
+        t_now = Time.mock_time
+        return nil if t_now.nil?
+        DateTime.new(t_now.year, t_now.month, t_now.day, t_now.hour, t_now.min, t_now.sec)
       end
-    
+
       # Alias the original now
       alias_method :now_without_mock_time, :now
-    
+
       # Define now_with_mock_time
       def now_with_mock_time
         mock_time || now_without_mock_time
       end
-    
+
       # Alias now to now_with_mock_time
       alias_method :now, :now_with_mock_time
     end

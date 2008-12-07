@@ -88,11 +88,77 @@ class TestTimecop < Test::Unit::TestCase
     end
   end
   
+  def test_travel_freezes_time
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    now = Time.now
+    Timecop.travel(t) do
+      #assert Time.now < now, "If we had failed to rebase, time would have proceeded, which is what appears to have happened."
+      new_t, new_d, new_dt = Time.now, Date.today, DateTime.now
+      assert_equal t, new_t, "Failed to change move time." # 2 seconds
+      #sleep(10)
+      assert_equal new_t, Time.now
+      assert_equal new_d, Date.today
+      assert_equal new_dt, DateTime.now
+    end
+  end
+  
+  def test_rebasing_keeps_time_moving
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    now = Time.now
+    Timecop.rebase(t) do
+      #assert Time.now < now, "If we had failed to rebase, time would have proceeded, which is what appears to have happened."
+      assert Time.now - t < 2000, "Looks like we failed to actually rebase time" # 2 seconds
+      new_t = Time.now
+      #sleep(10)
+      assert_not_equal new_t, Time.now
+    end
+  end
+  
+  def test_recursive_rebasing_maintains_each_context
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    Timecop.rebase(2008, 10, 10, 10, 10, 10) do 
+      assert((t - Time.now).abs < 50, "Failed to rebase time.")
+      t2 = Time.local(2008, 9, 9, 9, 9, 9)
+      Timecop.rebase(2008, 9, 9, 9, 9, 9) do
+        assert((t2 - Time.now) < 50, "Failed to rebase time.")
+        assert((t - Time.now) > 1000, "Failed to rebase time.")
+      end
+      assert((t - Time.now).abs < 2000, "Failed to restore previously-rebased time.")
+    end
+    assert_nil Time.send(:mock_time)
+  end
+  
+  def test_recursive_rebase_then_travel
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    Timecop.rebase(2008, 10, 10, 10, 10, 10) do 
+      assert((t - Time.now).abs < 50, "Failed to rebase time.")
+      t2 = Time.local(2008, 9, 9, 9, 9, 9)
+      Timecop.travel(2008, 9, 9, 9, 9, 9) do
+        assert_equal t2, Time.now
+      end
+      assert((t - Time.now).abs < 2000, "Failed to restore previously-rebased time.")
+    end
+    assert_nil Time.send(:mock_time)
+  end
+  
+  def test_recursive_travel_then_rebase
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    Timecop.travel(t) do 
+      assert_equal t, Time.now
+      t2 = Time.local(2008, 9, 9, 9, 9, 9)
+      Timecop.rebase(t2) do
+        assert((t2 - Time.now) < 50, "Failed to rebase time.")
+        assert((t - Time.now) > 1000, "Failed to rebase time.")
+      end
+      assert_equal t, Time.now
+    end
+    assert_nil Time.send(:mock_time)    
+  end
   
   def test_parse_travel_args_with_time
     t = Time.now
     y, m, d, h, min, s = t.year, t.month, t.day, t.hour, t.min, t.sec
-    ty, tm, td, th, tmin, ts = Timecop.send(:parse_travel_args, t)
+    ty, tm, td, th, tmin, ts = Timecop.instance().send(:parse_travel_args, t)
     assert_equal y, ty
     assert_equal m, tm
     assert_equal d, td
@@ -104,7 +170,7 @@ class TestTimecop < Test::Unit::TestCase
   def test_parse_travel_args_with_datetime
     t = DateTime.now
     y, m, d, h, min, s = t.year, t.month, t.day, t.hour, t.min, t.sec
-    ty, tm, td, th, tmin, ts = Timecop.send(:parse_travel_args, t)
+    ty, tm, td, th, tmin, ts = Timecop.instance().send(:parse_travel_args, t)
     assert_equal y, ty
     assert_equal m, tm
     assert_equal d, td
@@ -116,7 +182,7 @@ class TestTimecop < Test::Unit::TestCase
   def test_parse_travel_args_with_date
     date = Date.today
     y, m, d, h, min, s = date.year, date.month, date.day, 0, 0, 0
-    ty, tm, td, th, tmin, ts = Timecop.send(:parse_travel_args, date)
+    ty, tm, td, th, tmin, ts = Timecop.instance().send(:parse_travel_args, date)
     assert_equal y, ty
     assert_equal m, tm
     assert_equal d, td
@@ -127,7 +193,7 @@ class TestTimecop < Test::Unit::TestCase
   
   def test_parse_travel_args_with_individual_arguments
     y, m, d, h, min, s = 2008, 10, 10, 10, 10, 10
-    ty, tm, td, th, tmin, ts = Timecop.send(:parse_travel_args, y, m, d, h, min, s)
+    ty, tm, td, th, tmin, ts = Timecop.instance().send(:parse_travel_args, y, m, d, h, min, s)
     assert_equal y, ty
     assert_equal m, tm
     assert_equal d, td
