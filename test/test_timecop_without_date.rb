@@ -1,12 +1,12 @@
 
-require 'date'
 require 'test/unit'
 require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
-class TestTimecop < Test::Unit::TestCase
+class TestTimecopWithouDate < Test::Unit::TestCase
   
   def setup
-    
+    assert !Object.const_defined?(:Date)
+    assert !Object.const_defined?(:DateTime)
   end
   
   # just in case...let's really make sure that Timecop is disabled between tests...
@@ -36,43 +36,7 @@ class TestTimecop < Test::Unit::TestCase
       end
       assert_equal t, Time.now
     end
-    assert_not_equal t, Time.now
-  end
-  
-  def test_freeze_with_time_instance_works_as_expected
-    t = Time.local(2008, 10, 10, 10, 10, 10)
-    Timecop.freeze(t) do 
-      assert_equal t, Time.now
-      assert_equal DateTime.new(2008, 10, 10, 10, 10, 10), DateTime.now
-      assert_equal Date.new(2008, 10, 10), Date.today
-    end
-    assert_not_equal t, Time.now
-    assert_not_equal DateTime.new(2008, 10, 10, 10, 10, 10), DateTime.now
-    assert_not_equal Date.new(2008, 10, 10), Date.today
-  end
-  
-  def test_freeze_with_datetime_instance_works_as_expected
-    t = DateTime.new(2008, 10, 10, 10, 10, 10)
-    Timecop.freeze(t) do 
-      assert_equal t, DateTime.now
-      assert_equal Time.local(2008, 10, 10, 10, 10, 10), Time.now
-      assert_equal Date.new(2008, 10, 10), Date.today
-    end
-    assert_not_equal t, DateTime.now
-    assert_not_equal Time.local(2008, 10, 10, 10, 10, 10), Time.now
-    assert_not_equal Date.new(2008, 10, 10), Date.today
-  end
-  
-  def test_freeze_with_date_instance_works_as_expected
-    d = Date.new(2008, 10, 10)
-    Timecop.freeze(d) do
-      assert_equal d, Date.today
-      assert_equal Time.local(2008, 10, 10, 0, 0, 0), Time.now
-      assert_equal DateTime.new(2008, 10, 10, 0, 0, 0), DateTime.now
-    end
-    assert_not_equal d, Date.today
-    assert_not_equal Time.local(2008, 10, 10, 0, 0, 0), Time.now
-    assert_not_equal DateTime.new(2008, 10, 10, 0, 0, 0), DateTime.now    
+    assert_nil Time.send(:mock_time)
   end
   
   def test_exception_thrown_in_freeze_block_properly_resets_time
@@ -93,12 +57,10 @@ class TestTimecop < Test::Unit::TestCase
     now = Time.now
     Timecop.freeze(t) do
       #assert Time.now < now, "If we had failed to freeze, time would have proceeded, which is what appears to have happened."
-      new_t, new_d, new_dt = Time.now, Date.today, DateTime.now
-      assert_equal t, new_t, "Failed to freeze time." # 2 seconds
+      new_t = Time.now
+      assert_equal t, new_t, "Failed to change move time." # 2 seconds
       #sleep(10)
       assert_equal new_t, Time.now
-      assert_equal new_d, Date.today
-      assert_equal new_dt, DateTime.now
     end
   end
   
@@ -154,5 +116,5 @@ class TestTimecop < Test::Unit::TestCase
     end
     assert_nil Time.send(:mock_time)    
   end
-  
+
 end

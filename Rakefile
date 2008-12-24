@@ -31,3 +31,13 @@ end
 
 # vim: syntax=Ruby
 
+# Override the test task and instruct them how to actually run the tests.
+Rake.application.send(:eval, "@tasks.delete('test')")
+desc "Does not execute tests.  Manually run shell script ./run_tests.sh to execute tests."
+task :test do
+  puts <<-MSG
+    In order to run the test suite, run: cd test && ./run_tests.sh
+    The tests need to be run with different libraries loaded, which rules out using Rake
+    to automate them.
+  MSG
+end

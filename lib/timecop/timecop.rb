@@ -1,26 +1,25 @@
-require File.join(File.dirname(__FILE__), 'time_extensions')
 require 'singleton'
+require File.join(File.dirname(__FILE__), 'time_extensions')
+require File.join(File.dirname(__FILE__), 'stack_item')
 
-# 1. Wrapper class for manipulating the extensions to the Time, Date, and DateTime objects
-# 2. Allows us to "freeze" time in our Ruby applications.
-# 3. Optionally allows time travel to simulate a running clock, such time is not technically frozen.
-# 4. This is very useful when your app's functionality is dependent on time (e.g. 
+# Timecop
+# * Wrapper class for manipulating the extensions to the Time, Date, and DateTime objects
+# * Allows us to "freeze" time in our Ruby applications.
+# * Optionally allows time travel to simulate a running clock, such time is not technically frozen.
+# 
+# This is very useful when your app's functionality is dependent on time (e.g. 
 # anything that might expire).  This will allow us to alter the return value of
 # Date.today, Time.now, and DateTime.now, such that our application code _never_ has to change.
-class StackItem
-  
-  attr_reader :mock_type, :year, :month, :day, :hour, :minute, :second
-  def initialize(mock_type, year, month, day, hour, minute, second)
-    @mock_type, @year, @month, @day, @hour, @minute, @second = mock_type, year, month, day, hour, minute, second
-  end
-end
-
 class Timecop
-  include Singleton
+  # Timecop
+  # 1. Wrapper class for manipulating the extensions to the Time, Date, and DateTime objects
+  # 2. Allows us to "freeze" time in our Ruby applications.
+  # 3. Optionally allows time travel to simulate a running clock, such time is not technically frozen.
+  # 4. This is very useful when your app's functionality is dependent on time (e.g. 
+  # anything that might expire).  This will allow us to alter the return value of
+  # Date.today, Time.now, and DateTime.now, such that our application code _never_ has to change.
   
-  def initialize
-    @_stack = []
-  end
+  include Singleton
   
   # Allows you to run a block of code and "fake" a time throughout the execution of that block.
   # This is particularly useful for writing test methods where the passage of time is critical to the business
@@ -30,67 +29,99 @@ class Timecop
   #   joe = User.find(1)
   #   joe.purchase_home()
   #   assert !joe.mortgage_due?
-  #   Timecop.travel(2008, 10, 5) do
+  #   Timecop.freeze(2008, 10, 5) do
   #     assert joe.mortgage_due?
   #   end
   # </code>
   #
-  # travel will respond to several different arguments:
-  # 1. Timecop.travel(time_inst)
-  # 2. Timecop.travel(datetime_inst)
-  # 3. Timecop.travel(date_inst)
-  # 4. Timecop.travel(year, month, day, hour=0, minute=0, second=0)
+  # freeze and travel will respond to several different arguments:
+  # 1. Timecop.freeze(time_inst)
+  # 2. Timecop.freeze(datetime_inst)
+  # 3. Timecop.freeze(date_inst)
+  # 4. Timecop.freeze(year, month, day, hour=0, minute=0, second=0)
   #
-  # When a block is also passed, the Time.now, DateTime.now and Date.today are all reset to their
+  # When a block is also passed, Time.now, DateTime.now and Date.today are all reset to their
   # previous values.  This allows us to nest multiple calls to Timecop.travel and have each block
   # maintain it's concept of "now."
-  def self.travel(*args, &block)
-    instance().travel(:freeze, *args, &block)
+  #
+  # * Note: Timecop.freeze will actually freeze time.  This can cause unanticipated problems if
+  #   benchmark or other timing calls are executed, which implicitly expect Time to actually move
+  #   forward.
+  #
+  # * Rails Users: Be especially careful when setting this in your development environment in a 
+  #   rails project.  Generators will load your environment, including the migration generator, 
+  #   which will lead to files being generated with the timestamp set by the Timecop.freeze call 
+  #   in your dev environment
+  def self.freeze(*args, &block)
+    instance().send(:travel, :freeze, *args, &block)
   end
   
-  def self.rebase(*args, &block)
-    instance().travel(:move, *args, &block)
+  # Allows you to run a block of code and "fake" a time throughout the execution of that block.
+  # See Timecop#freeze for a sample of how to use (same exact usage syntax)
+  #
+  # * Note: Timecop.travel will not freeze time (as opposed to Timecop.freeze).  This is a particularly
+  #   good candidate for use in environment files in rails projects.  
+  def self.travel(*args, &block)
+    instance().send(:travel, :move, *args, &block)
   end
   
   # Reverts back to system's Time.now, Date.today and DateTime.now (if it exists). If freeze_all or rebase_all
   # was never called in the first place, this method will have no effect.
+  def self.return
+    instance().send(:unmock!)
+  end
+
+  # [Deprecated]: See Timecop#return instead.
   def self.unset_all
-    instance().unmock!
+    $stderr.puts "Timecop#unset_all is deprecated.  Please use Timecop#return instead."
+    $stderr.flush
+    self.return
   end
   
+  protected
   
-  def travel(mock_type, *args, &block)
-    year, month, day, hour, minute, second = parse_travel_args(*args)
-
-    if mock_type == :freeze
-      freeze_all(year, month, day, hour, minute, second)
-    else
-      move_all(year, month, day, hour, minute, second)
+    def initialize
+      @_stack = []
     end
-    @_stack << StackItem.new(mock_type, year, month, day, hour, minute, second)
     
-    if block_given?
-      begin
-        yield
-      ensure
-        stack_item = @_stack.pop
-        if @_stack.size == 0
-          unmock!
-        else
-          new_top = @_stack.last
-          if new_top.mock_type == :freeze
-            freeze_all(new_top.year, new_top.month, new_top.day, new_top.hour, new_top.minute, new_top.second)
+    def travel(mock_type, *args, &block)
+      # parse the arguments, build our base time units
+      year, month, day, hour, minute, second = parse_travel_args(*args)
+
+      # perform our action
+      if mock_type == :freeze
+        freeze_all(year, month, day, hour, minute, second)
+      else
+        move_all(year, month, day, hour, minute, second)
+      end
+      # store this time traveling on our stack...
+      @_stack << StackItem.new(mock_type, year, month, day, hour, minute, second)
+    
+      if block_given?
+        begin
+          yield
+        ensure
+          # pull it off the stack...
+          stack_item = @_stack.pop
+          if @_stack.size == 0
+            # completely unmock if there's nothing to revert back to 
+            unmock!
           else
-            move_all(new_top.year, new_top.month, new_top.day, new_top.hour, new_top.minute, new_top.second)
+            # or reinstantiate the new the top of the stack (could be a :freeze or a :move)
+            new_top = @_stack.last
+            if new_top.mock_type == :freeze
+              freeze_all(new_top.year, new_top.month, new_top.day, new_top.hour, new_top.minute, new_top.second)
+            else
+              move_all(new_top.year, new_top.month, new_top.day, new_top.hour, new_top.minute, new_top.second)
+            end
           end
         end
       end
     end
-  end
   
-  def unmock!
-    Time.unmock!
-  end
+    def unmock!
+      Time.unmock!
+    end
   
   private
   
@@ -112,6 +143,12 @@ class Timecop
       Time.freeze_time(time)
     end
 
+    # Re-bases Time.now, Date.today and DateTime.now to use the time passed in and to continue moving time
+    # forward.  When using this method directly, it is up to the developer to call return to return us to
+    # sanity.
+    #
+    # * If being consumed in a rails app, Time.zone.local will be used to instantiate the time.
+    #   Otherwise, Time.local will be used.
     def move_all(year, month, day, hour=0, minute=0, second=0)
       if Time.respond_to?(:zone) && !Time.zone.nil?
         # ActiveSupport loaded
