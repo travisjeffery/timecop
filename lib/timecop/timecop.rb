@@ -11,14 +11,6 @@ require File.join(File.dirname(__FILE__), 'stack_item')
 # anything that might expire).  This will allow us to alter the return value of
 # Date.today, Time.now, and DateTime.now, such that our application code _never_ has to change.
 class Timecop
-  # Timecop
-  # 1. Wrapper class for manipulating the extensions to the Time, Date, and DateTime objects
-  # 2. Allows us to "freeze" time in our Ruby applications.
-  # 3. Optionally allows time travel to simulate a running clock, such time is not technically frozen.
-  # 4. This is very useful when your app's functionality is dependent on time (e.g. 
-  # anything that might expire).  This will allow us to alter the return value of
-  # Date.today, Time.now, and DateTime.now, such that our application code _never_ has to change.
-  
   include Singleton
   
   # Allows you to run a block of code and "fake" a time throughout the execution of that block.

@@ -4,21 +4,18 @@
 
 == DESCRIPTION:
 
-A gem providing simple ways to (temporarily) override Time.now, Date.today, and DateTime.now.  It provides "time travel" capabilities, making it dead simple to write test time-dependent code.
+A gem providing simple ways to mock Time.now, Date.today, and DateTime.now.  It provides "time travel" and "time freezing" capabilities, making it dead simple to write test time-dependent code.
 
 == FEATURES:
 
-* Temporarily (or permanently if you prefer) change the concept of Time.now, DateTime.now (if defined), and Date.today (if defined)
-* Timecop#travel api allows an argument to be passed in as one of: 1) Time instance, 2) DateTime instance, 3) Date instance,
+* Temporarily (or permanently if you prefer) change the concept of Time.now, DateTime.now, and Date.today
+* Timecop api allows an arguments to be passed into #freeze and #travel as one of: 1) Time instance, 2) DateTime instance, 3) Date instance,
   4) individual arguments (year, month, day, hour, minute, second)
-* Nested calls to Timecop#travel are supported -- each block will maintain it's interpretation of now.
+* Nested calls to Timecop#travel and Timecop#freeze are supported -- each block will maintain it's interpretation of now.
 
 == SHORTCOMINGS:
 
-* Currently, time will stand still during a call to #travel.  The following scheme (when implemented) should be able to provide this functionality:
-  1) Take the new time/date from the #travel() function and store it.
-  2) Compute deltas (offsets) for Time.now, DateTime.now and Date.today as compared to the instance passed in #travel
-  3) Mock Time.now, DateTime.now and Date.today to return the current time + those deltas (rather than just returning the original mock)
+* Only fully tested on the 1.8.6 Ruby implementations.  1.8.7 and 1.9.1 should be tested, as well as other flavors (jruby, etc.)
 
 == SYNOPSIS:
 
@@ -28,7 +25,7 @@ A gem providing simple ways to (temporarily) override Time.now, Date.today, and 
   joe.purchase_home()
   assert !joe.mortgage_due?
   # move ahead a month and assert that the mortgage is due
-  Timecop.travel(Date.today + 30) do
+  Timecop.freeze(Date.today + 30) do
     assert joe.mortgage_due?
   end
 </code>
