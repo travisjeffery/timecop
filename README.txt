@@ -10,7 +10,7 @@ A gem providing simple ways to mock Time.now, Date.today, and DateTime.now.  It 
 
 * Temporarily (or permanently if you prefer) change the concept of Time.now, DateTime.now, and Date.today
 * Timecop api allows an arguments to be passed into #freeze and #travel as one of: 1) Time instance, 2) DateTime instance, 3) Date instance,
-  4) individual arguments (year, month, day, hour, minute, second)
+  4) individual arguments (year, month, day, hour, minute, second), 5) integer
 * Nested calls to Timecop#travel and Timecop#freeze are supported -- each block will maintain it's interpretation of now.
 
 == SHORTCOMINGS:

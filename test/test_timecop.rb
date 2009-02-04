@@ -75,6 +75,23 @@ class TestTimecop < Test::Unit::TestCase
     assert_not_equal DateTime.new(2008, 10, 10, 0, 0, 0), DateTime.now    
   end
   
+  def test_freeze_with_integer_instance_works_as_expected
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    Timecop.freeze(t) do
+      assert_equal t, Time.now
+      assert_equal DateTime.new(2008, 10, 10, 10, 10, 10), DateTime.now
+      assert_equal Date.new(2008, 10, 10), Date.today
+      Timecop.freeze(10) do
+        assert_equal t + 10, Time.now
+        assert_equal Time.local(2008, 10, 10, 10, 10, 20), Time.now
+        assert_equal Date.new(2008, 10, 10), Date.today
+      end
+    end
+    assert_not_equal t, Time.now
+    assert_not_equal DateTime.new(2008, 10, 10, 10, 10, 10), DateTime.now
+    assert_not_equal Date.new(2008, 10, 10), Date.today
+  end
+
   def test_exception_thrown_in_freeze_block_properly_resets_time
     t = Time.local(2008, 10, 10, 10, 10, 10)
     begin
