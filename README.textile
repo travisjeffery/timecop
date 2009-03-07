@@ -1,23 +1,28 @@
-= timecop
+h1. timecop
 
 * http://github.com/jtrupiano/timecop
 
-== DESCRIPTION:
+h2. DESCRIPTION
 
-A gem providing simple ways to mock Time.now, Date.today, and DateTime.now.  It provides "time travel" and "time freezing" capabilities, making it dead simple to write test time-dependent code.
+A gem providing simple ways to mock Time.now, Date.today, and DateTime.now.  It provides "time travel" and "time freezing" capabilities, making it dead simple to test time-dependent code.
 
-== FEATURES:
+h2. FEATURES
 
 * Temporarily (or permanently if you prefer) change the concept of Time.now, DateTime.now, and Date.today
-* Timecop api allows an arguments to be passed into #freeze and #travel as one of: 1) Time instance, 2) DateTime instance, 3) Date instance,
-  4) individual arguments (year, month, day, hour, minute, second), 5) integer
+* Timecop api allows arguments to be passed into #freeze and #travel as one of the following:
+  # Time instance
+  # DateTime instance
+  # Date instance
+  # individual arguments (year, month, day, hour, minute, second)
+  # a single integer argument that is interpreted as an offset in seconds from Time.now
+  
 * Nested calls to Timecop#travel and Timecop#freeze are supported -- each block will maintain it's interpretation of now.
 
-== SHORTCOMINGS:
+h2. SHORTCOMINGS
 
 * Only fully tested on the 1.8.6 Ruby implementations.  1.8.7 and 1.9.1 should be tested, as well as other flavors (jruby, etc.)
 
-== SYNOPSIS:
+h2. SYNOPSIS
 
 * Run a time-sensitive test:
 <code>
@@ -44,16 +49,16 @@ config.after_initialize do
 end
 </code>
 
-== REQUIREMENTS:
+h2. REQUIREMENTS
 
 * None
 
-== INSTALL:
+h2. INSTALL
 
 * sudo gem install timecop (latest stable version from rubyforge)
 * sudo gem install jtrupiano-timecop (HEAD of the repo from github)
 
-== LICENSE:
+h2. LICENSE
 
 (The MIT License)
 
