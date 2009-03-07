@@ -58,6 +58,11 @@ h2. INSTALL
 * sudo gem install timecop (latest stable version from rubyforge)
 * sudo gem install jtrupiano-timecop (HEAD of the repo from github)
 
+h2. REFERENCES
+
+* http://blog.smartlogicsolutions.com/2008/11/19/timecop-freeze-time-in-ruby-for-better-testing/
+* http://blog.smartlogicsolutions.com/2008/12/24/timecop-2-released-freeze-and-rebase-time-ruby/
+
 h2. LICENSE
 
 (The MIT License)

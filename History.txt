@@ -1,3 +1,10 @@
+=== 0.2.1 / 2009-03-06
+* API Changes
+  
+  * Introduced a 5th style of arguments to be passed into #travel and #freeze.  Now, if you pass in a single integer value,
+    it will be interpreted as a relative offset in seconds from the current Time.now.  Previously this was interpreted as
+    only the year, similar to calling Time.local(2008) --> Jan. 1, 2008.  This is no longer the case.
+
 === 0.2.0 / 2008-12-23
 
 * API Changes
