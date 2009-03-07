@@ -26,23 +26,31 @@ h2. SYNOPSIS
 
 Run a time-sensitive test
 
-    joe = User.find(1)
-    joe.purchase_home()
-    assert !joe.mortgage_due?
-    # move ahead a month and assert that the mortgage is due
-    Timecop.freeze(Date.today + 30) do
-      assert joe.mortgage_due?
-    end
+<pre>
+<code>
+  joe = User.find(1)
+  joe.purchase_home()
+  assert !joe.mortgage_due?
+  # move ahead a month and assert that the mortgage is due
+  Timecop.freeze(Date.today + 30) do
+    assert joe.mortgage_due?
+  end
+</code>
+</pre>
 
 Set the time for the test environment of a rails app -- this is particularly helpful if your whole application is time-sensitive.  It allows you to build your test data at a single point in time, and to move in/out of that time as appropriate (within your tests)
   
 in config/environments/test.rb
 
-    config.after_initialize do
-      # Set Time.now to September 1, 2008 10:05:00 AM
-      t = Time.local(2008, 9, 1, 10, 5, 0)
-      Timecop.travel(t)
-    end
+<pre>
+<code>
+  config.after_initialize do
+    # Set Time.now to September 1, 2008 10:05:00 AM
+    t = Time.local(2008, 9, 1, 10, 5, 0)
+    Timecop.travel(t)
+  end
+</code>
+</pre>
 
 h2. REQUIREMENTS
 
