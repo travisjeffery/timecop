@@ -25,15 +25,14 @@ h2. SHORTCOMINGS
 h2. SYNOPSIS
 
 * Run a time-sensitive test:
-<code>
-  joe = User.find(1)
-  joe.purchase_home()
-  assert !joe.mortgage_due?
-  # move ahead a month and assert that the mortgage is due
-  Timecop.freeze(Date.today + 30) do
-    assert joe.mortgage_due?
-  end
-</code>
+
+    joe = User.find(1)
+    joe.purchase_home()
+    assert !joe.mortgage_due?
+    # move ahead a month and assert that the mortgage is due
+    Timecop.freeze(Date.today + 30) do
+      assert joe.mortgage_due?
+    end
 
 * Set the time for the test environment of a rails app -- this is particularly helpful if your whole application
   is time-sensitive.  It allows you to build your test data at a single point in time, and to move in/out of that
@@ -41,13 +40,11 @@ h2. SYNOPSIS
   
 in config/environments/test.rb
 
-<code>
-config.after_initialize do
-  # Set Time.now to September 1, 2008 10:05:00 AM
-  t = Time.local(2008, 9, 1, 10, 5, 0)
-  Timecop.travel(t)
-end
-</code>
+    config.after_initialize do
+      # Set Time.now to September 1, 2008 10:05:00 AM
+      t = Time.local(2008, 9, 1, 10, 5, 0)
+      Timecop.travel(t)
+    end
 
 h2. REQUIREMENTS
 
@@ -60,30 +57,6 @@ h2. INSTALL
 
 h2. REFERENCES
 
-* http://blog.smartlogicsolutions.com/2008/11/19/timecop-freeze-time-in-ruby-for-better-testing/
-* http://blog.smartlogicsolutions.com/2008/12/24/timecop-2-released-freeze-and-rebase-time-ruby/
+* "0.1.0 release":http://blog.smartlogicsolutions.com/2008/11/19/timecop-freeze-time-in-ruby-for-better-testing/
+* "0.2.0 release":http://blog.smartlogicsolutions.com/2008/12/24/timecop-2-released-freeze-and-rebase-time-ruby/
 
-h2. LICENSE
-
-(The MIT License)
-
-Copyright (c) 2008 FIX
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-'Software'), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
