@@ -2,6 +2,8 @@ require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
 
+gem 'jeweler', '~> 0.9.2'
+
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |s|
@@ -29,3 +31,42 @@ task :test do
     to automate them.
   MSG
 end
+
+require 'rake/rdoctask'
+Rake::RDocTask.new do |rdoc|
+  config = YAML.load(File.read('VERSION.yml'))
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title = "timecop #{config[:major]}.#{config[:minor]}.#{config[:patch]}"
+  rdoc.options << '--line-numbers' << '--inline-source'
+  rdoc.rdoc_files.include('README*')
+  rdoc.rdoc_files.include('lib/**/*.rb')
+end
+
+# Rubyforge documentation task
+begin
+  require 'rake/contrib/sshpublisher'
+  namespace :rubyforge do
+    
+    desc "release gem and documentation to rubyforge"
+    task :release => ["rubyforge:release:gem", "rubyforge:release:docs"]
+    
+    namespace :release do
+      desc "Publish RDoc to RubyForge."
+      task :docs => [:rdoc] do
+        config = YAML.load(
+          File.read(File.expand_path('~/.rubyforge/user-config.yml'))
+        )
+
+        host = "#{config['username']}@rubyforge.org"
+        remote_dir = "/var/www/gforge-projects/johntrupiano/timecop"
+        local_dir = 'rdoc'
+
+        Rake::SshDirPublisher.new(host, remote_dir, local_dir).upload
+      end
+    end
+  end
+rescue LoadError
+  puts "Rake SshDirPublisher is unavailable or your rubyforge environment is not configured."
+end
+
+task :default => :test
