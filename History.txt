@@ -1,3 +1,11 @@
+=== 0.2.2 / Unreleased
+
+* Maintenance
+  * Upped build dependency to jeweler ~> 1.0.2
+
+* Documentation
+  * Clearer examples in the README, better description in the gemspec
+
 === 0.2.1 / 2009-03-06
 * API Changes
   

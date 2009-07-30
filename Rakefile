@@ -2,20 +2,19 @@ require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
 
-gem 'jeweler', '~> 0.9.2'
+gem 'jeweler', '~> 1.0.2'
 
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |s|
     s.name = "timecop"
     s.rubyforge_project = 'johntrupiano' # if different than lowercase project name
-    s.description = %q(A gem providing simple ways to temporarily override Time.now, Date.today, and DateTime.now.  It provides "time travel" capabilities, making it dead simple to test time-dependent code.)
+    s.description = %q(A gem providing "time travel" and "time freezing" capabilities, making it dead simple to test time-dependent code.  It provides a unified method to mock Time.now, Date.today, and DateTime.now in a single call.)
     s.summary = s.description # More details later??
     s.email = "jtrupiano@gmail.com"
     s.homepage = "http://github.com/jtrupiano/timecop"
     s.authors = ["John Trupiano"]
     s.files =  FileList["[A-Z]*", "{bin,lib,test}/**/*"]
-    #s.add_dependency 'schacon-git'
   end
 rescue LoadError
   puts "Jeweler, or one of its dependencies, is not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
