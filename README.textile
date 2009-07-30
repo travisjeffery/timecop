@@ -4,11 +4,12 @@ h1. timecop
 
 h2. DESCRIPTION
 
-A gem providing simple ways to mock Time.now, Date.today, and DateTime.now.  It provides "time travel" and "time freezing" capabilities, making it dead simple to test time-dependent code.
+A gem providing "time travel" and "time freezing" capabilities, making it dead simple to test time-dependent code.  It provides a unified method to mock Time.now, Date.today, and DateTime.now in a single call.
 
 h2. FEATURES
 
-* Temporarily (or permanently if you prefer) change the concept of Time.now, DateTime.now, and Date.today
+* Freeze time to a specific point.
+* Travel back to a specific point in time, but allow time to continue moving forward from there.
 * Timecop api allows arguments to be passed into #freeze and #travel as one of the following:
   # Time instance
   # DateTime instance
@@ -16,7 +17,7 @@ h2. FEATURES
   # individual arguments (year, month, day, hour, minute, second)
   # a single integer argument that is interpreted as an offset in seconds from Time.now
   
-* Nested calls to Timecop#travel and Timecop#freeze are supported -- each block will maintain it's interpretation of now.
+* Nested calls to Timecop#travel and Timecop#freeze are supported -- each block will maintain its interpretation of now.
 
 h2. SHORTCOMINGS
 
@@ -45,10 +46,28 @@ in config/environments/test.rb
 <pre>
 <code>
   config.after_initialize do
-    # Set Time.now to September 1, 2008 10:05:00 AM
+    # Set Time.now to September 1, 2008 10:05:00 AM (at this instant), but allow it to move forward
     t = Time.local(2008, 9, 1, 10, 5, 0)
     Timecop.travel(t)
   end
+</code>
+</pre>
+
+h3. The difference between Timecop.freeze and Timecop.travel
+
+#freeze is used to statically mock the concept of now.  As your program executes, Time.now will not change unless you make subsequent calls into the Timecop API.  #travel, on the other hand, computes an offset between what we currently think Time.now is (recall that we support nested traveling) and the time passed in.  It uses this offset to simulate the passage of time.  To demonstrate, consider the following code snippets:
+
+<pre>
+<code>
+  new_time = Time.local(2008, 9, 1, 12, 0, 0)
+  Timecop.freeze(new_time)
+  sleep(10)
+  new_time == Time.now # ==> true
+  
+  Timecop.return # "turn off" Timecop
+  Timecop.travel(new_time)
+  sleep(10)
+  new_time == Time.now # ==> false
 </code>
 </pre>
 
@@ -63,6 +82,5 @@ h2. INSTALL
 
 h2. REFERENCES
 
-* "0.1.0 release":http://blog.smartlogicsolutions.com/2008/11/19/timecop-freeze-time-in-ruby-for-better-testing/
 * "0.2.0 release":http://blog.smartlogicsolutions.com/2008/12/24/timecop-2-released-freeze-and-rebase-time-ruby/
-
+* "0.1.0 release":http://blog.smartlogicsolutions.com/2008/11/19/timecop-freeze-time-in-ruby-for-better-testing/
