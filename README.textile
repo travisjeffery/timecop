@@ -11,12 +11,11 @@ h2. FEATURES
 * Freeze time to a specific point.
 * Travel back to a specific point in time, but allow time to continue moving forward from there.
 * Timecop api allows arguments to be passed into #freeze and #travel as one of the following:
-  # Time instance
-  # DateTime instance
-  # Date instance
-  # individual arguments (year, month, day, hour, minute, second)
-  # a single integer argument that is interpreted as an offset in seconds from Time.now
-  
+** Time instance
+** DateTime instance
+** Date instance
+** individual arguments (year, month, day, hour, minute, second)
+** a single integer argument that is interpreted as an offset in seconds from Time.now
 * Nested calls to Timecop#travel and Timecop#freeze are supported -- each block will maintain its interpretation of now.
 
 h2. SHORTCOMINGS
