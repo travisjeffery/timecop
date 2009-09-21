@@ -1,10 +1,16 @@
-=== 0.2.2 / Unreleased
+=== 0.3.0 / 2009-09-20
+
+* API
+  * Completely remove Timecop#unset_all (deprecated by Timecop#return in 0.2.0)
+  * Return Time.now from #freeze, #travel and #return  -- code contributed by Keith Bennett (keithrbennett)
 
 * Maintenance
+  * Fix bug that left Time#mock_time set in some instances
   * Upped build dependency to jeweler ~> 1.0.2
 
 * Documentation
   * Clearer examples in the README, better description in the gemspec
+  * Improve RDoc
 
 === 0.2.1 / 2009-03-06
 * API Changes
