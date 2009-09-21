@@ -11,12 +11,12 @@ Gem::Specification.new do |s|
   s.email = %q{jtrupiano@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
-     "README.textile"
+     "README.rdoc"
   ]
   s.files = [
     "History.txt",
      "LICENSE",
-     "README.textile",
+     "README.rdoc",
      "Rakefile",
      "VERSION.yml",
      "lib/timecop.rb",
