@@ -17,24 +17,23 @@ class Timecop
   # This is particularly useful for writing test methods where the passage of time is critical to the business
   # logic being tested.  For example:
   #
-  # <code>
   #   joe = User.find(1)
   #   joe.purchase_home()
   #   assert !joe.mortgage_due?
   #   Timecop.freeze(2008, 10, 5) do
   #     assert joe.mortgage_due?
   #   end
-  # </code>
   #
   # freeze and travel will respond to several different arguments:
   # 1. Timecop.freeze(time_inst)
   # 2. Timecop.freeze(datetime_inst)
   # 3. Timecop.freeze(date_inst)
-  # 4. Timecop.freeze(year, month, day, hour=0, minute=0, second=0)
+  # 4. Timecop.freeze(offset_in_seconds)
+  # 5. Timecop.freeze(year, month, day, hour=0, minute=0, second=0)
   #
   # When a block is also passed, Time.now, DateTime.now and Date.today are all reset to their
-  # previous values.  This allows us to nest multiple calls to Timecop.travel and have each block
-  # maintain it's concept of "now."
+  # previous values after the block has finished executing.  This allows us to nest multiple 
+  # calls to Timecop.travel and have each block maintain it's concept of "now."
   #
   # * Note: Timecop.freeze will actually freeze time.  This can cause unanticipated problems if
   #   benchmark or other timing calls are executed, which implicitly expect Time to actually move
@@ -72,20 +71,13 @@ class Timecop
     Time.now
   end
 
-  # [Deprecated]: See Timecop#return instead.
-  def self.unset_all
-    $stderr.puts "Timecop#unset_all is deprecated.  Please use Timecop#return instead."
-    $stderr.flush
-    self.return
-  end
-  
   protected
   
-    def initialize
+    def initialize #:nodoc:
       @_stack = []
     end
     
-    def travel(mock_type, *args, &block)
+    def travel(mock_type, *args, &block) #:nodoc:
       # parse the arguments, build our base time units
       year, month, day, hour, minute, second = parse_travel_args(*args)
 
@@ -120,7 +112,7 @@ class Timecop
       end
     end
   
-    def unmock!
+    def unmock! #:nodoc:
       @_stack = []
       Time.unmock!
     end

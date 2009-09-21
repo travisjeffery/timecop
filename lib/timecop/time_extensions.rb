@@ -1,10 +1,11 @@
+#--
 # 1. Extensions to the Time, Date, and DateTime objects
 # 2. Allows us to "freeze" time in our Ruby applications.
 # 3. This is very useful when your app's functionality is dependent on time (e.g. 
 # anything that might expire).  This will allow us to alter the return value of
 # Date.today, Time.now, and DateTime.now, such that our application code _never_ has to change.
 
-class Time
+class Time #:nodoc:
   class << self
     # Time we might be behaving as
     #attr_reader :mock_time
@@ -50,7 +51,7 @@ class Time
 end 
 
 if Object.const_defined?(:Date)
-  class Date
+  class Date #:nodoc:
     class << self
       def mock_date
         now = Time.mock_time
@@ -73,7 +74,7 @@ if Object.const_defined?(:Date)
 end
 
 if Object.const_defined?(:DateTime)
-  class DateTime
+  class DateTime #:nodoc:
     class << self
       def mock_time
         t_now = Time.mock_time
