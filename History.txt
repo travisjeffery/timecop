@@ -6,7 +6,7 @@
 
 * Maintenance
   * Fix bug that left Time#mock_time set in some instances
-  * Upped build dependency to jeweler ~> 1.0.2
+  * Upped build dependency to jeweler ~> 1.2.1
 
 * Documentation
   * Clearer examples in the README, better description in the gemspec
