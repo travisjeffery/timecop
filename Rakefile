@@ -16,6 +16,10 @@ begin
     s.authors = ["John Trupiano"]
     s.files =  FileList["[A-Z]*", "{bin,lib,test}/**/*"]
   end
+  Jeweler::RubyforgeTasks.new do |rubyforge|
+    rubyforge.doc_task = "rdoc"
+    rubyforge.remote_doc_path = "timecop"
+  end
 rescue LoadError
   puts "Jeweler, or one of its dependencies, is not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
 end
@@ -33,39 +37,18 @@ end
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
-  config = YAML.load(File.read('VERSION.yml'))
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "timecop #{config[:major]}.#{config[:minor]}.#{config[:patch]}"
-  rdoc.options << '--line-numbers' << '--inline-source'
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
-end
-
-# Rubyforge documentation task
-begin
-  require 'rake/contrib/sshpublisher'
-  namespace :rubyforge do
-    
-    desc "release gem and documentation to rubyforge"
-    task :release => ["rubyforge:release:gem", "rubyforge:release:docs"]
-    
-    namespace :release do
-      desc "Publish RDoc to RubyForge."
-      task :docs => [:rdoc] do
-        config = YAML.load(
-          File.read(File.expand_path('~/.rubyforge/user-config.yml'))
-        )
-
-        host = "#{config['username']}@rubyforge.org"
-        remote_dir = "/var/www/gforge-projects/johntrupiano/timecop"
-        local_dir = 'rdoc'
-
-        Rake::SshDirPublisher.new(host, remote_dir, local_dir).upload
-      end
-    end
+  if File.exist?('VERSION')
+    version = File.read('VERSION')
+  else
+    version = ""
   end
-rescue LoadError
-  puts "Rake SshDirPublisher is unavailable or your rubyforge environment is not configured."
+
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.options << '--line-numbers' << '--inline-source'
+  rdoc.title = "timecop #{version}"
+  rdoc.rdoc_files.include('README*')
+  rdoc.rdoc_files.include('History.txt')
+  rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
 task :default => :test
