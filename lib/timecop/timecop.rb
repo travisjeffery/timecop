@@ -44,23 +44,32 @@ class Timecop
   #   rails project.  Generators will load your environment, including the migration generator, 
   #   which will lead to files being generated with the timestamp set by the Timecop.freeze call 
   #   in your dev environment
+  #
+  # Returns the frozen time.
   def self.freeze(*args, &block)
     instance().send(:travel, :freeze, *args, &block)
+    Time.now
   end
   
   # Allows you to run a block of code and "fake" a time throughout the execution of that block.
   # See Timecop#freeze for a sample of how to use (same exact usage syntax)
   #
   # * Note: Timecop.travel will not freeze time (as opposed to Timecop.freeze).  This is a particularly
-  #   good candidate for use in environment files in rails projects.  
+  #   good candidate for use in environment files in rails projects.
+  #
+  # Returns the 'new' current Time.
   def self.travel(*args, &block)
     instance().send(:travel, :move, *args, &block)
+    Time.now
   end
   
   # Reverts back to system's Time.now, Date.today and DateTime.now (if it exists). If freeze_all or rebase_all
   # was never called in the first place, this method will have no effect.
+  #
+  # Returns Time.now, which is now the real current time.
   def self.return
     instance().send(:unmock!)
+    Time.now
   end
 
   # [Deprecated]: See Timecop#return instead.
