@@ -1,33 +1,27 @@
-h1. timecop
+= timecop
 
 * http://github.com/jtrupiano/timecop
 
-h2. DESCRIPTION
+== DESCRIPTION
 
 A gem providing "time travel" and "time freezing" capabilities, making it dead simple to test time-dependent code.  It provides a unified method to mock Time.now, Date.today, and DateTime.now in a single call.
 
-h2. FEATURES
+== FEATURES
 
 * Freeze time to a specific point.
 * Travel back to a specific point in time, but allow time to continue moving forward from there.
 * Timecop api allows arguments to be passed into #freeze and #travel as one of the following:
-** Time instance
-** DateTime instance
-** Date instance
-** individual arguments (year, month, day, hour, minute, second)
-** a single integer argument that is interpreted as an offset in seconds from Time.now
+  * Time instance
+  * DateTime instance
+  * Date instance
+  * individual arguments (year, month, day, hour, minute, second)
+  * a single integer argument that is interpreted as an offset in seconds from Time.now
 * Nested calls to Timecop#travel and Timecop#freeze are supported -- each block will maintain its interpretation of now.
 
-h2. SHORTCOMINGS
-
-* Only fully tested on the 1.8.6 Ruby implementations.  1.8.7 and 1.9.1 should be tested, as well as other flavors (jruby, etc.)
-
-h2. SYNOPSIS
+== USAGE
 
 Run a time-sensitive test
 
-<pre>
-<code>
   joe = User.find(1)
   joe.purchase_home()
   assert !joe.mortgage_due?
@@ -35,29 +29,21 @@ Run a time-sensitive test
   Timecop.freeze(Date.today + 30) do
     assert joe.mortgage_due?
   end
-</code>
-</pre>
 
 Set the time for the test environment of a rails app -- this is particularly helpful if your whole application is time-sensitive.  It allows you to build your test data at a single point in time, and to move in/out of that time as appropriate (within your tests)
   
 in config/environments/test.rb
 
-<pre>
-<code>
   config.after_initialize do
     # Set Time.now to September 1, 2008 10:05:00 AM (at this instant), but allow it to move forward
     t = Time.local(2008, 9, 1, 10, 5, 0)
     Timecop.travel(t)
   end
-</code>
-</pre>
 
-h3. The difference between Timecop.freeze and Timecop.travel
+=== The difference between Timecop.freeze and Timecop.travel
 
 #freeze is used to statically mock the concept of now.  As your program executes, Time.now will not change unless you make subsequent calls into the Timecop API.  #travel, on the other hand, computes an offset between what we currently think Time.now is (recall that we support nested traveling) and the time passed in.  It uses this offset to simulate the passage of time.  To demonstrate, consider the following code snippets:
 
-<pre>
-<code>
   new_time = Time.local(2008, 9, 1, 12, 0, 0)
   Timecop.freeze(new_time)
   sleep(10)
@@ -67,19 +53,17 @@ h3. The difference between Timecop.freeze and Timecop.travel
   Timecop.travel(new_time)
   sleep(10)
   new_time == Time.now # ==> false
-</code>
-</pre>
 
-h2. REQUIREMENTS
+== DEPENDENCIES
 
 * None
 
-h2. INSTALL
+== INSTALL
 
 * sudo gem install timecop (latest stable version from rubyforge)
 * sudo gem install jtrupiano-timecop (HEAD of the repo from github)
 
-h2. REFERENCES
+== REFERENCES
 
 * "0.2.0 release":http://blog.smartlogicsolutions.com/2008/12/24/timecop-2-released-freeze-and-rebase-time-ruby/
 * "0.1.0 release":http://blog.smartlogicsolutions.com/2008/11/19/timecop-freeze-time-in-ruby-for-better-testing/
