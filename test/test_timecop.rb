@@ -26,6 +26,30 @@ class TestTimecop < Test::Unit::TestCase
     assert_not_equal t, Time.now
   end
   
+  def test_freeze_then_return_unsets_mock_time
+    Timecop.freeze(1)
+    Timecop.return
+    assert_nil Time.send(:mock_time)
+  end
+
+  def test_travel_then_return_unsets_mock_time
+    Timecop.travel(1)
+    Timecop.return
+    assert_nil Time.send(:mock_time)
+  end
+  
+  def test_freeze_with_block_unsets_mock_time
+    assert_nil Time.send(:mock_time), "test is invalid"
+    Timecop.freeze(1) do; end
+    assert_nil Time.send(:mock_time)
+  end
+  
+  def test_travel_with_block_unsets_mock_time
+    assert_nil Time.send(:mock_time), "test is invalid"
+    Timecop.travel(1) do; end
+    assert_nil Time.send(:mock_time)
+  end
+  
   def test_recursive_freeze
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.freeze(2008, 10, 10, 10, 10, 10) do 
@@ -142,7 +166,6 @@ class TestTimecop < Test::Unit::TestCase
       end
       assert((t - Time.now).abs < 2000, "Failed to restore previously-traveled time.")
     end
-    assert_nil Time.send(:mock_time)
   end
   
   def test_recursive_travel_then_freeze
@@ -155,7 +178,6 @@ class TestTimecop < Test::Unit::TestCase
       end
       assert((t - Time.now).abs < 2000, "Failed to restore previously-traveled time.")
     end
-    assert_nil Time.send(:mock_time)
   end
   
   def test_recursive_freeze_then_travel

@@ -121,6 +121,7 @@ class Timecop
     end
   
     def unmock!
+      @_stack = []
       Time.unmock!
     end
   
@@ -183,25 +184,3 @@ class Timecop
       return year, month, day, hour, minute, second
     end
 end
-
-#def with_dates(*dates, &block)
-#  dates.flatten.each do |date|
-#    begin
-#      DateTime.forced_now = case date
-#        when String: DateTime.parse(date)
-#        when Time: DateTime.parse(date.to_s)
-#        else
-#          date
-#      end
-#      Date.forced_today = Date.new(DateTime.forced_now.year,
-#DateTime.forced_now.month, DateTime.forced_now.day)
-#      yield
-#    rescue Exception => e
-#      raise e
-#    ensure
-#      DateTime.forced_now = nil
-#      Date.forced_today = nil
-#    end
-#  end
-#end 
-
