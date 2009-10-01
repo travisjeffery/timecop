@@ -62,8 +62,7 @@ class Timecop
     Time.now
   end
   
-  # Reverts back to system's Time.now, Date.today and DateTime.now (if it exists). If freeze_all or rebase_all
-  # was never called in the first place, this method will have no effect.
+  # Reverts back to system's Time.now, Date.today and DateTime.now (if it exists).
   #
   # Returns Time.now, which is now the real current time.
   def self.return
@@ -81,32 +80,26 @@ class Timecop
       # parse the arguments, build our base time units
       year, month, day, hour, minute, second = parse_travel_args(*args)
 
+      stack_item = StackItem.new(mock_type, year, month, day, hour, minute, second)
       # perform our action
-      if mock_type == :freeze
-        freeze_all(year, month, day, hour, minute, second)
-      else
-        move_all(year, month, day, hour, minute, second)
-      end
+      freeze_or_move(stack_item)
+      
       # store this time traveling on our stack...
-      @_stack << StackItem.new(mock_type, year, month, day, hour, minute, second)
+      @_stack << stack_item
     
       if block_given?
         begin
           yield
         ensure
           # pull it off the stack...
-          stack_item = @_stack.pop
+          @_stack.pop
           if @_stack.size == 0
             # completely unmock if there's nothing to revert back to 
             unmock!
           else
             # or reinstantiate the new the top of the stack (could be a :freeze or a :move)
             new_top = @_stack.last
-            if new_top.mock_type == :freeze
-              freeze_all(new_top.year, new_top.month, new_top.day, new_top.hour, new_top.minute, new_top.second)
-            else
-              move_all(new_top.year, new_top.month, new_top.day, new_top.hour, new_top.minute, new_top.second)
-            end
+            freeze_or_move(new_top)
           end
         end
       end
@@ -119,43 +112,25 @@ class Timecop
   
   private
   
-    # Re-bases Time.now, Date.today and DateTime.now (if it exists) to use the time passed in.
-    # When using this method directly, it is up to the developer to call unset_all to return us
-    # to sanity.
-    #
-    # * If being consumed in a rails app, Time.zone.local will be used to instantiate the time.
-    #   Otherwise, Time.local will be used.
-    def freeze_all(year, month, day, hour=0, minute=0, second=0)
-      if Time.respond_to?(:zone) && !Time.zone.nil?
-        # ActiveSupport loaded
-        time = Time.zone.local(year, month, day, hour, minute, second)
-      else 
-        # ActiveSupport not loaded
-        time = Time.local(year, month, day, hour, minute, second)
+    def freeze_or_move(stack_item) #:nodoc:
+      if stack_item.mock_type == :freeze
+        Time.freeze_time(time_for_stack_item(stack_item))
+      else
+        Time.move_time(time_for_stack_item(stack_item))
       end
-    
-      Time.freeze_time(time)
-    end
-
-    # Re-bases Time.now, Date.today and DateTime.now to use the time passed in and to continue moving time
-    # forward.  When using this method directly, it is up to the developer to call return to return us to
-    # sanity.
-    #
-    # * If being consumed in a rails app, Time.zone.local will be used to instantiate the time.
-    #   Otherwise, Time.local will be used.
-    def move_all(year, month, day, hour=0, minute=0, second=0)
-      if Time.respond_to?(:zone) && !Time.zone.nil?
-        # ActiveSupport loaded
-        time = Time.zone.local(year, month, day, hour, minute, second)
-      else 
-        # ActiveSupport not loaded
-        time = Time.local(year, month, day, hour, minute, second)
-      end
-    
-      Time.move_time(time)
     end
     
-    def parse_travel_args(*args)
+    def time_for_stack_item(stack_item) #:nodoc:
+      if Time.respond_to?(:zone) && !Time.zone.nil?
+        # ActiveSupport loaded
+        time = Time.zone.local(stack_item.year, stack_item.month, stack_item.day, stack_item.hour, stack_item.minute, stack_item.second)
+      else 
+        # ActiveSupport not loaded
+        time = Time.local(stack_item.year, stack_item.month, stack_item.day, stack_item.hour, stack_item.minute, stack_item.second)
+      end      
+    end
+        
+    def parse_travel_args(*args) #:nodoc:
       arg = args.shift
       if arg.is_a?(Time) || (Object.const_defined?(:DateTime) && arg.is_a?(DateTime))
         year, month, day, hour, minute, second = arg.year, arg.month, arg.day, arg.hour, arg.min, arg.sec
