@@ -50,7 +50,7 @@ class Time #:nodoc:
   end
 end 
 
-if Object.const_defined?(:Date)
+if Object.const_defined?(:Date) && Date.respond_to?(:today)
   class Date #:nodoc:
     class << self
       def mock_date
@@ -73,7 +73,7 @@ if Object.const_defined?(:Date)
   end
 end
 
-if Object.const_defined?(:DateTime)
+if Object.const_defined?(:DateTime) && DateTime.respond_to?(:now)
   class DateTime #:nodoc:
     class << self
       def mock_time
