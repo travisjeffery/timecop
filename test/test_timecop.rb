@@ -67,16 +67,16 @@ class TestTimecop < Test::Unit::TestCase
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.freeze(t) do 
       assert_equal t, Time.now
-      assert_equal DateTime.new(2008, 10, 10, 10, 10, 10), DateTime.now
+      assert_equal DateTime.new(2008, 10, 10, 10, 10, 10, local_offset), DateTime.now
       assert_equal Date.new(2008, 10, 10), Date.today
     end
     assert_not_equal t, Time.now
-    assert_not_equal DateTime.new(2008, 10, 10, 10, 10, 10), DateTime.now
+    assert_not_equal DateTime.new(2008, 10, 10, 10, 10, 10, local_offset), DateTime.now
     assert_not_equal Date.new(2008, 10, 10), Date.today
   end
   
   def test_freeze_with_datetime_instance_works_as_expected
-    t = DateTime.new(2008, 10, 10, 10, 10, 10)
+    t = DateTime.new(2008, 10, 10, 10, 10, 10, local_offset)
     Timecop.freeze(t) do 
       assert_equal t, DateTime.now
       assert_equal Time.local(2008, 10, 10, 10, 10, 10), Time.now
@@ -92,18 +92,18 @@ class TestTimecop < Test::Unit::TestCase
     Timecop.freeze(d) do
       assert_equal d, Date.today
       assert_equal Time.local(2008, 10, 10, 0, 0, 0), Time.now
-      assert_equal DateTime.new(2008, 10, 10, 0, 0, 0), DateTime.now
+      assert_equal DateTime.new(2008, 10, 10, 0, 0, 0, local_offset), DateTime.now
     end
     assert_not_equal d, Date.today
     assert_not_equal Time.local(2008, 10, 10, 0, 0, 0), Time.now
-    assert_not_equal DateTime.new(2008, 10, 10, 0, 0, 0), DateTime.now    
+    assert_not_equal DateTime.new(2008, 10, 10, 0, 0, 0, local_offset), DateTime.now    
   end
   
   def test_freeze_with_integer_instance_works_as_expected
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.freeze(t) do
       assert_equal t, Time.now
-      assert_equal DateTime.new(2008, 10, 10, 10, 10, 10), DateTime.now
+      assert_equal DateTime.new(2008, 10, 10, 10, 10, 10, local_offset), DateTime.now
       assert_equal Date.new(2008, 10, 10), Date.today
       Timecop.freeze(10) do
         assert_equal t + 10, Time.now
@@ -152,6 +152,35 @@ class TestTimecop < Test::Unit::TestCase
       new_t = Time.now
       #sleep(10)
       assert_not_equal new_t, Time.now
+    end
+  end
+  
+  def test_freeze_with_datetime_on_specific_timezone
+    each_timezone do
+      t = DateTime.parse("2009-10-11 00:38:00 +0200")
+      assert_equal "+02:00", t.zone
+      Timecop.freeze(t) do
+        assert_equal t, DateTime.now
+      end
+    end
+  end
+
+  def test_mocked_date_time_now_is_local
+    each_timezone do
+      t = DateTime.parse("2009-10-11 00:38:00 +0200")
+      Timecop.freeze(t) do
+        assert_equal local_offset, DateTime.now.offset
+      end
+    end
+  end
+  
+  def test_freeze_with_utc_time
+    each_timezone do
+      t = Time.utc(2008, 10, 10, 10, 10, 10)
+      local = t.getlocal
+      Timecop.freeze(t) do
+        assert_equal local, Time.now
+      end
     end
   end
   
@@ -218,13 +247,31 @@ class TestTimecop < Test::Unit::TestCase
     assert times_effectively_equal(t_real, t_return)
   end
 
+  private
 
-private
-
-  # Tests to see that two times are within the given distance,
-  # in seconds, from each other.
-  def times_effectively_equal(time1, time2, seconds_interval = 1)
-    (time1.to_i - time2.to_i).abs <= seconds_interval
-  end
+    # Tests to see that two times are within the given distance,
+    # in seconds, from each other.
+    def times_effectively_equal(time1, time2, seconds_interval = 1)
+      (time1.to_i - time2.to_i).abs <= seconds_interval
+    end
     
+    def local_offset
+      DateTime.now_without_mock_time.offset
+    end
+  
+    TIMEZONES = ["Europe/Paris", "UTC", "EDT"]
+  
+    def each_timezone
+      old_tz = ENV["TZ"]
+    
+      begin
+        TIMEZONES.each do |timezone|
+          ENV["TZ"] = timezone
+          yield
+        end
+      ensure
+        ENV["TZ"] = old_tz
+      end
+    end
+  
 end

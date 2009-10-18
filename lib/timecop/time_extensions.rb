@@ -79,7 +79,8 @@ if Object.const_defined?(:DateTime)
       def mock_time
         t_now = Time.mock_time
         return nil if t_now.nil?
-        DateTime.new(t_now.year, t_now.month, t_now.day, t_now.hour, t_now.min, t_now.sec)
+        offset = Rational(t_now.utc_offset, 60 * 60 * 24)
+        DateTime.new(t_now.year, t_now.month, t_now.day, t_now.hour, t_now.min, t_now.sec, offset)
       end
 
       # Alias the original now

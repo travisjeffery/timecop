@@ -132,7 +132,11 @@ class Timecop
         
     def parse_travel_args(*args) #:nodoc:
       arg = args.shift
-      if arg.is_a?(Time) || (Object.const_defined?(:DateTime) && arg.is_a?(DateTime))
+      if arg.is_a?(Time)
+        arg = arg.getlocal
+        year, month, day, hour, minute, second = arg.year, arg.month, arg.day, arg.hour, arg.min, arg.sec
+      elsif Object.const_defined?(:DateTime) && arg.is_a?(DateTime)
+        arg = arg.new_offset(DateTime.now_without_mock_time.offset)
         year, month, day, hour, minute, second = arg.year, arg.month, arg.day, arg.hour, arg.min, arg.sec
       elsif Object.const_defined?(:Date) && arg.is_a?(Date)
         year, month, day, hour, minute, second = arg.year, arg.month, arg.day, 0, 0, 0
