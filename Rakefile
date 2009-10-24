@@ -16,6 +16,7 @@ begin
     s.authors = ["John Trupiano"]
     s.files =  FileList["[A-Z]*", "{bin,lib,test}/**/*"]
   end
+  Jeweler::GemcutterTasks.new
   Jeweler::RubyforgeTasks.new do |rubyforge|
     rubyforge.doc_task = "rdoc"
     rubyforge.remote_doc_path = "timecop"
