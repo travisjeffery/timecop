@@ -2,7 +2,7 @@
 require 'test/unit'
 require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
-class TestTimecopWithouDate < Test::Unit::TestCase
+class TestTimecopWithoutDate < Test::Unit::TestCase
   
   def setup
     assert !Object.const_defined?(:Date)
