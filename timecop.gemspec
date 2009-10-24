@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{timecop}
-  s.version = "0.3.1"
+  s.version = "0.3.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Trupiano"]
-  s.date = %q{2009-09-30}
+  s.date = %q{2009-10-24}
   s.description = %q{A gem providing "time travel" and "time freezing" capabilities, making it dead simple to test time-dependent code.  It provides a unified method to mock Time.now, Date.today, and DateTime.now in a single call.}
   s.email = %q{jtrupiano@gmail.com}
   s.extra_rdoc_files = [
@@ -29,7 +29,8 @@ Gem::Specification.new do |s|
      "test/run_tests.sh",
      "test/test_timecop.rb",
      "test/test_timecop_internals.rb",
-     "test/test_timecop_without_date.rb"
+     "test/test_timecop_without_date.rb",
+     "test/test_timecop_without_date_but_with_time.rb"
   ]
   s.homepage = %q{http://github.com/jtrupiano/timecop}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -40,7 +41,8 @@ Gem::Specification.new do |s|
   s.test_files = [
     "test/test_timecop.rb",
      "test/test_timecop_internals.rb",
-     "test/test_timecop_without_date.rb"
+     "test/test_timecop_without_date.rb",
+     "test/test_timecop_without_date_but_with_time.rb"
   ]
 
   if s.respond_to? :specification_version then
