@@ -58,7 +58,7 @@ class Timecop
   #
   # Returns the 'new' current Time.
   def self.travel(*args, &block)
-    instance().send(:travel, :move, *args, &block)
+    instance().send(:travel, :travel, *args, &block)
     Time.now
   end
   
@@ -69,6 +69,10 @@ class Timecop
     instance().send(:unmock!)
     Time.now
   end
+  
+  def self.top_stack_item #:nodoc:
+    instance().instance_variable_get(:@_stack).last
+  end
 
   protected
   
@@ -78,8 +82,6 @@ class Timecop
     
     def travel(mock_type, *args, &block) #:nodoc:
       stack_item = TimeStackItem.new(mock_type, *args)
-      # perform our action
-      freeze_or_move(stack_item)
       
       # store this time traveling on our stack...
       @_stack << stack_item
@@ -90,30 +92,12 @@ class Timecop
         ensure
           # pull it off the stack...
           @_stack.pop
-          if @_stack.size == 0
-            # completely unmock if there's nothing to revert back to 
-            unmock!
-          else
-            # or reinstantiate the new the top of the stack (could be a :freeze or a :move)
-            new_top = @_stack.last
-            freeze_or_move(new_top)
-          end
         end
       end
     end
   
     def unmock! #:nodoc:
       @_stack = []
-      Time.unmock!
     end
   
-  private
-  
-    def freeze_or_move(stack_item) #:nodoc:
-      if stack_item.mock_type == :freeze
-        Time.freeze_time(stack_item.time)
-      else
-        Time.move_time(stack_item.time)
-      end
-    end
 end

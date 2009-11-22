@@ -6,59 +6,50 @@ class Timecop
   
     attr_reader :mock_type
     def initialize(mock_type, *args)
-      @adjust_for_dst = false
-      @mock_type = mock_type
-      arg = args.shift
-      if arg.is_a?(Time)
-        @time = arg.getlocal
-      elsif Object.const_defined?(:DateTime) && arg.is_a?(DateTime)
-        offset_difference = Time.now.utc_offset - rational_to_utc_offset(arg.offset)
-        @time = Time.local(arg.year, arg.month, arg.day, arg.hour, arg.min, arg.sec) + offset_difference
-      elsif Object.const_defined?(:Date) && arg.is_a?(Date)
-        @time = Time.local(arg.year, arg.month, arg.day, 0, 0, 0)
-      elsif args.empty? && arg.kind_of?(Integer)
-        @time = Time.now + arg
-      else # we'll just assume it's a list of y/m/d/h/m/s
-        year   = arg        || 0
-        month  = args.shift || 1
-        day    = args.shift || 1
-        hour   = args.shift || 0
-        minute = args.shift || 0
-        second = args.shift || 0
-        @time = Time.local(year, month, day, hour, minute, second)
-      end
+      raise "Unknown mock_type #{mock_type}" unless [:freeze, :travel].include?(mock_type)
+      @mock_type     = mock_type
+      @time          = parse_time(*args)
+      @travel_offset = compute_travel_offset
     end
     
     def year
-      @time.year
+      time.year
     end
     
     def month
-      @time.month
+      time.month
     end
     
     def day
-      @time.day
+      time.day
     end
     
     def hour
-      @time.hour
+      time.hour
     end
     
     def min
-      @time.min
+      time.min
     end
     
     def sec
-      @time.sec
+      time.sec
     end
     
     def utc_offset
-      @time.utc_offset
+      time.utc_offset
+    end
+    
+    def travel_offset
+      @travel_offset
     end
     
     def time #:nodoc:
-      @time
+      if travel_offset.nil?
+        @time
+      else
+        Time.now_without_mock_time + travel_offset
+      end
     end
     
     def date
@@ -81,9 +72,37 @@ class Timecop
       end
       
       def dst_adjustment
-        return 0 if !(@time.dst? ^ Time.now.dst?)
-        return -1 * 60 * 60 if @time.dst?
+        return 0 if !(time.dst? ^ Time.now.dst?)
+        return -1 * 60 * 60 if time.dst?
         return 60 * 60
       end
+      
+      def parse_time(*args)
+        arg = args.shift
+        if arg.is_a?(Time)
+          arg.getlocal
+        elsif Object.const_defined?(:DateTime) && arg.is_a?(DateTime)
+          offset_difference = Time.now.utc_offset - rational_to_utc_offset(arg.offset)
+          Time.local(arg.year, arg.month, arg.day, arg.hour, arg.min, arg.sec) + offset_difference
+        elsif Object.const_defined?(:Date) && arg.is_a?(Date)
+          Time.local(arg.year, arg.month, arg.day, 0, 0, 0)
+        elsif args.empty? && arg.kind_of?(Integer)
+          Time.now + arg
+        else # we'll just assume it's a list of y/m/d/h/m/s
+          year   = arg        || 0
+          month  = args.shift || 1
+          day    = args.shift || 1
+          hour   = args.shift || 0
+          minute = args.shift || 0
+          second = args.shift || 0
+          Time.local(year, month, day, hour, minute, second)
+        end
+      end
+      
+      def compute_travel_offset
+        return nil if mock_type == :freeze
+        @time - Time.now_without_mock_time
+      end
+      
   end
 end

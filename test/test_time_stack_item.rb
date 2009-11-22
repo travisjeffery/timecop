@@ -147,4 +147,21 @@ class TestTimeStackItem < Test::Unit::TestCase
     # verify Date also 'moves forward' an hour to change the day
     assert_equal Date.new(2009, 12, 1), tsi.date
   end
+  
+  # Ensure @travel_offset is set properly
+  def test_set_travel_offset_for_travel
+    # Timecop.freeze(2009, 10, 1, 0, 0, 0)
+    t_now = Time.now
+    t = Time.local(2009, 10, 1, 0, 0, 30)
+    expected_offset = t - t_now
+    tsi = Timecop::TimeStackItem.new(:travel, t)
+    assert_times_effectively_equal expected_offset, tsi.send(:travel_offset), 1, "Offset not calculated correctly"
+  end
+  
+  def test_set_travel_offset_for_freeze
+    Timecop.freeze(2009, 10, 1, 0, 0, 0)
+    t = Time.local(2009, 10, 1, 0, 0, 30)
+    tsi = Timecop::TimeStackItem.new(:freeze, t)
+    assert_equal nil, tsi.send(:travel_offset)
+  end
 end

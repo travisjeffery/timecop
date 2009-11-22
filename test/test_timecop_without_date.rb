@@ -1,5 +1,5 @@
 
-require 'test/unit'
+require 'test_helper'
 require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
 class TestTimecopWithoutDate < Test::Unit::TestCase
@@ -56,10 +56,10 @@ class TestTimecopWithoutDate < Test::Unit::TestCase
     t = Time.local(2008, 10, 10, 10, 10, 10)
     now = Time.now
     Timecop.freeze(t) do
-      #assert Time.now < now, "If we had failed to freeze, time would have proceeded, which is what appears to have happened."
+      sleep(0.25)
+      assert Time.now < now, "If we had failed to freeze, time would have proceeded, which is what appears to have happened."
       new_t = Time.now
       assert_equal t, new_t, "Failed to change move time." # 2 seconds
-      #sleep(10)
       assert_equal new_t, Time.now
     end
   end
@@ -68,24 +68,23 @@ class TestTimecopWithoutDate < Test::Unit::TestCase
     t = Time.local(2008, 10, 10, 10, 10, 10)
     now = Time.now
     Timecop.travel(t) do
-      #assert Time.now < now, "If we had failed to freeze, time would have proceeded, which is what appears to have happened."
-      assert Time.now - t < 2000, "Looks like we failed to actually travel time" # 2 seconds
-      new_t = Time.now
-      #sleep(10)
-      assert_not_equal new_t, Time.now
+      new_now = Time.now
+      assert_times_effectively_equal new_now, t, 1, "Looks like we failed to actually travel time" # 0.1 seconds
+      sleep(0.25)
+      assert_times_effectively_not_equal new_now, Time.now, 0.25, "Looks like time is not moving"
     end
   end
   
-  def test_recursive_rebasing_maintains_each_context
+  def test_recursive_travel_maintains_each_context
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.travel(2008, 10, 10, 10, 10, 10) do 
       assert((t - Time.now).abs < 50, "Failed to travel time.")
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.travel(2008, 9, 9, 9, 9, 9) do
-        assert((t2 - Time.now) < 50, "Failed to travel time.")
-        assert((t - Time.now) > 1000, "Failed to travel time.")
+        assert_times_effectively_equal(t2, Time.now, 1, "Failed to travel time.")
+        assert_times_effectively_not_equal(t, Time.now, 1000, "Failed to travel time.")
       end
-      assert((t - Time.now).abs < 2000, "Failed to restore previously-traveled time.")
+      assert_times_effectively_equal(t, Time.now, 2, "Failed to restore previously-traveled time.")
     end
     assert_nil Time.send(:mock_time)
   end
@@ -98,7 +97,7 @@ class TestTimecopWithoutDate < Test::Unit::TestCase
       Timecop.freeze(2008, 9, 9, 9, 9, 9) do
         assert_equal t2, Time.now
       end
-      assert((t - Time.now).abs < 2000, "Failed to restore previously-traveled time.")
+      assert_times_effectively_equal(t, Time.now, 2, "Failed to restore previously-traveled time.")
     end
     assert_nil Time.send(:mock_time)
   end
@@ -109,8 +108,8 @@ class TestTimecopWithoutDate < Test::Unit::TestCase
       assert_equal t, Time.now
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.travel(t2) do
-        assert((t2 - Time.now) < 50, "Failed to travel time.")
-        assert((t - Time.now) > 1000, "Failed to travel time.")
+        assert_times_effectively_equal(t2, Time.now, 1, "Failed to travel time.")
+        assert_times_effectively_not_equal(t, Time.now, 1000, "Failed to travel time.")
       end
       assert_equal t, Time.now
     end
