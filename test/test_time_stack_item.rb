@@ -1,8 +1,12 @@
 require 'date'
-require 'test/unit'
+require 'test_helper'
 require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
 class TestTimeStackItem < Test::Unit::TestCase
+  
+  def teardown
+    Timecop.return
+  end
   
   def test_new_with_time
     t = Time.now
@@ -15,7 +19,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal min, stack_item.min
     assert_equal s,   stack_item.sec
   end
-
+  
   def test_new_with_datetime_now
     t = DateTime.now
     y, m, d, h, min, s = t.year, t.month, t.day, t.hour, t.min, t.sec
@@ -29,11 +33,13 @@ class TestTimeStackItem < Test::Unit::TestCase
   end
   
   def test_new_with_datetime_in_different_timezone
-    t = DateTime.parse("2009-10-11 00:38:00 +0200")
-    stack_item = Timecop::TimeStackItem.new(:freeze, t)
-    assert_equal t, stack_item.datetime
+    each_timezone do
+      t = DateTime.parse("2009-10-11 00:38:00 +0200")
+      stack_item = Timecop::TimeStackItem.new(:freeze, t)
+      assert_date_times_equal(t, stack_item.datetime)
+    end
   end
-
+  
   def test_new_with_date
     date = Date.today
     y, m, d, h, min, s = date.year, date.month, date.day, 0, 0, 0
@@ -45,7 +51,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal min, stack_item.min
     assert_equal s,   stack_item.sec
   end
-
+  
   # Due to the nature of this test (calling Time.now once in this test and
   # once in #new), this test may fail when two subsequent calls
   # to Time.now return a different second.
@@ -60,7 +66,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal min, stack_item.min
     assert_equal s,   stack_item.sec
   end
-
+  
   def test_new_with_individual_arguments
     y, m, d, h, min, s = 2008, 10, 10, 10, 10, 10
     stack_item = Timecop::TimeStackItem.new(:freeze, y, m, d, h, min, s)
@@ -86,8 +92,59 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal Rational(1, 24),  a_time_stack_item.send(:utc_offset_to_rational, 3600)
   end
   
-  private
-    def a_time_stack_item
-      Timecop::TimeStackItem.new(:freeze, 2008, 1, 1, 0, 0, 0)
-    end
+  # Ensure DST adjustment is calculated properly for DateTime's
+  def test_compute_dst_adjustment_for_dst_to_dst
+    Timecop.freeze(DateTime.parse("2009-10-1 00:38:00 -0400"))
+    t = DateTime.parse("2009-10-11 00:00:00 -0400")
+    tsi = Timecop::TimeStackItem.new(:freeze, t)
+    assert Time.now.dst?, "precondition"
+    assert tsi.time.dst?, "precondition"
+    assert_equal 0, tsi.send(:dst_adjustment)
+  end
+  
+  def test_compute_dst_adjustment_for_non_dst_to_non_dst
+    Timecop.freeze(DateTime.parse("2009-12-1 00:38:00 -0400"))
+    t = DateTime.parse("2009-12-11 00:00:00 -0400")
+    tsi = Timecop::TimeStackItem.new(:freeze, t)
+    assert !Time.now.dst?, "precondition"
+    assert !tsi.time.dst?, "precondition"
+    assert_equal 0, tsi.send(:dst_adjustment)    
+  end
+  
+  def test_compute_dst_adjustment_for_dst_to_non_dst
+    Timecop.freeze(DateTime.parse("2009-10-1 00:38:00 -0400"))
+    t = DateTime.parse("2009-12-11 00:00:00 -0400")
+    tsi = Timecop::TimeStackItem.new(:freeze, t)
+    assert Time.now.dst?, "precondition"
+    assert !tsi.time.dst?, "precondition"
+    assert_equal 60 * 60, tsi.send(:dst_adjustment)
+  end
+  
+  def test_compute_dst_adjustment_for_non_dst_to_dst
+    Timecop.freeze(DateTime.parse("2009-12-1 00:38:00 -0400"))
+    t = DateTime.parse("2009-10-11 00:00:00 -0400")
+    tsi = Timecop::TimeStackItem.new(:freeze, t)
+    assert !Time.now.dst?, "precondition"
+    assert tsi.time.dst?, "precondition"
+    assert_equal -1 * 60 * 60, tsi.send(:dst_adjustment)
+  end
+  
+  # Ensure DateTime's handle changing DST properly
+  def test_datetime_for_dst_to_non_dst
+    Timecop.freeze(DateTime.parse("2009-12-1 00:38:00 -0500"))
+    t = DateTime.parse("2009-10-11 00:00:00 -0400")
+    tsi = Timecop::TimeStackItem.new(:freeze, t)
+    assert_date_times_equal t, tsi.datetime
+    # verify Date also 'moves backward' an hour to change the day
+    assert_equal Date.new(2009, 10, 10), tsi.date
+  end
+  
+  def test_datetime_for_non_dst_to_dst
+    Timecop.freeze(DateTime.parse("2009-10-11 00:00:00 -0400"))
+    t = DateTime.parse("2009-11-30 23:38:00 -0500")
+    tsi = Timecop::TimeStackItem.new(:freeze, t)
+    assert_date_times_equal t, tsi.datetime
+    # verify Date also 'moves forward' an hour to change the day
+    assert_equal Date.new(2009, 12, 1), tsi.date
+  end
 end
