@@ -1,4 +1,4 @@
-=== 0.3.2 / 2009-10-24
+=== 0.3.4 / unreleased (RC2 released 2009-11-28)
 
 * Maintenance
   * Fix various timezone-related issues.  Notably, when traveling to a DateTime
@@ -8,6 +8,18 @@
   * Fix bug that would not allow Timecop to be used when Ruby's 'date'
     library had not been previously loaded.
     Code contributed by Tuomas Kareinen [tuomas]
+  * Fix bug when traveling to a DateTime across a DST boundary that
+    resulted in DateTime's being off by an hour.
+  * Migrate argument parsing into Timecop::TimeStackItem to reduce the
+    responsibility of the Timecop class.
+
+=== 0.3.3  2009-10-30
+
+* Revoked due to regression.
+
+=== 0.3.2 / 2009-10-24
+
+* Revoked due to regression.
     
 === 0.3.1 / 2009-09-30
 
