@@ -52,9 +52,14 @@ if Object.const_defined?(:DateTime) && DateTime.respond_to?(:now)
         mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.datetime
       end
       
-      # Alias the original now
-      alias_method :now_without_mock_time, :now
-
+      # Fake alias :now_without_mock_time :now
+      # It appears that the DateTime library itself references Time.now
+      # for it's interpretation of now which caused 
+      # DateTime.now_without_mock_time to incorrectly return the frozen time.
+      def now_without_mock_time
+        Time.now_without_mock_time.send :to_datetime
+      end
+      
       # Define now_with_mock_time
       def now_with_mock_time
         mock_time || now_without_mock_time

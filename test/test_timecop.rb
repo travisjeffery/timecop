@@ -1,6 +1,5 @@
-
 require 'date'
-require 'test/unit'
+require 'test_helper'
 require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
 class TestTimecop < Test::Unit::TestCase
@@ -67,7 +66,7 @@ class TestTimecop < Test::Unit::TestCase
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.freeze(t) do 
       assert_equal t, Time.now
-      assert_equal DateTime.new(2008, 10, 10, 10, 10, 10, local_offset), DateTime.now
+      assert_date_times_equal DateTime.new(2008, 10, 10, 10, 10, 10, local_offset), DateTime.now
       assert_equal Date.new(2008, 10, 10), Date.today
     end
     assert_not_equal t, Time.now
@@ -75,16 +74,54 @@ class TestTimecop < Test::Unit::TestCase
     assert_not_equal Date.new(2008, 10, 10), Date.today
   end
   
-  def test_freeze_with_datetime_instance_works_as_expected
-    t = DateTime.new(2008, 10, 10, 10, 10, 10, local_offset)
-    Timecop.freeze(t) do 
-      assert_equal t, DateTime.now
-      assert_equal Time.local(2008, 10, 10, 10, 10, 10), Time.now
-      assert_equal Date.new(2008, 10, 10), Date.today
+  def test_freeze_with_datetime_on_specific_timezone_during_dst
+    each_timezone do
+      # Start from a time that is subject to DST
+      Timecop.freeze(2009, 9, 1)
+      # Travel to a DateTime that is also in DST
+      t = DateTime.parse("2009-10-11 00:38:00 +0200")
+      Timecop.freeze(t) do
+        assert_date_times_equal t, DateTime.now
+      end
+      # Undo the original freeze
+      Timecop.return
     end
-    assert_not_equal t, DateTime.now
-    assert_not_equal Time.local(2008, 10, 10, 10, 10, 10), Time.now
-    assert_not_equal Date.new(2008, 10, 10), Date.today
+  end
+  
+  def test_freeze_with_datetime_on_specific_timezone_not_during_dst
+    each_timezone do
+      # Start from a time that is not subject to DST
+      Timecop.freeze(2009, 12, 1)
+      # Travel to a time that is also not in DST
+      t = DateTime.parse("2009-12-11 00:38:00 +0100")
+      Timecop.freeze(t) do
+        assert_date_times_equal t, DateTime.now
+      end
+    end
+  end
+  
+  def test_freeze_with_datetime_from_a_non_dst_time_to_a_dst_time
+    each_timezone do
+      # Start from a time that is not subject to DST
+      Timecop.freeze(DateTime.parse("2009-12-1 00:00:00 +0100"))
+      # Travel back to a time in DST
+      t = DateTime.parse("2009-10-11 00:38:00 +0200")
+      Timecop.freeze(t) do
+        assert_date_times_equal t, DateTime.now
+      end
+    end    
+  end
+
+  def test_freeze_with_datetime_from_a_dst_time_to_a_non_dst_time
+    each_timezone do
+      # Start from a time that is not subject to DST
+      Timecop.freeze(DateTime.parse("2009-10-11 00:00:00 +0200"))
+      # Travel back to a time in DST
+      t = DateTime.parse("2009-12-1 00:38:00 +0100")
+      Timecop.freeze(t) do
+        assert_date_times_equal t, DateTime.now
+      end
+    end    
   end
   
   def test_freeze_with_date_instance_works_as_expected
@@ -92,7 +129,7 @@ class TestTimecop < Test::Unit::TestCase
     Timecop.freeze(d) do
       assert_equal d, Date.today
       assert_equal Time.local(2008, 10, 10, 0, 0, 0), Time.now
-      assert_equal DateTime.new(2008, 10, 10, 0, 0, 0, local_offset), DateTime.now
+      assert_date_times_equal DateTime.new(2008, 10, 10, 0, 0, 0, local_offset), DateTime.now
     end
     assert_not_equal d, Date.today
     assert_not_equal Time.local(2008, 10, 10, 0, 0, 0), Time.now
@@ -103,7 +140,7 @@ class TestTimecop < Test::Unit::TestCase
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.freeze(t) do
       assert_equal t, Time.now
-      assert_equal DateTime.new(2008, 10, 10, 10, 10, 10, local_offset), DateTime.now
+      assert_date_times_equal DateTime.new(2008, 10, 10, 10, 10, 10, local_offset), DateTime.now
       assert_equal Date.new(2008, 10, 10), Date.today
       Timecop.freeze(10) do
         assert_equal t + 10, Time.now
@@ -147,34 +184,13 @@ class TestTimecop < Test::Unit::TestCase
     t = Time.local(2008, 10, 10, 10, 10, 10)
     now = Time.now
     Timecop.travel(t) do
-      #assert Time.now < now, "If we had failed to freeze, time would have proceeded, which is what appears to have happened."
-      assert Time.now - t < 2000, "Looks like we failed to actually travel time" # 2 seconds
-      new_t = Time.now
-      #sleep(10)
-      assert_not_equal new_t, Time.now
+      new_now = Time.now
+      assert_times_effectively_equal(new_now, t, 1, "Looks like we failed to actually travel time")
+      sleep(0.25)
+      assert_times_effectively_not_equal new_now, Time.now, 0.25, "Looks like time is not moving"
     end
   end
   
-  def test_freeze_with_datetime_on_specific_timezone_during_dst
-    each_timezone do
-      t = DateTime.parse("2009-10-11 00:38:00 +0200")
-      assert_equal "+02:00", t.zone
-      Timecop.freeze(t) do
-        assert_equal t, DateTime.now.new_offset(t.offset), "Failed for timezone: #{ENV['TZ']}: #{t.to_s} not equal to #{DateTime.now.new_offset(t.offset).to_s}"
-      end
-    end
-  end
-  
-  def test_freeze_with_datetime_on_specific_timezone_not_during_dst
-    each_timezone do
-      t = DateTime.parse("2009-12-11 00:38:00 +0200")
-      assert_equal "+02:00", t.zone
-      Timecop.freeze(t) do
-        assert_equal t, DateTime.now.new_offset(t.offset), "Failed for timezone: #{ENV['TZ']}"
-      end
-    end
-  end
-
   def test_mocked_date_time_now_is_local
     each_timezone do
       t = DateTime.parse("2009-10-11 00:38:00 +0200")
@@ -194,17 +210,18 @@ class TestTimecop < Test::Unit::TestCase
     end
   end
   
-  def test_recursive_rebasing_maintains_each_context
+  def test_recursive_travel_maintains_each_context
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.travel(2008, 10, 10, 10, 10, 10) do 
       assert((t - Time.now).abs < 50, "Failed to travel time.")
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.travel(2008, 9, 9, 9, 9, 9) do
-        assert((t2 - Time.now) < 50, "Failed to travel time.")
-        assert((t - Time.now) > 1000, "Failed to travel time.")
+        assert_times_effectively_equal(t2, Time.now, 1, "Failed to travel time.")
+        assert_times_effectively_not_equal(t, Time.now, 1000, "Failed to travel time.")
       end
-      assert((t - Time.now).abs < 2000, "Failed to restore previously-traveled time.")
+      assert_times_effectively_equal(t, Time.now, 2, "Failed to restore previously-traveled time.")
     end
+    assert_nil Time.send(:mock_time)
   end
   
   def test_recursive_travel_then_freeze
@@ -215,8 +232,9 @@ class TestTimecop < Test::Unit::TestCase
       Timecop.freeze(2008, 9, 9, 9, 9, 9) do
         assert_equal t2, Time.now
       end
-      assert((t - Time.now).abs < 2000, "Failed to restore previously-traveled time.")
+      assert_times_effectively_equal(t, Time.now, 2, "Failed to restore previously-traveled time.")
     end
+    assert_nil Time.send(:mock_time)
   end
   
   def test_recursive_freeze_then_travel
@@ -225,11 +243,12 @@ class TestTimecop < Test::Unit::TestCase
       assert_equal t, Time.now
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.travel(t2) do
-        assert((t2 - Time.now) < 50, "Failed to travel time.")
-        assert((t - Time.now) > 1000, "Failed to travel time.")
+        assert_times_effectively_equal(t2, Time.now, 1, "Failed to travel time.")
+        assert_times_effectively_not_equal(t, Time.now, 1000, "Failed to travel time.")
       end
       assert_equal t, Time.now
     end
+    assert_nil Time.send(:mock_time)    
   end
   
   def test_return_values_are_Time_instances
@@ -257,31 +276,4 @@ class TestTimecop < Test::Unit::TestCase
     assert times_effectively_equal(t_real, t_return)
   end
 
-  private
-
-    # Tests to see that two times are within the given distance,
-    # in seconds, from each other.
-    def times_effectively_equal(time1, time2, seconds_interval = 1)
-      (time1.to_i - time2.to_i).abs <= seconds_interval
-    end
-    
-    def local_offset
-      DateTime.now_without_mock_time.offset
-    end
-  
-    TIMEZONES = ["Europe/Paris", "UTC", "EDT"]
-  
-    def each_timezone
-      old_tz = ENV["TZ"]
-    
-      begin
-        TIMEZONES.each do |timezone|
-          ENV["TZ"] = timezone
-          yield
-        end
-      ensure
-        ENV["TZ"] = old_tz
-      end
-    end
-  
 end

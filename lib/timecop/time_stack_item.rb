@@ -7,9 +7,10 @@ class Timecop
     attr_reader :mock_type
     def initialize(mock_type, *args)
       raise "Unknown mock_type #{mock_type}" unless [:freeze, :travel].include?(mock_type)
-      @mock_type     = mock_type
-      @time          = parse_time(*args)
-      @travel_offset = compute_travel_offset
+      @mock_type      = mock_type
+      @time           = parse_time(*args)
+      @travel_offset  = compute_travel_offset
+      @dst_adjustment = compute_dst_adjustment
     end
     
     def year
@@ -62,6 +63,10 @@ class Timecop
       DateTime.new(year, month, day, hour, min, sec, utc_offset_to_rational(our_offset))
     end
     
+    def dst_adjustment
+      @dst_adjustment
+    end
+    
     private
       def rational_to_utc_offset(rational)
         ((24.0 / rational.denominator) * rational.numerator) * (60 * 60)
@@ -69,12 +74,6 @@ class Timecop
       
       def utc_offset_to_rational(utc_offset)
         Rational(utc_offset, 24 * 60 * 60)
-      end
-      
-      def dst_adjustment
-        return 0 if !(time.dst? ^ Time.now.dst?)
-        return -1 * 60 * 60 if time.dst?
-        return 60 * 60
       end
       
       def parse_time(*args)
@@ -97,6 +96,12 @@ class Timecop
           second = args.shift || 0
           Time.local(year, month, day, hour, minute, second)
         end
+      end
+      
+      def compute_dst_adjustment
+        return 0 if !(time.dst? ^ Time.now.dst?)
+        return -1 * 60 * 60 if time.dst?
+        return 60 * 60
       end
       
       def compute_travel_offset
