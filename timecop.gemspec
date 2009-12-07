@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{timecop}
-  s.version = "0.3.4.rc2"
+  s.version = "0.3.4"
 
-  s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
+  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Trupiano"]
-  s.date = %q{2009-11-28}
+  s.date = %q{2009-12-07}
   s.description = %q{A gem providing "time travel" and "time freezing" capabilities, making it dead simple to test time-dependent code.  It provides a unified method to mock Time.now, Date.today, and DateTime.now in a single call.}
   s.email = %q{jtrupiano@gmail.com}
   s.extra_rdoc_files = [
