@@ -62,6 +62,7 @@ in config/environments/test.rb
 
 == REFERENCES
 
+* {0.3.4 release}[http://blog.smartlogicsolutions.com/2009/12/07/timecop-0-3-4-released/]
 * {0.3.0 release}[http://blog.smartlogicsolutions.com/2009/09/20/timecop-0-3-0-released/]
 * {0.2.0 release}[http://blog.smartlogicsolutions.com/2008/12/24/timecop-2-released-freeze-and-rebase-time-ruby/]
 * {0.1.0 release}[http://blog.smartlogicsolutions.com/2008/11/19/timecop-freeze-time-in-ruby-for-better-testing/]
