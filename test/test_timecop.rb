@@ -209,6 +209,21 @@ class TestTimecop < Test::Unit::TestCase
       end
     end
   end
+
+  def test_destructive_methods_on_frozen_time
+    # Use any time zone other than UTC.
+    ENV['TZ'] = 'EST'
+
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    Timecop.freeze(t) do
+      assert !Time.now.utc?, "Time#local failed to return a time in the local time zone."
+
+      # #utc, #gmt, and #localtime are destructive methods.
+      Time.now.utc
+
+      assert !Time.now.utc?, "Failed to thwart destructive methods."
+    end
+  end
   
   def test_recursive_travel_maintains_each_context
     t = Time.local(2008, 10, 10, 10, 10, 10)
