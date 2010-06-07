@@ -1,4 +1,10 @@
-=== 0.3.4 / unreleased (RC2 released 2009-11-28)
+=== 0.3.5 / 2010-06-07
+
+* Maintenance
+  * Return a cloned time instance in order to support the destructive methods #gmt, #utc and #localtime
+  * Don't use full path requires where unnecessary
+
+=== 0.3.4 / 2009-12-07
 
 * Maintenance
   * Fix various timezone-related issues.  Notably, when traveling to a DateTime
