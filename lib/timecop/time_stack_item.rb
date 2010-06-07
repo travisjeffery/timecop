@@ -47,7 +47,7 @@ class Timecop
     
     def time #:nodoc:
       if travel_offset.nil?
-        @time
+        @time.clone
       else
         Time.now_without_mock_time + travel_offset
       end
@@ -106,7 +106,7 @@ class Timecop
       
       def compute_travel_offset
         return nil if mock_type == :freeze
-        @time - Time.now_without_mock_time
+        time - Time.now_without_mock_time
       end
       
   end
