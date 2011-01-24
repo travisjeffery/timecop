@@ -33,8 +33,8 @@ if Object.const_defined?(:Date) && Date.respond_to?(:today)
       alias_method :today_without_mock_date, :today
     
       # Define today_with_mock_date
-      def today_with_mock_date
-        mock_date || today_without_mock_date
+      def today_with_mock_date(sg=nil)
+        mock_date || today_without_mock_date(sg)
       end
     
       # Alias today to today_with_mock_date
