@@ -106,7 +106,7 @@ class Timecop
 
       if block_given?
         begin
-          yield
+          yield stack_item.time
         ensure
           # pull it off the stack...
           @_stack.pop
