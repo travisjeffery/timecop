@@ -3,20 +3,20 @@ require 'test_helper'
 require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
 class TestTimecop < Test::Unit::TestCase
-  
+
   def setup
-    
+
   end
-  
+
   # just in case...let's really make sure that Timecop is disabled between tests...
   def teardown
     Timecop.return
   end
-  
+
   def test_freeze_changes_and_resets_time
     # depending on how we're invoked (individually or via the rake test suite)
     assert !Time.respond_to?(:zone) || Time.zone.nil?
-    
+
     t = Time.local(2008, 10, 10, 10, 10, 10)
     assert_not_equal t, Time.now
     Timecop.freeze(2008, 10, 10, 10, 10, 10) do
@@ -24,7 +24,7 @@ class TestTimecop < Test::Unit::TestCase
     end
     assert_not_equal t, Time.now
   end
-  
+
   def test_freeze_then_return_unsets_mock_time
     Timecop.freeze(1)
     Timecop.return
@@ -36,19 +36,19 @@ class TestTimecop < Test::Unit::TestCase
     Timecop.return
     assert_nil Time.send(:mock_time)
   end
-  
+
   def test_freeze_with_block_unsets_mock_time
     assert_nil Time.send(:mock_time), "test is invalid"
     Timecop.freeze(1) do; end
     assert_nil Time.send(:mock_time)
   end
-  
+
   def test_travel_with_block_unsets_mock_time
     assert_nil Time.send(:mock_time), "test is invalid"
     Timecop.travel(1) do; end
     assert_nil Time.send(:mock_time)
   end
-  
+
   def test_travel_does_not_reduce_precision_of_datetime
     Timecop.travel(1)
     assert_not_equal DateTime.now, DateTime.now
@@ -56,7 +56,7 @@ class TestTimecop < Test::Unit::TestCase
 
   def test_recursive_freeze
     t = Time.local(2008, 10, 10, 10, 10, 10)
-    Timecop.freeze(2008, 10, 10, 10, 10, 10) do 
+    Timecop.freeze(2008, 10, 10, 10, 10, 10) do
       assert_equal t, Time.now
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.freeze(2008, 9, 9, 9, 9, 9) do
@@ -66,10 +66,10 @@ class TestTimecop < Test::Unit::TestCase
     end
     assert_not_equal t, Time.now
   end
-  
+
   def test_freeze_with_time_instance_works_as_expected
     t = Time.local(2008, 10, 10, 10, 10, 10)
-    Timecop.freeze(t) do 
+    Timecop.freeze(t) do
       assert_equal t, Time.now
       assert_date_times_equal DateTime.new(2008, 10, 10, 10, 10, 10, local_offset), DateTime.now
       assert_equal Date.new(2008, 10, 10), Date.today
@@ -78,7 +78,7 @@ class TestTimecop < Test::Unit::TestCase
     assert_not_equal DateTime.new(2008, 10, 10, 10, 10, 10, local_offset), DateTime.now
     assert_not_equal Date.new(2008, 10, 10), Date.today
   end
-  
+
   def test_freeze_with_datetime_on_specific_timezone_during_dst
     each_timezone do
       # Start from a time that is subject to DST
@@ -92,7 +92,7 @@ class TestTimecop < Test::Unit::TestCase
       Timecop.return
     end
   end
-  
+
   def test_freeze_with_datetime_on_specific_timezone_not_during_dst
     each_timezone do
       # Start from a time that is not subject to DST
@@ -104,7 +104,7 @@ class TestTimecop < Test::Unit::TestCase
       end
     end
   end
-  
+
   def test_freeze_with_datetime_from_a_non_dst_time_to_a_dst_time
     each_timezone do
       # Start from a time that is not subject to DST
@@ -114,7 +114,7 @@ class TestTimecop < Test::Unit::TestCase
       Timecop.freeze(t) do
         assert_date_times_equal t, DateTime.now
       end
-    end    
+    end
   end
 
   def test_freeze_with_datetime_from_a_dst_time_to_a_non_dst_time
@@ -126,9 +126,9 @@ class TestTimecop < Test::Unit::TestCase
       Timecop.freeze(t) do
         assert_date_times_equal t, DateTime.now
       end
-    end    
+    end
   end
-  
+
   def test_freeze_with_date_instance_works_as_expected
     d = Date.new(2008, 10, 10)
     Timecop.freeze(d) do
@@ -138,9 +138,9 @@ class TestTimecop < Test::Unit::TestCase
     end
     assert_not_equal d, Date.today
     assert_not_equal Time.local(2008, 10, 10, 0, 0, 0), Time.now
-    assert_not_equal DateTime.new(2008, 10, 10, 0, 0, 0, local_offset), DateTime.now    
+    assert_not_equal DateTime.new(2008, 10, 10, 0, 0, 0, local_offset), DateTime.now
   end
-  
+
   def test_freeze_with_integer_instance_works_as_expected
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.freeze(t) do
@@ -170,7 +170,7 @@ class TestTimecop < Test::Unit::TestCase
       assert_nil Time.send(:mock_time)
     end
   end
-  
+
   def test_freeze_freezes_time
     t = Time.local(2008, 10, 10, 10, 10, 10)
     now = Time.now
@@ -184,7 +184,7 @@ class TestTimecop < Test::Unit::TestCase
       assert_equal new_dt, DateTime.now
     end
   end
-  
+
   def test_travel_keeps_time_moving
     t = Time.local(2008, 10, 10, 10, 10, 10)
     now = Time.now
@@ -195,7 +195,7 @@ class TestTimecop < Test::Unit::TestCase
       assert_times_effectively_not_equal new_now, Time.now, 0.25, "Looks like time is not moving"
     end
   end
-  
+
   def test_mocked_date_time_now_is_local
     each_timezone do
       t = DateTime.parse("2009-10-11 00:38:00 +0200")
@@ -204,7 +204,7 @@ class TestTimecop < Test::Unit::TestCase
       end
     end
   end
-  
+
   def test_freeze_with_utc_time
     each_timezone do
       t = Time.utc(2008, 10, 10, 10, 10, 10)
@@ -229,10 +229,10 @@ class TestTimecop < Test::Unit::TestCase
       assert !Time.now.utc?, "Failed to thwart destructive methods."
     end
   end
-  
+
   def test_recursive_travel_maintains_each_context
     t = Time.local(2008, 10, 10, 10, 10, 10)
-    Timecop.travel(2008, 10, 10, 10, 10, 10) do 
+    Timecop.travel(2008, 10, 10, 10, 10, 10) do
       assert((t - Time.now).abs < 50, "Failed to travel time.")
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.travel(2008, 9, 9, 9, 9, 9) do
@@ -243,10 +243,10 @@ class TestTimecop < Test::Unit::TestCase
     end
     assert_nil Time.send(:mock_time)
   end
-  
+
   def test_recursive_travel_then_freeze
     t = Time.local(2008, 10, 10, 10, 10, 10)
-    Timecop.travel(2008, 10, 10, 10, 10, 10) do 
+    Timecop.travel(2008, 10, 10, 10, 10, 10) do
       assert((t - Time.now).abs < 50, "Failed to travel time.")
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.freeze(2008, 9, 9, 9, 9, 9) do
@@ -256,10 +256,10 @@ class TestTimecop < Test::Unit::TestCase
     end
     assert_nil Time.send(:mock_time)
   end
-  
+
   def test_recursive_freeze_then_travel
     t = Time.local(2008, 10, 10, 10, 10, 10)
-    Timecop.freeze(t) do 
+    Timecop.freeze(t) do
       assert_equal t, Time.now
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.travel(t2) do
@@ -268,27 +268,27 @@ class TestTimecop < Test::Unit::TestCase
       end
       assert_equal t, Time.now
     end
-    assert_nil Time.send(:mock_time)    
+    assert_nil Time.send(:mock_time)
   end
-  
+
   def test_return_values_are_Time_instances
     assert Timecop.freeze.is_a?(Time)
     assert Timecop.travel.is_a?(Time)
     assert Timecop.return.is_a?(Time)
   end
-  
+
   def test_travel_time_returns_passed_value
     t_future = Time.local(2030, 10, 10, 10, 10, 10)
     t_travel = Timecop.travel t_future
     assert times_effectively_equal(t_future, t_travel)
   end
-  
+
   def test_freeze_time_returns_passed_value
     t_future = Time.local(2030, 10, 10, 10, 10, 10)
     t_frozen = Timecop.freeze t_future
     assert times_effectively_equal(t_future, t_frozen)
   end
-  
+
   def test_return_time_returns_actual_time
     t_real = Time.now
     Timecop.freeze Time.local(2030, 10, 10, 10, 10, 10)
@@ -296,4 +296,30 @@ class TestTimecop < Test::Unit::TestCase
     assert times_effectively_equal(t_real, t_return)
   end
 
+  def test_return_to_baseline_without_a_baseline_set_returns_to_current_time
+    time_before_travel = Time.now
+    Timecop.travel Time.now - 60
+    Timecop.return_to_baseline
+    assert times_effectively_equal(time_before_travel, Time.now)
+  end
+
+  def test_return_to_baseline_with_a_baseline_set_returns_to_baseline
+    baseline = Time.local(1945, 10, 10, 10, 10, 10)
+    Timecop.baseline = baseline
+    Timecop.travel Time.now - 60
+    time_now = Timecop.return_to_baseline
+    assert times_effectively_equal(baseline, time_now),
+      "expected to return to #{baseline}, but returned to #{time_now}"
+  end
+
+  def test_return_eliminates_baseline
+    time_before_travel = Time.now
+    Timecop.baseline = Time.local(1937, 9, 9, 9, 9, 9)
+    Timecop.return
+    assert times_effectively_equal(time_before_travel, Time.now)
+
+    Timecop.travel(Time.now - 100)
+    Timecop.return_to_baseline
+    assert times_effectively_equal(time_before_travel, Time.now)
+  end
 end
