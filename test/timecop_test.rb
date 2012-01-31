@@ -48,7 +48,7 @@ class TestTimecop < Test::Unit::TestCase
     Timecop.travel(1) do; end
     assert_nil Time.send(:mock_time)
   end
-  
+
   def test_travel_does_not_reduce_precision_of_datetime
     Timecop.travel(1)
     assert_not_equal DateTime.now, DateTime.now
