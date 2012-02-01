@@ -60,7 +60,9 @@ class Timecop
     def datetime
       # DateTime doesn't know about DST, so let's remove its presence
       our_offset = utc_offset + dst_adjustment
-      DateTime.new(year, month, day, hour, min, sec, utc_offset_to_rational(our_offset))
+      fractions_of_a_second = time.to_f % 1
+      DateTime.new(year, month, day, hour, min, sec + fractions_of_a_second,
+                   utc_offset_to_rational(our_offset))
     end
     
     def dst_adjustment
