@@ -23,6 +23,7 @@ A gem providing "time travel" and "time freezing" capabilities, making it dead s
   * individual arguments (year, month, day, hour, minute, second)
   * a single integer argument that is interpreted as an offset in seconds from Time.now
 * Nested calls to Timecop#travel and Timecop#freeze are supported -- each block will maintain its interpretation of now.
+* Works with or without Rails!
 
 == USAGE
 
@@ -36,9 +37,11 @@ Run a time-sensitive test
     assert joe.mortgage_due?
   end
 
-Set the time for the test environment of a rails app -- this is particularly helpful if your whole application is time-sensitive.  It allows you to build your test data at a single point in time, and to move in/out of that time as appropriate (within your tests)
+=== Rails Configuration
+
+You can set the time for your whole test environment. This is useful if your whole application is time-sensitive.  It allows you to build your test data at a single point in time, and to move in/out of that time as appropriate (within your tests).
   
-in config/environments/test.rb
+In config/environments/test.rb
 
   config.after_initialize do
     # Set Time.now to September 1, 2008 10:05:00 AM (at this instant), but allow it to move forward
