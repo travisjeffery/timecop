@@ -88,7 +88,7 @@ class Timecop
         elsif args.empty? && arg.kind_of?(Integer)
           Time.now + arg
         else # we'll just assume it's a list of y/m/d/h/m/s
-          year   = arg        || 0
+          year   = arg        || 2000
           month  = args.shift || 1
           day    = args.shift || 1
           hour   = args.shift || 0
