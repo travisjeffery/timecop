@@ -24,6 +24,12 @@ class TestTimecop < Test::Unit::TestCase
     end
     assert_not_equal t, Time.now
   end
+
+  def test_freeze_yields_mocked_time
+    Timecop.freeze(2008, 10, 10, 10, 10, 10) do |frozen_time|
+      assert_equal frozen_time, Time.now
+    end
+  end
   
   def test_freeze_then_return_unsets_mock_time
     Timecop.freeze(1)
@@ -237,6 +243,14 @@ class TestTimecop < Test::Unit::TestCase
       assert_times_effectively_equal(t, Time.now, 2, "Failed to restore previously-traveled time.")
     end
     assert_nil Time.send(:mock_time)
+  end
+
+  def test_recursive_travel_yields_correct_time
+    Timecop.travel(2008, 10, 10, 10, 10, 10) do 
+      Timecop.travel(2008, 9, 9, 9, 9, 9) do |inner_freeze|
+        assert_times_effectively_equal inner_freeze, Time.now, 1, "Failed to yield current time back to block"
+      end
+    end
   end
   
   def test_recursive_travel_then_freeze
