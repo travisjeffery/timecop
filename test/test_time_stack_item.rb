@@ -129,7 +129,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal -1 * 60 * 60, tsi.send(:dst_adjustment)
   end
   
-  # Ensure DateTime's handle changing DST properly
+  # Ensure DateTimes handle changing DST properly
   def test_datetime_for_dst_to_non_dst
     Timecop.freeze(DateTime.parse("2009-12-1 00:38:00 -0500"))
     t = DateTime.parse("2009-10-11 00:00:00 -0400")

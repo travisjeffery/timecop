@@ -6,13 +6,13 @@ require 'timecop/time_stack_item'
 # * Wrapper class for manipulating the extensions to the Time, Date, and DateTime objects
 # * Allows us to "freeze" time in our Ruby applications.
 # * Optionally allows time travel to simulate a running clock, such time is not technically frozen.
-# 
-# This is very useful when your app's functionality is dependent on time (e.g. 
+#
+# This is very useful when your app's functionality is dependent on time (e.g.
 # anything that might expire).  This will allow us to alter the return value of
 # Date.today, Time.now, and DateTime.now, such that our application code _never_ has to change.
 class Timecop
   include Singleton
-  
+
   # Allows you to run a block of code and "fake" a time throughout the execution of that block.
   # This is particularly useful for writing test methods where the passage of time is critical to the business
   # logic being tested.  For example:
@@ -32,16 +32,16 @@ class Timecop
   # 5. Timecop.freeze(year, month, day, hour=0, minute=0, second=0)
   #
   # When a block is also passed, Time.now, DateTime.now and Date.today are all reset to their
-  # previous values after the block has finished executing.  This allows us to nest multiple 
+  # previous values after the block has finished executing.  This allows us to nest multiple
   # calls to Timecop.travel and have each block maintain it's concept of "now."
   #
   # * Note: Timecop.freeze will actually freeze time.  This can cause unanticipated problems if
   #   benchmark or other timing calls are executed, which implicitly expect Time to actually move
   #   forward.
   #
-  # * Rails Users: Be especially careful when setting this in your development environment in a 
-  #   rails project.  Generators will load your environment, including the migration generator, 
-  #   which will lead to files being generated with the timestamp set by the Timecop.freeze call 
+  # * Rails Users: Be especially careful when setting this in your development environment in a
+  #   rails project.  Generators will load your environment, including the migration generator,
+  #   which will lead to files being generated with the timestamp set by the Timecop.freeze call
   #   in your dev environment
   #
   # Returns the frozen time.
@@ -49,7 +49,7 @@ class Timecop
     instance().send(:travel, :freeze, *args, &block)
     Time.now
   end
-  
+
   # Allows you to run a block of code and "fake" a time throughout the execution of that block.
   # See Timecop#freeze for a sample of how to use (same exact usage syntax)
   #
@@ -61,7 +61,15 @@ class Timecop
     instance().send(:travel, :travel, *args, &block)
     Time.now
   end
-  
+
+  def self.baseline
+    instance().send(:baseline)
+  end
+
+  def self.baseline=(baseline)
+    instance().send(:baseline=, baseline)
+  end
+
   # Reverts back to system's Time.now, Date.today and DateTime.now (if it exists).
   #
   # Returns Time.now, which is now the real current time.
@@ -69,23 +77,33 @@ class Timecop
     instance().send(:unmock!)
     Time.now
   end
-  
+
+  def self.return_to_baseline
+    instance().send(:return_to_baseline)
+    Time.now
+  end
+
   def self.top_stack_item #:nodoc:
     instance().instance_variable_get(:@_stack).last
   end
 
   protected
-  
+
+    def baseline=(baseline)
+      @baseline = baseline
+      @_stack << TimeStackItem.new(:travel, baseline)
+    end
+
     def initialize #:nodoc:
       @_stack = []
     end
-    
+
     def travel(mock_type, *args, &block) #:nodoc:
       stack_item = TimeStackItem.new(mock_type, *args)
-      
+
       # store this time traveling on our stack...
       @_stack << stack_item
-    
+
       if block_given?
         begin
           yield
@@ -95,9 +113,17 @@ class Timecop
         end
       end
     end
-  
+
     def unmock! #:nodoc:
+      @baseline = nil
       @_stack = []
     end
-  
+
+    def return_to_baseline
+      if @baseline
+        @_stack = [@_stack.shift]
+      else
+        unmock!
+      end
+    end
 end
