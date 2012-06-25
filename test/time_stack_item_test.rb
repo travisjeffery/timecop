@@ -135,8 +135,6 @@ class TestTimeStackItem < Test::Unit::TestCase
     t = DateTime.parse("2009-10-11 00:00:00 -0400")
     tsi = Timecop::TimeStackItem.new(:freeze, t)
     assert_date_times_equal t, tsi.datetime
-    # verify Date also 'moves backward' an hour to change the day
-    assert_equal Date.new(2009, 10, 10), tsi.date
   end
   
   def test_datetime_for_non_dst_to_dst

@@ -10,7 +10,7 @@ class Timecop
       @mock_type      = mock_type
       @time           = parse_time(*args)
       @travel_offset  = compute_travel_offset
-      @dst_adjustment = compute_dst_adjustment
+      @dst_adjustment = compute_dst_adjustment(@time)
     end
     
     def year
@@ -79,14 +79,22 @@ class Timecop
       end
       
       def parse_time(*args)
+        time_klass = Time
+        time_klass = Time.zone if Time.respond_to? :zone
         arg = args.shift
         if arg.is_a?(Time)
-          arg.getlocal
+          if arg.respond_to?(:in_time_zone) && Time.respond_to?(:zone)
+            arg.in_time_zone(Time.zone)
+          else
+            arg.getlocal
+          end
         elsif Object.const_defined?(:DateTime) && arg.is_a?(DateTime)
-          offset_difference = Time.now.utc_offset - rational_to_utc_offset(arg.offset)
-          Time.local(arg.year, arg.month, arg.day, arg.hour, arg.min, arg.sec) + offset_difference
+          expected_time = time_klass.local(arg.year, arg.month, arg.day, arg.hour, arg.min, arg.sec)
+          offset_difference = expected_time.utc_offset - rational_to_utc_offset(arg.offset)
+          expected_time += offset_difference
+          expected_time + compute_dst_adjustment(expected_time)
         elsif Object.const_defined?(:Date) && arg.is_a?(Date)
-          Time.local(arg.year, arg.month, arg.day, 0, 0, 0)
+          time_klass.local(arg.year, arg.month, arg.day, 0, 0, 0)
         elsif args.empty? && arg.kind_of?(Integer)
           Time.now + arg
         elsif arg.nil?
@@ -98,11 +106,11 @@ class Timecop
           hour   = args.shift || 0
           minute = args.shift || 0
           second = args.shift || 0
-          Time.local(year, month, day, hour, minute, second)
+          time_klass.local(year, month, day, hour, minute, second)
         end
       end
       
-      def compute_dst_adjustment
+      def compute_dst_adjustment(time)
         return 0 if !(time.dst? ^ Time.now.dst?)
         return -1 * 60 * 60 if time.dst?
         return 60 * 60
