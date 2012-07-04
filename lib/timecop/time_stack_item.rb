@@ -83,15 +83,14 @@ class Timecop
         time_klass = Time.zone if Time.respond_to? :zone
         arg = args.shift
         if arg.is_a?(Time)
-          if arg.respond_to?(:in_time_zone) && Time.respond_to?(:zone)
-            arg.in_time_zone(Time.zone)
+          if arg.respond_to?(:in_time_zone)
+            arg.in_time_zone
           else
             arg.getlocal
           end
         elsif Object.const_defined?(:DateTime) && arg.is_a?(DateTime)
           expected_time = time_klass.local(arg.year, arg.month, arg.day, arg.hour, arg.min, arg.sec)
-          offset_difference = expected_time.utc_offset - rational_to_utc_offset(arg.offset)
-          expected_time += offset_difference
+          expected_time += expected_time.utc_offset - rational_to_utc_offset(arg.offset)
           expected_time + compute_dst_adjustment(expected_time)
         elsif Object.const_defined?(:Date) && arg.is_a?(Date)
           time_klass.local(arg.year, arg.month, arg.day, 0, 0, 0)

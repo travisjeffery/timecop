@@ -162,4 +162,20 @@ class TestTimeStackItem < Test::Unit::TestCase
     tsi = Timecop::TimeStackItem.new(:freeze, t)
     assert_equal nil, tsi.send(:travel_offset)
   end
+
+  def test_integration_with_rails_time_zone
+    time = Time.now
+    def time.in_time_zone
+      self - 3600
+    end
+    t = time - 3600
+    stack_item = Timecop::TimeStackItem.new(:freeze, time)
+    y, m, d, h, min, s = t.year, t.month, t.day, t.hour, t.min, t.sec
+    assert_equal y,   stack_item.year
+    assert_equal m,   stack_item.month
+    assert_equal d,   stack_item.day
+    assert_equal h,   stack_item.hour
+    assert_equal min, stack_item.min
+    assert_equal s,   stack_item.sec
+  end
 end
