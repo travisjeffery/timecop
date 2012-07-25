@@ -1,0 +1,26 @@
+PATH
+  remote: .
+  specs:
+    timecop (0.3.5)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    git (1.2.5)
+    jeweler (1.8.4)
+      bundler (~> 1.0)
+      git (>= 1.2.5)
+      rake
+      rdoc
+    json (1.7.3)
+    rake (0.9.2.2)
+    rdoc (3.12)
+      json (~> 1.4)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  jeweler
+  rake
+  timecop!
