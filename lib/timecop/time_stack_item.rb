@@ -87,6 +87,8 @@ class Timecop
           Time.local(arg.year, arg.month, arg.day, 0, 0, 0)
         elsif args.empty? && arg.kind_of?(Integer)
           Time.now + arg
+        elsif arg.nil?
+          Time.now
         else # we'll just assume it's a list of y/m/d/h/m/s
           year   = arg        || 0
           month  = args.shift || 1

@@ -291,4 +291,12 @@ class TestTimecop < Test::Unit::TestCase
     assert times_effectively_equal(t_real, t_return)
   end
 
+  def test_freeze_without_params
+    Timecop.freeze 1 do
+      current_time = Time.now
+      Timecop.freeze do
+        assert_equal Time.now, current_time
+      end
+    end
+  end
 end
