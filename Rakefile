@@ -4,12 +4,6 @@ require 'rake/testtask'
 
 $LOAD_PATH.unshift("lib")
 
-Rake::TestTask.new do |t|
-  t.libs << 'lib' << 'test'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = false
-end
-
 require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
   if File.exist?('VERSION')
@@ -24,6 +18,10 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('History.rdoc')
   rdoc.rdoc_files.include('lib/**/*.rb')
+end
+
+task :test do 
+  system "cd test && ./run_tests.sh"
 end
 
 desc 'Default: run tests'
