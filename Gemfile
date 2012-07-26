@@ -7,4 +7,5 @@ gemspec
 group :development do
   gem 'rake'
   gem 'jeweler'
+  gem 'active_support'
 end
