@@ -23,6 +23,7 @@ A gem providing "time travel" and "time freezing" capabilities, making it dead s
   - individual arguments (year, month, day, hour, minute, second)
   - a single integer argument that is interpreted as an offset in seconds from Time.now
 - Nested calls to Timecop#travel and Timecop#freeze are supported -- each block will maintain its interpretation of now.
+- Works with regular Ruby projects, and Ruby on Rails projects
 
 ## USAGE
 
