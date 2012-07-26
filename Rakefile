@@ -1,10 +1,10 @@
 require 'bundler/setup'
 require 'bundler/gem_tasks'
 require 'rake/testtask'
+require 'rdoc/task'
 
 $LOAD_PATH.unshift("lib")
 
-require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
   if File.exist?('VERSION')
     version = File.read('VERSION')
