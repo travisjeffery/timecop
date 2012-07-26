@@ -98,14 +98,19 @@ class Timecop
           Time.now + arg
         elsif arg.nil?
           Time.now
-        else # we'll just assume it's a list of y/m/d/h/m/s
-          year   = arg        || 2000
-          month  = args.shift || 1
-          day    = args.shift || 1
-          hour   = args.shift || 0
-          minute = args.shift || 0
-          second = args.shift || 0
-          time_klass.local(year, month, day, hour, minute, second)
+        else
+          if Time.respond_to?(:parse)
+            Time.parse(arg)
+          else
+            # we'll just assume it's a list of y/m/d/h/m/s
+            year   = arg        || 2000
+            month  = args.shift || 1
+            day    = args.shift || 1
+            hour   = args.shift || 0
+            minute = args.shift || 0
+            second = args.shift || 0
+            time_klass.local(year, month, day, hour, minute, second)
+          end
         end
       end
       

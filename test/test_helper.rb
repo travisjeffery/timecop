@@ -1,6 +1,10 @@
+require 'rubygems'
+require 'bundler/setup'
 require 'test/unit'
+require 'mocha'
 
 class Test::Unit::TestCase
+
   private
     # Tests to see that two times are within the given distance,
     # in seconds, from each other.

@@ -163,6 +163,12 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal nil, tsi.send(:travel_offset)
   end
 
+  def test_parse_string_date_with_active_support
+    date = '2012-01-02'
+    Time.expects(:parse).with(date).returns(Time.local(2012, 01, 02))
+    Timecop.freeze(date)
+  end
+
   def test_integration_with_rails_time_zone
     time = Time.now
     def time.in_time_zone

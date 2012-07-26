@@ -10,3 +10,7 @@ group :development do
   gem 'active_support', :require => "active_support/all"
   gem 'pry'
 end
+
+group :development, :test do
+  gem 'mocha', :require => false
+end

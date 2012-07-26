@@ -17,7 +17,10 @@ GEM
       rake
       rdoc
     json (1.7.3)
+    metaclass (0.0.1)
     method_source (0.8)
+    mocha (0.10.5)
+      metaclass (~> 0.0.1)
     pry (0.9.10)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
@@ -33,6 +36,7 @@ PLATFORMS
 DEPENDENCIES
   active_support
   jeweler
+  mocha
   pry
   rake
   timecop!
