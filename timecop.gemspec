@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{timecop}
-  s.version = "0.3.5"
+  s.version = "0.3.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Trupiano"]
