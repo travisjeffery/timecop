@@ -97,8 +97,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     Timecop.freeze(DateTime.parse("2009-10-1 00:38:00 -0400"))
     t = DateTime.parse("2009-10-11 00:00:00 -0400")
     tsi = Timecop::TimeStackItem.new(:freeze, t)
-    assert Time.now.dst?, "precondition"
-    assert tsi.time.dst?, "precondition"
+    return if !(Time.now.dst? && tsi.time.dst?)
     assert_equal 0, tsi.send(:dst_adjustment)
   end
   
@@ -106,8 +105,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     Timecop.freeze(DateTime.parse("2009-12-1 00:38:00 -0400"))
     t = DateTime.parse("2009-12-11 00:00:00 -0400")
     tsi = Timecop::TimeStackItem.new(:freeze, t)
-    assert !Time.now.dst?, "precondition"
-    assert !tsi.time.dst?, "precondition"
+    return if Time.now.dst? || tsi.time.dst?
     assert_equal 0, tsi.send(:dst_adjustment)    
   end
   
@@ -115,8 +113,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     Timecop.freeze(DateTime.parse("2009-10-1 00:38:00 -0400"))
     t = DateTime.parse("2009-12-11 00:00:00 -0400")
     tsi = Timecop::TimeStackItem.new(:freeze, t)
-    assert Time.now.dst?, "precondition"
-    assert !tsi.time.dst?, "precondition"
+    return if !Time.now.dst? || tsi.time.dst?
     assert_equal 60 * 60, tsi.send(:dst_adjustment)
   end
   
@@ -124,8 +121,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     Timecop.freeze(DateTime.parse("2009-12-1 00:38:00 -0400"))
     t = DateTime.parse("2009-10-11 00:00:00 -0400")
     tsi = Timecop::TimeStackItem.new(:freeze, t)
-    assert !Time.now.dst?, "precondition"
-    assert tsi.time.dst?, "precondition"
+    return if Time.now.dst? || !tsi.time.dst?
     assert_equal -1 * 60 * 60, tsi.send(:dst_adjustment)
   end
   
@@ -141,8 +137,8 @@ class TestTimeStackItem < Test::Unit::TestCase
     Timecop.freeze(DateTime.parse("2009-10-11 00:00:00 -0400"))
     t = DateTime.parse("2009-11-30 23:38:00 -0500")
     tsi = Timecop::TimeStackItem.new(:freeze, t)
+    return if !tsi.time.dst?
     assert_date_times_equal t, tsi.datetime
-    # verify Date also 'moves forward' an hour to change the day
     assert_equal Date.new(2009, 12, 1), tsi.date
   end
   
