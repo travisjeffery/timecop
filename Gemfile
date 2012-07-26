@@ -7,5 +7,6 @@ gemspec
 group :development do
   gem 'rake'
   gem 'jeweler'
-  gem 'active_support'
+  gem 'active_support', :require => "active_support/all"
+  gem 'pry'
 end
