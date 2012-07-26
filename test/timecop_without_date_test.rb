@@ -5,8 +5,8 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 class TestTimecopWithoutDate < Test::Unit::TestCase
   
   def setup
-    assert !Object.const_defined?(:Date)
-    assert !Object.const_defined?(:DateTime)
+    Object.send(:remove_const, :Date) if Object.const_defined?(:Date)
+    Object.send(:remove_const, :DateTime) if Object.const_defined?(:DateTime)
   end
   
   # just in case...let's really make sure that Timecop is disabled between tests...
