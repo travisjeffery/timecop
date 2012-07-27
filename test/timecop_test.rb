@@ -345,4 +345,11 @@ class TestTimecop < Test::Unit::TestCase
     Timecop.return_to_baseline
     assert times_effectively_equal(time_before_travel, Time.now)
   end
+
+  def test_mock_time_new_same_as_now
+    date = Time.local(2011, 01, 02)
+    Timecop.freeze date
+    assert_equal date, Time.now
+    assert_equal date, Time.new
+  end
 end

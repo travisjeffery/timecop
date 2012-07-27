@@ -17,6 +17,7 @@ class Time #:nodoc:
     
     # Alias now to now_with_mock_time
     alias_method :now, :now_with_mock_time
+    alias_method :new, :now
   end
 end 
 
