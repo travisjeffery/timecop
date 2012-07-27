@@ -14,12 +14,12 @@ Gem::Specification.new do |s|
   s.email = %q{travisjeffery@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
-     "README.rdoc"
+     "README.markdown"
   ]
   s.files = [
     "History.rdoc",
      "LICENSE",
-     "README.rdoc",
+     "README.markdown",
      "Rakefile",
      "VERSION.yml",
      "lib/timecop.rb",
@@ -28,10 +28,10 @@ Gem::Specification.new do |s|
      "lib/timecop/timecop.rb",
      "test/run_tests.sh",
      "test/test_helper.rb",
-     "test/test_time_stack_item.rb",
-     "test/test_timecop.rb",
-     "test/test_timecop_without_date.rb",
-     "test/test_timecop_without_date_but_with_time.rb"
+     "test/time_stack_item_test.rb",
+     "test/timecop_test.rb",
+     "test/timecop_without_date_test.rb",
+     "test/timecop_without_date_but_with_time_test.rb"
   ]
   s.homepage = %q{http://github.com/jtrupiano/timecop}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -41,10 +41,10 @@ Gem::Specification.new do |s|
   s.summary = %q{A gem providing "time travel" and "time freezing" capabilities, making it dead simple to test time-dependent code.  It provides a unified method to mock Time.now, Date.today, and DateTime.now in a single call.}
   s.test_files = [
     "test/test_helper.rb",
-     "test/test_time_stack_item.rb",
-     "test/test_timecop.rb",
-     "test/test_timecop_without_date.rb",
-     "test/test_timecop_without_date_but_with_time.rb"
+     "test/time_stack_item_test.rb",
+     "test/timecop_test.rb",
+     "test/timecop_without_date_test.rb",
+     "test/timecop_without_date_but_with_time_test.rb"
   ]
 
   if s.respond_to? :specification_version then
