@@ -1,3 +1,13 @@
+=== 0.4.1 / 2012-07-27
+
+* Maintenance
+  * Mock Time#new the same as Time#now since they're synonyms
+  * Set default arg in parsing to 2000
+  * Time.freeze defaults to Time#now
+  * Use Time#parse is available to parse Time's given as strings
+  * Add ActiveSupport Time.zone support
+  * Stop DateTime from losing precision after traveling
+
 === 0.3.5 / 2010-06-07
 
 * Maintenance
