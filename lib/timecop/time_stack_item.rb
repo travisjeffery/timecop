@@ -99,7 +99,7 @@ class Timecop
         elsif arg.nil?
           Time.now
         else
-          if Time.respond_to?(:parse)
+          if Time.respond_to?(:parse) && arg.is_a?(String)
             Time.parse(arg)
           else
             # we'll just assume it's a list of y/m/d/h/m/s

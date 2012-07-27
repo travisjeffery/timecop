@@ -165,6 +165,11 @@ class TestTimeStackItem < Test::Unit::TestCase
     Timecop.freeze(date)
   end
 
+  def test_parse_only_string_with_active_support
+    Time.expects(:parse).never
+    Timecop.freeze(2011, 01, 02, hour=0, minute=0, second=0)
+  end
+
   def test_integration_with_rails_time_zone
     time = Time.now
     def time.in_time_zone
