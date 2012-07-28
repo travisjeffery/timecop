@@ -19,6 +19,18 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal min, stack_item.min
     assert_equal s,   stack_item.sec
   end
+
+  def test_new_with_time_and_arguments
+    t = Time.new(2012, 7, 28, 20, 0)
+    y, m, d, h, min, s = t.year, t.month, t.day, t.hour, t.min, t.sec
+    stack_item = Timecop::TimeStackItem.new(:freeze, t)
+    assert_equal y,   stack_item.year
+    assert_equal m,   stack_item.month
+    assert_equal d,   stack_item.day
+    assert_equal h,   stack_item.hour
+    assert_equal min, stack_item.min
+    assert_equal s,   stack_item.sec
+  end
   
   def test_new_with_datetime_now
     t = DateTime.now
