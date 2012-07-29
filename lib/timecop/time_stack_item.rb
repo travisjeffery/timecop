@@ -82,8 +82,8 @@ class Timecop
         time_klass = Time
         time_klass = Time.zone if Time.respond_to? :zone
         arg = args.shift
-        if arg.is_a?(Time)
-          if arg.respond_to?(:in_time_zone)
+        if arg.is_a?(Time) 
+          if Timecop.active_support != false && arg.respond_to?(:in_time_zone)
             arg.in_time_zone
           else
             arg.getlocal
@@ -99,7 +99,7 @@ class Timecop
         elsif arg.nil?
           Time.now
         else
-          if Time.respond_to?(:parse) && arg.is_a?(String)
+          if arg.is_a?(String) && Timecop.active_support != false && Time.respond_to?(:parse)
             Time.parse(arg)
           else
             # we'll just assume it's a list of y/m/d/h/m/s

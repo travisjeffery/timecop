@@ -5,6 +5,7 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 class TestTimeStackItem < Test::Unit::TestCase
   
   def teardown
+    Timecop.active_support = nil
     Timecop.return
   end
   
@@ -182,9 +183,22 @@ class TestTimeStackItem < Test::Unit::TestCase
     Timecop.freeze(2011, 01, 02, hour=0, minute=0, second=0)
   end
 
-  def test_integration_with_rails_time_zone
+  def test_parse_with_active_support_off
+    date = '2012-01-02'
+    Timecop.active_support = false
+    Time.expects(:parse).never
+    Timecop.freeze(date)
+  end
+
+  def test_uses_active_supports_in_time_zone
     time = Time.now
-    Time.any_instance.expects(:in_time_zone).returns(Time.now)
+    Time.any_instance.expects(:in_time_zone).returns(time)
     Timecop::TimeStackItem.new(:freeze, time)
+  end
+
+  def test_configured_off_active_support_in_time_zone_xxx
+    Timecop.active_support = false
+    Time.any_instance.expects(:in_time_zone).never
+    Timecop::TimeStackItem.new(:freeze, Time.now)
   end
 end
