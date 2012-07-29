@@ -1,4 +1,14 @@
-=== 0.4.1 / 2012-07-27
+=== 0.4.4 / 2012-07-29
+
+* Maintenance
+  * Can now configure Timecop to not use ActiveSupport by setting Timecop.active_support = false
+
+=== 0.4.3 / 2012-07-27
+
+* Maintenance
+  * Fix alias of Time#new/Time#now when Time#new given with args
+
+=== 0.4.2 / 2012-07-27
 
 * Maintenance
   * Mock Time#new the same as Time#now since they're synonyms
