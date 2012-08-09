@@ -4,7 +4,7 @@ class Time #:nodoc:
     # Time we are behaving as
     def mock_time
       mocked_time_stack_item = Timecop.top_stack_item
-      mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.time
+      mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.time(self)
     end
     
     # Alias the original now
@@ -37,7 +37,7 @@ if Object.const_defined?(:Date) && Date.respond_to?(:today)
       # Date we are behaving as
       def mock_date
         mocked_time_stack_item = Timecop.top_stack_item
-        mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.date
+        mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.date(self)
       end
       
       # Alias the original today
@@ -60,7 +60,7 @@ if Object.const_defined?(:DateTime) && DateTime.respond_to?(:now)
       # Time we are behaving as
       def mock_time
         mocked_time_stack_item = Timecop.top_stack_item
-        mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.datetime
+        mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.datetime(self)
       end
       
       # Fake alias :now_without_mock_time :now
