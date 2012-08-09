@@ -45,23 +45,23 @@ class Timecop
       @travel_offset
     end
     
-    def time #:nodoc:
+    def time( time_klass=Time ) #:nodoc:
       if travel_offset.nil?
-        @time.clone
+        time_klass.at( @time.to_f )
       else
-        Time.now_without_mock_time + travel_offset
+        time_klass.at( ( Time.now_without_mock_time + travel_offset ).to_f )
       end
     end
     
-    def date
-      time.send(:to_date)
+    def date( date_klass=Date )
+      date_klass.jd( time.to_date.jd )
     end
     
-    def datetime
+    def datetime( datetime_klass=DateTime )
       # DateTime doesn't know about DST, so let's remove its presence
       our_offset = utc_offset + dst_adjustment
       fractions_of_a_second = time.to_f % 1
-      DateTime.new(year, month, day, hour, min, sec + fractions_of_a_second,
+      datetime_klass.new(year, month, day, hour, min, sec + fractions_of_a_second,
                    utc_offset_to_rational(our_offset))
     end
     
