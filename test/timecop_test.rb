@@ -60,6 +60,42 @@ class TestTimecop < Test::Unit::TestCase
     assert_not_equal DateTime.now, DateTime.now
   end
 
+  def test_freeze_in_time_subclass_returns_mocked_subclass
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    custom_timeklass = Class.new(Time) do
+      def custom_format_method() strftime('%F') end
+    end
+    Timecop.freeze(2008, 10, 10, 10, 10, 10) do
+      assert custom_timeklass.now.is_a? custom_timeklass
+      assert Time.now.eql? custom_timeklass.now
+      assert custom_timeklass.now.respond_to? :custom_format_method
+    end
+  end
+
+  def test_freeze_in_date_subclass_returns_mocked_subclass
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    custom_dateklass = Class.new(Date) do
+      def custom_format_method() strftime('%F') end
+    end
+    Timecop.freeze(2008, 10, 10, 10, 10, 10) do
+      assert custom_dateklass.today.is_a? custom_dateklass
+      assert Date.today.eql? custom_dateklass.today
+      assert custom_dateklass.today.respond_to? :custom_format_method
+    end
+  end
+
+  def test_freeze_in_datetime_subclass_returns_mocked_subclass
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    custom_datetimeklass = Class.new(DateTime) do
+      def custom_format_method() strftime('%F') end
+    end
+    Timecop.freeze(2008, 10, 10, 10, 10, 10) do
+      assert custom_datetimeklass.now.is_a? custom_datetimeklass
+      assert DateTime.now.eql? custom_datetimeklass.now
+      assert custom_datetimeklass.now.respond_to? :custom_format_method
+    end
+  end
+
   def test_recursive_freeze
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.freeze(2008, 10, 10, 10, 10, 10) do
