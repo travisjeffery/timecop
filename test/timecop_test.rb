@@ -321,29 +321,34 @@ class TestTimecop < Test::Unit::TestCase
     assert_nil Time.send(:mock_time)
   end
 
-  def test_return_values_are_Time_instances
-    assert Timecop.freeze.is_a?(Time)
-    assert Timecop.travel.is_a?(Time)
-    assert Timecop.return.is_a?(Time)
-  end
-
-  def test_travel_time_returns_passed_value
+  def test_travel_time_returns_nil
     t_future = Time.local(2030, 10, 10, 10, 10, 10)
-    t_travel = Timecop.travel t_future
-    assert times_effectively_equal(t_future, t_travel)
+    assert_nil Timecop.travel(t_future)
   end
 
-  def test_freeze_time_returns_passed_value
+  def test_travel_time_with_block_returns_the_value_of_the_block
     t_future = Time.local(2030, 10, 10, 10, 10, 10)
-    t_frozen = Timecop.freeze t_future
-    assert times_effectively_equal(t_future, t_frozen)
+    expected = :foo
+    actual = Timecop.travel(t_future) { expected }
+
+    assert_equal expected, actual
   end
 
-  def test_return_time_returns_actual_time
-    t_real = Time.now
-    Timecop.freeze Time.local(2030, 10, 10, 10, 10, 10)
-    t_return = Timecop.return
-    assert times_effectively_equal(t_real, t_return)
+  def test_freeze_time_returns_nil
+    t_future = Time.local(2030, 10, 10, 10, 10, 10)
+    assert_nil Timecop.freeze(t_future)
+  end
+
+  def test_freeze_time_with_block_returns_the_value_of_the_block
+    t_future = Time.local(2030, 10, 10, 10, 10, 10)
+    expected = :foo
+    actual = Timecop.freeze(t_future) { expected }
+
+    assert_equal expected, actual
+  end
+
+  def test_return_returns_nil
+    assert_nil Timecop.return
   end
 
   def test_freeze_without_params
