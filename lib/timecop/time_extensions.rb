@@ -19,10 +19,12 @@ class Time #:nodoc:
     alias_method :now, :now_with_mock_time
 
     alias_method :new_without_mock_time, :new
+
     def new_with_mock_time *args
-      if args.size > 0
+      begin
+        raise ArgumentError.new if args.size <= 0
         new_without_mock_time *args
-      else
+      rescue ArgumentError
         now
       end
     end
