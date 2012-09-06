@@ -47,10 +47,11 @@ class Timecop
     #   which will lead to files being generated with the timestamp set by the Timecop.freeze call
     #   in your dev environment
     #
-    # Returns the frozen time.
+    # Returns the value of the block or nil.
     def freeze(*args, &block)
-      instance().send(:travel, :freeze, *args, &block)
-      Time.now
+      val = instance().send(:travel, :freeze, *args, &block)
+
+      block_given? ? val : nil
     end
 
     # Allows you to run a block of code and "fake" a time throughout the execution of that block.
@@ -59,10 +60,11 @@ class Timecop
     # * Note: Timecop.travel will not freeze time (as opposed to Timecop.freeze).  This is a particularly
     #   good candidate for use in environment files in rails projects.
     #
-    # Returns the 'new' current Time.
+    # Returns the value of the block or nil.
     def travel(*args, &block)
-      instance().send(:travel, :travel, *args, &block)
-      Time.now
+      val = instance().send(:travel, :travel, *args, &block)
+
+      block_given? ? val : nil
     end
 
     def baseline
@@ -74,11 +76,9 @@ class Timecop
     end
 
     # Reverts back to system's Time.now, Date.today and DateTime.now (if it exists).
-    #
-    # Returns Time.now, which is now the real current time.
     def return
       instance().send(:unmock!)
-      Time.now
+      nil
     end
 
     def return_to_baseline
