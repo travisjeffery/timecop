@@ -56,8 +56,11 @@ class TestTimecop < Test::Unit::TestCase
   end
 
   def test_travel_does_not_reduce_precision_of_datetime
-    Timecop.travel(1)
-    assert_not_equal DateTime.now, DateTime.now
+    # requires to_r on Float (>= 1.9)
+    if Float.method_defined?(:to_r)
+      Timecop.travel(1)
+      assert_not_equal DateTime.now, DateTime.now
+    end
   end
 
   def test_freeze_in_time_subclass_returns_mocked_subclass
@@ -352,6 +355,13 @@ class TestTimecop < Test::Unit::TestCase
       Timecop.freeze do
         assert_equal Time.now, current_time
       end
+    end
+  end
+
+  def test_freeze_with_new_date
+    date = Date.new(2012, 6, 9)
+    Timecop.freeze(Date.new(2012, 6, 9)) do
+      assert_equal date, Time.now.__send__(:to_date)
     end
   end
 
