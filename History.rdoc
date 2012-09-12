@@ -1,3 +1,13 @@
+=== 0.4.6 / 2012-07-05
+
+* Maintenance
+  * Fix rounding support for Ruby < 1.9
+
+=== 0.4.5 / 2012-08-09
+
+* Maintenance
+  * Subclasses of Time/Date/DateTime now return proper instances
+
 === 0.4.4 / 2012-07-29
 
 * Maintenance
