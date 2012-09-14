@@ -84,8 +84,7 @@ class Timecop
       end
       
       def parse_time(*args)
-        time_klass = Time
-        time_klass = Time.zone if Time.respond_to? :zone
+        time_klass = Time.respond_to?(:zone) && Time.zone ? Time.zone : Time
         arg = args.shift
         if arg.is_a?(Time) 
           if Timecop.active_support != false && arg.respond_to?(:in_time_zone)

@@ -201,4 +201,10 @@ class TestTimeStackItem < Test::Unit::TestCase
     Time.any_instance.expects(:in_time_zone).never
     Timecop::TimeStackItem.new(:freeze, Time.now)
   end
+
+  def test_parse_date
+    assert_nothing_raised do
+      Timecop.freeze(Date.new(2012, 6, 9))
+    end
+  end
 end
