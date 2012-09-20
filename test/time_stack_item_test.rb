@@ -172,6 +172,15 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal nil, tsi.send(:travel_offset)
   end
 
+  def test_set_scaling_factor_for_lens
+    t_now = Time.now
+    t = Time.local(2009, 10, 1, 0, 0, 30)
+    expected_offset = t - t_now
+    tsi = Timecop::TimeStackItem.new(:lens, 4, t)
+    assert_times_effectively_equal expected_offset, tsi.send(:travel_offset), 1, "Offset not calculated correctly"
+    assert_equal tsi.send(:scaling_factor), 4, "Scaling factor not set"
+  end
+
   def test_parse_string_date_with_active_support
     date = '2012-01-02'
     Time.expects(:parse).with(date).returns(Time.local(2012, 01, 02))

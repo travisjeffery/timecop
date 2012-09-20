@@ -6,9 +6,11 @@ class Timecop
   
     attr_reader :mock_type
     def initialize(mock_type, *args)
-      raise "Unknown mock_type #{mock_type}" unless [:freeze, :travel].include?(mock_type)
+      raise "Unknown mock_type #{mock_type}" unless [:freeze, :travel, :lens].include?(mock_type)
+      @scaling_factor = args.shift if mock_type == :lens
       @mock_type      = mock_type
       @time           = parse_time(*args)
+      @time_was       = Time.now_without_mock_time
       @travel_offset  = compute_travel_offset
       @dst_adjustment = compute_dst_adjustment(@time)
     end
@@ -44,13 +46,23 @@ class Timecop
     def travel_offset
       @travel_offset
     end
+
+    def scaling_factor
+      @scaling_factor
+    end
     
     def time(time_klass=Time) #:nodoc:
       if travel_offset.nil?
         time_klass.at( @time.to_f )
-      else
+      elsif scaling_factor.nil?
         time_klass.at( ( Time.now_without_mock_time + travel_offset ).to_f )
+      else
+        time_klass.at( scaled_time )
       end
+    end
+
+    def scaled_time
+      (@time + (Time.now_without_mock_time - @time_was) * scaling_factor).to_f
     end
     
     def date(date_klass=Date)

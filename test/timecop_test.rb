@@ -250,6 +250,16 @@ class TestTimecop < Test::Unit::TestCase
     end
   end
 
+  def test_lensing_keeps_time_moving_at_an_accelerated_rate
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    Timecop.lens(4, t) do
+      start = Time.now
+      assert_times_effectively_equal start, t, 1, "Looks like we failed to actually travel time"
+      sleep(0.25)
+      assert_times_effectively_equal Time.at((start + 4*0.25).to_f), Time.now, 0.25, "Looks like time is not moving at 4x"
+    end
+  end
+
   def test_freeze_with_utc_time
     each_timezone do
       t = Time.utc(2008, 10, 10, 10, 10, 10)

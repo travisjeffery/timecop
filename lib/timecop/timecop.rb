@@ -67,6 +67,20 @@ class Timecop
       block_given? ? val : nil
     end
 
+    # Allows you to run a block of code and "lens" a time throughout the execution of that block.
+    # The first argument is a scaling factor, for example:
+    #   Timecop.lens(2) do
+    #     ... time will 'go' twice as fast here
+    #   end
+    # See Timecop#freeze for exact usage of the other arguments
+    #
+    # Returns the value of the block or nil.
+    def lens(*args, &block)
+      val = instance().send(:travel, :lens, *args, &block)
+
+      block_given? ? val : nil
+    end
+
     def baseline
       instance().send(:baseline)
     end
