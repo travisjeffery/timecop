@@ -252,7 +252,7 @@ class TestTimecop < Test::Unit::TestCase
 
   def test_lensing_keeps_time_moving_at_an_accelerated_rate
     t = Time.local(2008, 10, 10, 10, 10, 10)
-    Timecop.lens(4, t) do
+    Timecop.scale(4, t) do
       start = Time.now
       assert_times_effectively_equal start, t, 1, "Looks like we failed to actually travel time"
       sleep(0.25)

@@ -6,8 +6,8 @@ class Timecop
   
     attr_reader :mock_type
     def initialize(mock_type, *args)
-      raise "Unknown mock_type #{mock_type}" unless [:freeze, :travel, :lens].include?(mock_type)
-      @scaling_factor = args.shift if mock_type == :lens
+      raise "Unknown mock_type #{mock_type}" unless [:freeze, :travel, :scale].include?(mock_type)
+      @scaling_factor = args.shift if mock_type == :scale
       @mock_type      = mock_type
       @time           = parse_time(*args)
       @time_was       = Time.now_without_mock_time

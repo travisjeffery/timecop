@@ -176,7 +176,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     t_now = Time.now
     t = Time.local(2009, 10, 1, 0, 0, 30)
     expected_offset = t - t_now
-    tsi = Timecop::TimeStackItem.new(:lens, 4, t)
+    tsi = Timecop::TimeStackItem.new(:scale, 4, t)
     assert_times_effectively_equal expected_offset, tsi.send(:travel_offset), 1, "Offset not calculated correctly"
     assert_equal tsi.send(:scaling_factor), 4, "Scaling factor not set"
   end
