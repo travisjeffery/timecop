@@ -15,6 +15,7 @@ A gem providing "time travel" and "time freezing" capabilities, making it dead s
 
 - Freeze time to a specific point.
 - Travel back to a specific point in time, but allow time to continue moving forward from there.
+- Scale time by a given scaling factor that will cause time to move at an accelerated pace.
 - No dependencies, can be used with _any_ ruby project
 - Timecop api allows arguments to be passed into #freeze and #travel as one of the following:
   - Time instance
@@ -73,6 +74,23 @@ Timecop.return # "turn off" Timecop
 Timecop.travel(new_time)
 sleep(10)
 new_time == Time.now # ==> false
+```
+
+### Timecop.scale
+
+Let's say you want to test a "live" integration wherein entire days could pass by
+in minutes while you're able to simulate "real" activity. For example, one such use case
+is being able to test reports and invoices that run in 30 day cycles in very little time, while also
+being able to simulate activity via subsequent calls to your application.
+
+```ruby
+# seconds will now seem like hours
+Timecop.lens(3600)
+Time.now
+# => 2012-09-20 21:23:25 -0500
+# seconds later, hours have past it's gone from 9pm at night to 6am in the morning
+Time.now
+# => 2012-09-21 06:22:59 -0500
 ```
 
 ## REFERENCES
