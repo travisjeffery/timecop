@@ -93,6 +93,8 @@ Time.now
 # => 2012-09-21 06:22:59 -0500
 ```
 
+See #42 for more information, thanks to Ken Mayer, David Holcomb, and Pivotal Labs.
+
 ## REFERENCES
 
 * {0.3.4 release}[http://blog.smartlogicsolutions.com/2009/12/07/timecop-0-3-4-released/]
