@@ -104,8 +104,8 @@ See #42 for more information, thanks to Ken Mayer, David Holcomb, and Pivotal La
 
 ## Contribute
 
-timecop is maintained by [travisjeffery](http://github.com/travisjeffery), who
-you can also hit up on [Twitter](http://twitter.com/travisjeffery).
+timecop is maintained by [travisjeffery](http://github.com/travisjeffery), and
+was created by [jtrupiano](https://github.com/jtrupiano). 
 
 Here's the most direct way to get your work merged into the project.
 
