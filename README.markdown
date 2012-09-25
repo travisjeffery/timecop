@@ -1,6 +1,6 @@
 # timecop
 
-- Source[http://github.com/jtrupiano/timecop]
+- Source[http://github.com/travisjeffery/timecop]
 - Documentation[http://johntrupiano.rubyforge.org/timecop]
 
 ## DESCRIPTION
