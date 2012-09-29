@@ -1,5 +1,7 @@
 # timecop
 
+[![Build Status](https://secure.travis-ci.org/travisjeffery/timecop.png)](http://travis-ci.org/travisjeffery/timecop)
+
 - Source[http://github.com/travisjeffery/timecop]
 - Documentation[http://johntrupiano.rubyforge.org/timecop]
 
