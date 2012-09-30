@@ -3,8 +3,8 @@ class Timecop
   # A data class for carrying around "time movement" objects.  Makes it easy to keep track of the time
   # movements on a simple stack.
   class TimeStackItem #:nodoc:
-  
     attr_reader :mock_type
+  
     def initialize(mock_type, *args)
       raise "Unknown mock_type #{mock_type}" unless [:freeze, :travel, :scale].include?(mock_type)
       @scaling_factor = args.shift if mock_type == :scale
@@ -51,13 +51,13 @@ class Timecop
       @scaling_factor
     end
     
-    def time(time_klass=Time) #:nodoc:
+    def time(time_klass = Time) #:nodoc:
       if travel_offset.nil?
-        time_klass.at( @time.to_f )
+        time_klass.at(@time.to_f)
       elsif scaling_factor.nil?
-        time_klass.at( ( Time.now_without_mock_time + travel_offset ).to_f )
+        time_klass.at((Time.now_without_mock_time + travel_offset).to_f)
       else
-        time_klass.at( scaled_time )
+        time_klass.at(scaled_time)
       end
     end
 
@@ -65,17 +65,16 @@ class Timecop
       (@time + (Time.now_without_mock_time - @time_was) * scaling_factor).to_f
     end
     
-    def date(date_klass=Date)
+    def date(date_klass = Date)
       date_klass.jd(time.__send__(:to_date).jd)
     end
     
-    def datetime(datetime_klass=DateTime)
-      # DateTime doesn't know about DST, so let's remove its presence
+    def datetime(datetime_klass = DateTime)
       our_offset = utc_offset + dst_adjustment
+
       if Float.method_defined?(:to_r)
         fractions_of_a_second = time.to_f % 1
-        datetime_klass.new(year, month, day, hour, min, sec + fractions_of_a_second,
-                           utc_offset_to_rational(our_offset))
+        datetime_klass.new(year, month, day, hour, min, sec + fractions_of_a_second, utc_offset_to_rational(our_offset))
       else
         our_offset = utc_offset + dst_adjustment
         datetime_klass.new(year, month, day, hour, min, sec, utc_offset_to_rational(our_offset))
@@ -140,6 +139,5 @@ class Timecop
         return nil if mock_type == :freeze
         time - Time.now_without_mock_time
       end
-      
   end
 end

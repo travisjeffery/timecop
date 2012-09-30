@@ -3,25 +3,20 @@ require 'test_helper'
 require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
 class TestTimecop < Test::Unit::TestCase
-
-  def setup
-
-  end
-
-  # just in case...let's really make sure that Timecop is disabled between tests...
   def teardown
     Timecop.return
   end
 
   def test_freeze_changes_and_resets_time
-    # depending on how we're invoked (individually or via the rake test suite)
     assert !Time.respond_to?(:zone) || Time.zone.nil?
 
     t = Time.local(2008, 10, 10, 10, 10, 10)
     assert_not_equal t, Time.now
+
     Timecop.freeze(2008, 10, 10, 10, 10, 10) do
       assert_equal t, Time.now
     end
+
     assert_not_equal t, Time.now
   end
 
@@ -68,6 +63,7 @@ class TestTimecop < Test::Unit::TestCase
     custom_timeklass = Class.new(Time) do
       def custom_format_method() strftime('%F') end
     end
+
     Timecop.freeze(2008, 10, 10, 10, 10, 10) do
       assert custom_timeklass.now.is_a? custom_timeklass
       assert Time.now.eql? custom_timeklass.now
@@ -80,6 +76,7 @@ class TestTimecop < Test::Unit::TestCase
     custom_dateklass = Class.new(Date) do
       def custom_format_method() strftime('%F') end
     end
+
     Timecop.freeze(2008, 10, 10, 10, 10, 10) do
       assert custom_dateklass.today.is_a? custom_dateklass
       assert Date.today.eql? custom_dateklass.today
@@ -92,6 +89,7 @@ class TestTimecop < Test::Unit::TestCase
     custom_datetimeklass = Class.new(DateTime) do
       def custom_format_method() strftime('%F') end
     end
+
     Timecop.freeze(2008, 10, 10, 10, 10, 10) do
       assert custom_datetimeklass.now.is_a? custom_datetimeklass
       assert DateTime.now.eql? custom_datetimeklass.now
@@ -119,6 +117,7 @@ class TestTimecop < Test::Unit::TestCase
       assert_date_times_equal DateTime.new(2008, 10, 10, 10, 10, 10, local_offset), DateTime.now
       assert_equal Date.new(2008, 10, 10), Date.today
     end
+
     assert_not_equal t, Time.now
     assert_not_equal DateTime.new(2008, 10, 10, 10, 10, 10, local_offset), DateTime.now
     assert_not_equal Date.new(2008, 10, 10), Date.today
@@ -133,7 +132,6 @@ class TestTimecop < Test::Unit::TestCase
       Timecop.freeze(t) do
         assert_date_times_equal t, DateTime.now
       end
-      # Undo the original freeze
       Timecop.return
     end
   end

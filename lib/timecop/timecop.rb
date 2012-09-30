@@ -49,7 +49,7 @@ class Timecop
     #
     # Returns the value of the block or nil.
     def freeze(*args, &block)
-      val = instance().send(:travel, :freeze, *args, &block)
+      val = instance.send(:travel, :freeze, *args, &block)
 
       block_given? ? val : nil
     end
@@ -62,7 +62,7 @@ class Timecop
     #
     # Returns the value of the block or nil.
     def travel(*args, &block)
-      val = instance().send(:travel, :travel, *args, &block)
+      val = instance.send(:travel, :travel, *args, &block)
 
       block_given? ? val : nil
     end
@@ -76,72 +76,70 @@ class Timecop
     #
     # Returns the value of the block or nil.
     def scale(*args, &block)
-      val = instance().send(:travel, :scale, *args, &block)
+      val = instance.send(:travel, :scale, *args, &block)
 
       block_given? ? val : nil
     end
 
     def baseline
-      instance().send(:baseline)
+      instance.send(:baseline)
     end
 
     def baseline=(baseline)
-      instance().send(:baseline=, baseline)
+      instance.send(:baseline=, baseline)
     end
 
     # Reverts back to system's Time.now, Date.today and DateTime.now (if it exists).
     def return
-      instance().send(:unmock!)
+      instance.send(:unmock!)
       nil
     end
 
     def return_to_baseline
-      instance().send(:return_to_baseline)
+      instance.send(:return_to_baseline)
       Time.now
     end
 
     def top_stack_item #:nodoc:
-      instance().instance_variable_get(:@_stack).last
+      instance.instance_variable_get(:@_stack).last
     end
   end
 
-  protected
+  private
 
-    def baseline=(baseline)
-      @baseline = baseline
-      @_stack << TimeStackItem.new(:travel, baseline)
-    end
+  def baseline=(baseline)
+    @baseline = baseline
+    @_stack << TimeStackItem.new(:travel, baseline)
+  end
 
-    def initialize #:nodoc:
-      @_stack = []
-    end
+  def initialize #:nodoc:
+    @_stack = []
+  end
 
-    def travel(mock_type, *args, &block) #:nodoc:
-      stack_item = TimeStackItem.new(mock_type, *args)
+  def travel(mock_type, *args, &block) #:nodoc:
+    stack_item = TimeStackItem.new(mock_type, *args)
 
-      # store this time traveling on our stack...
-      @_stack << stack_item
+    @_stack << stack_item
 
-      if block_given?
-        begin
-          yield stack_item.time
-        ensure
-          # pull it off the stack...
-          @_stack.pop
-        end
+    if block_given?
+      begin
+        yield stack_item.time
+      ensure
+        @_stack.pop
       end
     end
+  end
 
-    def unmock! #:nodoc:
-      @baseline = nil
-      @_stack = []
-    end
+  def unmock! #:nodoc:
+    @baseline = nil
+    @_stack = []
+  end
 
-    def return_to_baseline
-      if @baseline
-        @_stack = [@_stack.shift]
-      else
-        unmock!
-      end
+  def return_to_baseline
+    if @baseline
+      @_stack = [@_stack.shift]
+    else
+      unmock!
     end
+  end
 end

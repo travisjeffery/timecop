@@ -3,7 +3,6 @@ require 'test_helper'
 require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
 class TestTimeStackItem < Test::Unit::TestCase
-  
   def teardown
     Timecop.active_support = nil
     Timecop.return
@@ -13,6 +12,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     t = Time.now
     y, m, d, h, min, s = t.year, t.month, t.day, t.hour, t.min, t.sec
     stack_item = Timecop::TimeStackItem.new(:freeze, t)
+
     assert_equal y,   stack_item.year
     assert_equal m,   stack_item.month
     assert_equal d,   stack_item.day
@@ -25,6 +25,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     t = Time.new(2012, 7, 28, 20, 0)
     y, m, d, h, min, s = t.year, t.month, t.day, t.hour, t.min, t.sec
     stack_item = Timecop::TimeStackItem.new(:freeze, t)
+
     assert_equal y,   stack_item.year
     assert_equal m,   stack_item.month
     assert_equal d,   stack_item.day
@@ -37,6 +38,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     t = DateTime.now
     y, m, d, h, min, s = t.year, t.month, t.day, t.hour, t.min, t.sec
     stack_item = Timecop::TimeStackItem.new(:freeze, t)
+
     assert_equal y,   stack_item.year
     assert_equal m,   stack_item.month
     assert_equal d,   stack_item.day
@@ -49,6 +51,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     each_timezone do
       t = DateTime.parse("2009-10-11 00:38:00 +0200")
       stack_item = Timecop::TimeStackItem.new(:freeze, t)
+
       assert_date_times_equal(t, stack_item.datetime)
     end
   end
@@ -57,6 +60,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     date = Date.today
     y, m, d, h, min, s = date.year, date.month, date.day, 0, 0, 0
     stack_item = Timecop::TimeStackItem.new(:freeze, date)
+
     assert_equal y,   stack_item.year
     assert_equal m,   stack_item.month
     assert_equal d,   stack_item.day
@@ -72,6 +76,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     t = Time.now
     y, m, d, h, min, s = t.year, t.month, t.day, t.hour, t.min, t.sec
     stack_item = Timecop::TimeStackItem.new(:freeze, 0)
+
     assert_equal y,   stack_item.year
     assert_equal m,   stack_item.month
     assert_equal d,   stack_item.day
@@ -83,6 +88,7 @@ class TestTimeStackItem < Test::Unit::TestCase
   def test_new_with_individual_arguments
     y, m, d, h, min, s = 2008, 10, 10, 10, 10, 10
     stack_item = Timecop::TimeStackItem.new(:freeze, y, m, d, h, min, s)
+
     assert_equal y,   stack_item.year
     assert_equal m,   stack_item.month
     assert_equal d,   stack_item.day
@@ -104,13 +110,13 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal Rational(0, 1),   a_time_stack_item.send(:utc_offset_to_rational, 0)
     assert_equal Rational(1, 24),  a_time_stack_item.send(:utc_offset_to_rational, 3600)
   end
-  
-  # Ensure DST adjustment is calculated properly for DateTime's
+
   def test_compute_dst_adjustment_for_dst_to_dst
     Timecop.freeze(DateTime.parse("2009-10-1 00:38:00 -0400"))
     t = DateTime.parse("2009-10-11 00:00:00 -0400")
     tsi = Timecop::TimeStackItem.new(:freeze, t)
     return if !(Time.now.dst? && tsi.time.dst?)
+
     assert_equal 0, tsi.send(:dst_adjustment)
   end
   
@@ -119,6 +125,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     t = DateTime.parse("2009-12-11 00:00:00 -0400")
     tsi = Timecop::TimeStackItem.new(:freeze, t)
     return if Time.now.dst? || tsi.time.dst?
+
     assert_equal 0, tsi.send(:dst_adjustment)    
   end
   
@@ -127,6 +134,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     t = DateTime.parse("2009-12-11 00:00:00 -0400")
     tsi = Timecop::TimeStackItem.new(:freeze, t)
     return if !Time.now.dst? || tsi.time.dst?
+
     assert_equal 60 * 60, tsi.send(:dst_adjustment)
   end
   
@@ -135,6 +143,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     t = DateTime.parse("2009-10-11 00:00:00 -0400")
     tsi = Timecop::TimeStackItem.new(:freeze, t)
     return if Time.now.dst? || !tsi.time.dst?
+
     assert_equal -1 * 60 * 60, tsi.send(:dst_adjustment)
   end
   
@@ -143,6 +152,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     Timecop.freeze(DateTime.parse("2009-12-1 00:38:00 -0500"))
     t = DateTime.parse("2009-10-11 00:00:00 -0400")
     tsi = Timecop::TimeStackItem.new(:freeze, t)
+
     assert_date_times_equal t, tsi.datetime
   end
   
@@ -151,17 +161,17 @@ class TestTimeStackItem < Test::Unit::TestCase
     t = DateTime.parse("2009-11-30 23:38:00 -0500")
     tsi = Timecop::TimeStackItem.new(:freeze, t)
     return if !tsi.time.dst?
+
     assert_date_times_equal t, tsi.datetime
     assert_equal Date.new(2009, 12, 1), tsi.date
   end
-  
-  # Ensure @travel_offset is set properly
+
   def test_set_travel_offset_for_travel
-    # Timecop.freeze(2009, 10, 1, 0, 0, 0)
     t_now = Time.now
     t = Time.local(2009, 10, 1, 0, 0, 30)
     expected_offset = t - t_now
     tsi = Timecop::TimeStackItem.new(:travel, t)
+
     assert_times_effectively_equal expected_offset, tsi.send(:travel_offset), 1, "Offset not calculated correctly"
   end
   
@@ -169,6 +179,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     Timecop.freeze(2009, 10, 1, 0, 0, 0)
     t = Time.local(2009, 10, 1, 0, 0, 30)
     tsi = Timecop::TimeStackItem.new(:freeze, t)
+
     assert_equal nil, tsi.send(:travel_offset)
   end
 
@@ -177,6 +188,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     t = Time.local(2009, 10, 1, 0, 0, 30)
     expected_offset = t - t_now
     tsi = Timecop::TimeStackItem.new(:scale, 4, t)
+
     assert_times_effectively_equal expected_offset, tsi.send(:travel_offset), 1, "Offset not calculated correctly"
     assert_equal tsi.send(:scaling_factor), 4, "Scaling factor not set"
   end
