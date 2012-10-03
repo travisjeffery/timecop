@@ -103,7 +103,13 @@ class Timecop
     def top_stack_item #:nodoc:
       instance.instance_variable_get(:@_stack).last
     end
+
+    # execute the block in realtime
+    def in_realtime(&block)
+      instance.send(:in_realtime, &block)
+    end
   end
+
 
   private
 
@@ -129,6 +135,18 @@ class Timecop
       end
     end
   end
+
+  def in_realtime(&block)
+    current_stack = @_stack
+    current_baseline = @baseline
+    unmock!
+    yield
+  ensure
+    @_stack = current_stack
+    @baseline = current_baseline
+  end
+
+
 
   def unmock! #:nodoc:
     @baseline = nil
