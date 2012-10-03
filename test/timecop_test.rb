@@ -362,6 +362,38 @@ class TestTimecop < Test::Unit::TestCase
 
   end
 
+  class TestError < RuntimeError; end;
+
+  def test_return_resets_to_current_time_when_exceptio_occurrs
+    t_future = Time.local(2030, 10, 10, 10, 10, 10)
+    t_past = Time.local(2010, 10, 10, 10, 10, 10)
+    
+    Timecop.return
+    now = Time.now
+
+    Timecop.travel t_future
+    assert (Time.now - 30) > now
+    assert_raises TestError do
+      Timecop.in_realtime do
+        assert (Time.now - 30) < now
+        assert Time.now >= now
+        raise TestError
+      end
+    end
+
+    Timecop.travel t_past
+    assert (Time.now + 30) < now
+    assert_raises TestError do
+      Timecop.in_realtime do
+        assert (Time.now - 30) < now
+        assert Time.now >= now
+        raise TestError
+      end
+    end
+
+    assert (Time.now + 30) < now
+  end
+
   def test_travel_time_with_block_returns_the_value_of_the_block
     t_future = Time.local(2030, 10, 10, 10, 10, 10)
     expected = :foo
