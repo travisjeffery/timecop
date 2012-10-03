@@ -89,10 +89,16 @@ class Timecop
       instance.send(:baseline=, baseline)
     end
 
-    # Reverts back to system's Time.now, Date.today and DateTime.now (if it exists).
-    def return
-      instance.send(:unmock!)
-      nil
+    # Reverts back to system's Time.now, Date.today and DateTime.now (if it exists) permamently when
+    # no block argument is given, or temporarily reverts back to the system's time temporarily for
+    # the given block.
+    def return(&block)
+      if block_given?
+        instance.send(:return, &block)
+      else
+        instance.send(:unmock!)
+        nil
+      end
     end
 
     def return_to_baseline
@@ -128,6 +134,15 @@ class Timecop
         @_stack.pop
       end
     end
+  end
+
+  def return(&block)
+    current_stack = @_stack
+    current_baseline = @baseline
+    unmock!
+    yield
+    @_stack = current_stack
+    @baseline = current_baseline
   end
 
   def unmock! #:nodoc:

@@ -337,6 +337,19 @@ class TestTimecop < Test::Unit::TestCase
     assert_nil Timecop.travel(t_future)
   end
 
+  def test_return_temporarily_returns_to_current_time_in_given_block
+    time_after_travel = Time.local(1990, 7, 16)
+    now = Time.now
+
+    Timecop.travel(time_after_travel)
+
+    assert_times_effectively_equal(time_after_travel, Time.now)
+    Timecop.return do
+      assert_times_effectively_equal(now, Time.now)
+    end
+    assert_times_effectively_equal(time_after_travel, Time.now)
+  end
+
   def test_travel_time_with_block_returns_the_value_of_the_block
     t_future = Time.local(2030, 10, 10, 10, 10, 10)
     expected = :foo
