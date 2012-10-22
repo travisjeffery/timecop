@@ -42,6 +42,22 @@ Timecop.freeze(Date.today + 30) do
 end
 ```
 
+Freeze the time for a collection of tests
+
+```ruby
+describe "time sensitive specs"
+  before do
+    Timecop.freeze
+  end
+  after do
+    Timecop.return
+  end
+
+  it "should foo"{...}
+  it "should bar"{...}
+end
+```
+
 Set the time for the test environment of a rails app -- this is particularly
 helpful if your whole application is time-sensitive.  It allows you to build
 your test data at a single point in time, and to move in/out of that time as
