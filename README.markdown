@@ -42,6 +42,22 @@ Timecop.freeze(Date.today + 30) do
 end
 ```
 
+You can mock the time for a set of tests easily via setup/teardown methods
+
+```ruby
+describe "some set of tests to mock" do
+  before do
+    Timecop.freeze(Time.local(1990))
+  end
+  
+  after do
+    Timecop.return
+  end
+
+  it "should do blah blah blah" {}
+end
+```
+
 Set the time for the test environment of a rails app -- this is particularly
 helpful if your whole application is time-sensitive.  It allows you to build
 your test data at a single point in time, and to move in/out of that time as
