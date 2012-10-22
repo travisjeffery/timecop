@@ -258,6 +258,11 @@ class TestTimecop < Test::Unit::TestCase
     end
   end
 
+  def test_scaling_returns_now_if_no_block_given
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    assert_times_effectively_equal t, Timecop.scale(4, t)
+  end
+
   def test_freeze_with_utc_time
     each_timezone do
       t = Time.utc(2008, 10, 10, 10, 10, 10)
@@ -332,9 +337,9 @@ class TestTimecop < Test::Unit::TestCase
     assert_nil Time.send(:mock_time)
   end
 
-  def test_travel_time_returns_nil
+  def test_travel_time_returns_now_if_no_block_given
     t_future = Time.local(2030, 10, 10, 10, 10, 10)
-    assert_nil Timecop.travel(t_future)
+    assert_times_effectively_equal t_future, Timecop.travel(t_future)
   end
 
   def test_return_temporarily_returns_to_current_time_in_given_block
@@ -358,9 +363,9 @@ class TestTimecop < Test::Unit::TestCase
     assert_equal expected, actual
   end
 
-  def test_freeze_time_returns_nil
+  def test_freeze_time_returns_now_if_no_block_given
     t_future = Time.local(2030, 10, 10, 10, 10, 10)
-    assert_nil Timecop.freeze(t_future)
+    assert_times_effectively_equal t_future, Timecop.freeze(t_future)
   end
 
   def test_freeze_time_with_block_returns_the_value_of_the_block

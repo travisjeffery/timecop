@@ -47,11 +47,11 @@ class Timecop
     #   which will lead to files being generated with the timestamp set by the Timecop.freeze call
     #   in your dev environment
     #
-    # Returns the value of the block or nil.
+    # Returns the value of the block if one is given, or the mocked time.
     def freeze(*args, &block)
       val = instance.send(:travel, :freeze, *args, &block)
 
-      block_given? ? val : nil
+      block_given? ? val : Time.now
     end
 
     # Allows you to run a block of code and "fake" a time throughout the execution of that block.
@@ -60,11 +60,11 @@ class Timecop
     # * Note: Timecop.travel will not freeze time (as opposed to Timecop.freeze).  This is a particularly
     #   good candidate for use in environment files in rails projects.
     #
-    # Returns the value of the block or nil.
+    # Returns the value of the block if one is given, or the mocked time.
     def travel(*args, &block)
       val = instance.send(:travel, :travel, *args, &block)
 
-      block_given? ? val : nil
+      block_given? ? val : Time.now
     end
 
     # Allows you to run a block of code and "scale" a time throughout the execution of that block.
@@ -74,11 +74,11 @@ class Timecop
     #   end
     # See Timecop#freeze for exact usage of the other arguments
     #
-    # Returns the value of the block or nil.
+    # Returns the value of the block if one is given, or the mocked time.
     def scale(*args, &block)
       val = instance.send(:travel, :scale, *args, &block)
 
-      block_given? ? val : nil
+      block_given? ? val : Time.now
     end
 
     def baseline
