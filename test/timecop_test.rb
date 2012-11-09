@@ -248,7 +248,7 @@ class TestTimecop < Test::Unit::TestCase
     end
   end
 
-  def test_lensing_keeps_time_moving_at_an_accelerated_rate
+  def test_scaling_keeps_time_moving_at_an_accelerated_rate
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.scale(4, t) do
       start = Time.now

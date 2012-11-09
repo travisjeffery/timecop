@@ -183,7 +183,7 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal nil, tsi.send(:travel_offset)
   end
 
-  def test_set_scaling_factor_for_lens
+  def test_set_scaling_factor_for_scale
     t_now = Time.now
     t = Time.local(2009, 10, 1, 0, 0, 30)
     expected_offset = t - t_now
