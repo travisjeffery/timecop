@@ -35,10 +35,10 @@ Gem::Specification.new do |s|
      "test/timecop_without_date_test.rb",
      "test/timecop_without_date_but_with_time_test.rb"
   ]
-  s.homepage = %q{http://github.com/jtrupiano/timecop}
+  s.homepage = %q{https://github.com/travisjeffery/timecop}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubyforge_project = %q{johntrupiano}
+  s.rubyforge_project = %q{timecop}
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{A gem providing "time travel" and "time freezing" capabilities, making it dead simple to test time-dependent code.  It provides a unified method to mock Time.now, Date.today, and DateTime.now in a single call.}
   s.test_files = [
