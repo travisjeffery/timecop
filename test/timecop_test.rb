@@ -429,4 +429,10 @@ class TestTimecop < Test::Unit::TestCase
     assert_equal date, Time.now
     assert_equal date, Time.new
   end
+
+  def test_not_callable_send_travel
+    assert_raise NoMethodError do
+      Timecop.send_travel(:travel, Time.now - 100)
+    end
+  end
 end

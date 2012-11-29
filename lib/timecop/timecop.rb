@@ -49,9 +49,7 @@ class Timecop
     #
     # Returns the value of the block if one is given, or the mocked time.
     def freeze(*args, &block)
-      val = instance.send(:travel, :freeze, *args, &block)
-
-      block_given? ? val : Time.now
+      send_travel(:freeze, *args, &block)
     end
 
     # Allows you to run a block of code and "fake" a time throughout the execution of that block.
@@ -62,9 +60,7 @@ class Timecop
     #
     # Returns the value of the block if one is given, or the mocked time.
     def travel(*args, &block)
-      val = instance.send(:travel, :travel, *args, &block)
-
-      block_given? ? val : Time.now
+      send_travel(:travel, *args, &block)
     end
 
     # Allows you to run a block of code and "scale" a time throughout the execution of that block.
@@ -76,9 +72,7 @@ class Timecop
     #
     # Returns the value of the block if one is given, or the mocked time.
     def scale(*args, &block)
-      val = instance.send(:travel, :scale, *args, &block)
-
-      block_given? ? val : Time.now
+      send_travel(:scale, *args, &block)
     end
 
     def baseline
@@ -108,6 +102,12 @@ class Timecop
 
     def top_stack_item #:nodoc:
       instance.instance_variable_get(:@_stack).last
+    end
+
+    private
+    def send_travel(mock_type, *args, &block)
+      val = instance.send(:travel, mock_type, *args, &block)
+      block_given? ? val : Time.now  
     end
   end
 
