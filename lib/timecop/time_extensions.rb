@@ -67,4 +67,15 @@ if Object.const_defined?(:DateTime) && DateTime.respond_to?(:now)
       alias_method :now, :now_with_mock_time
     end
   end
+
+  # for ruby1.8
+  unless Time::public_instance_methods.include? :to_datetime
+    class DateTime
+      class << self
+        def now_without_mock_time
+          Time.now_without_mock_time.send(:to_datetime)
+        end
+      end
+    end
+  end
 end
