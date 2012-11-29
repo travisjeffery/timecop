@@ -1,7 +1,11 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'test/unit'
-require 'mocha'
+begin
+  require 'mocha/setup'
+rescue LoadError
+  require 'mocha'
+end
 
 class Test::Unit::TestCase
 
