@@ -1,3 +1,8 @@
+=== 0.5.4 / 2012-11-29
+
+* Maintenance
+  * Fix usage with Ruby 1.8
+
 === 0.5.2 / 2012-09-20
 
 * Feature
