@@ -1,5 +1,5 @@
 
-require 'test_helper'
+require File.join(File.dirname(__FILE__), "test_helper")
 require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
 class TestTimecopWithoutDate < Test::Unit::TestCase

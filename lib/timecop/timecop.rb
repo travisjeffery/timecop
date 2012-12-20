@@ -1,6 +1,6 @@
 require 'singleton'
-require 'timecop/time_extensions'
-require 'timecop/time_stack_item'
+require File.join(File.dirname(__FILE__), "time_extensions")
+require File.join(File.dirname(__FILE__), "time_stack_item")
 
 # Timecop
 # * Wrapper class for manipulating the extensions to the Time, Date, and DateTime objects
