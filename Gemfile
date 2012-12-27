@@ -8,9 +8,9 @@ group :development do
   gem 'rake'
   gem 'jeweler'
   gem 'active_support', :require => "active_support/all"
-  gem 'pry'
 end
 
 group :development, :test do
+  gem 'pry'
   gem 'mocha', :require => false
 end
