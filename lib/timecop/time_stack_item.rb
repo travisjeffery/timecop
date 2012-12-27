@@ -4,7 +4,7 @@ class Timecop
   # movements on a simple stack.
   class TimeStackItem #:nodoc:
     attr_reader :mock_type
-  
+
     def initialize(mock_type, *args)
       raise "Unknown mock_type #{mock_type}" unless [:freeze, :travel, :scale].include?(mock_type)
       @scaling_factor = args.shift if mock_type == :scale
@@ -14,35 +14,35 @@ class Timecop
       @travel_offset  = compute_travel_offset
       @dst_adjustment = compute_dst_adjustment(@time)
     end
-    
+
     def year
       time.year
     end
-    
+
     def month
       time.month
     end
-    
+
     def day
       time.day
     end
-    
+
     def hour
       time.hour
     end
-    
+
     def min
       time.min
     end
-    
+
     def sec
       time.sec
     end
-    
+
     def utc_offset
       time.utc_offset
     end
-    
+
     def travel_offset
       @travel_offset
     end
@@ -50,12 +50,12 @@ class Timecop
     def scaling_factor
       @scaling_factor
     end
-    
+
     def time(time_klass = Time) #:nodoc:
       if travel_offset.nil?
-        time_klass.at(@time.to_f)
+        time_klass.at(@time)
       elsif scaling_factor.nil?
-        time_klass.at((Time.now_without_mock_time + travel_offset).to_f)
+        time_klass.at(Time.now_without_mock_time + travel_offset)
       else
         time_klass.at(scaled_time)
       end
@@ -64,11 +64,11 @@ class Timecop
     def scaled_time
       (@time + (Time.now_without_mock_time - @time_was) * scaling_factor).to_f
     end
-    
+
     def date(date_klass = Date)
       date_klass.jd(time.__send__(:to_date).jd)
     end
-    
+
     def datetime(datetime_klass = DateTime)
       our_offset = utc_offset + dst_adjustment
 
@@ -80,24 +80,24 @@ class Timecop
         datetime_klass.new(year, month, day, hour, min, sec, utc_offset_to_rational(our_offset))
       end
     end
-    
+
     def dst_adjustment
       @dst_adjustment
     end
-    
+
     private
       def rational_to_utc_offset(rational)
         ((24.0 / rational.denominator) * rational.numerator) * (60 * 60)
       end
-      
+
       def utc_offset_to_rational(utc_offset)
         Rational(utc_offset, 24 * 60 * 60)
       end
-      
+
       def parse_time(*args)
         time_klass = Time.respond_to?(:zone) && Time.zone ? Time.zone : Time
         arg = args.shift
-        if arg.is_a?(Time) 
+        if arg.is_a?(Time)
           if Timecop.active_support != false && arg.respond_to?(:in_time_zone)
             arg.in_time_zone
           else
@@ -128,13 +128,13 @@ class Timecop
           end
         end
       end
-      
+
       def compute_dst_adjustment(time)
         return 0 if !(time.dst? ^ Time.now.dst?)
         return -1 * 60 * 60 if time.dst?
         return 60 * 60
       end
-      
+
       def compute_travel_offset
         return nil if mock_type == :freeze
         time - Time.now_without_mock_time
