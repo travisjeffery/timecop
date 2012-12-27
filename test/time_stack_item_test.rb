@@ -183,6 +183,15 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal nil, tsi.send(:travel_offset)
   end
 
+  def test_timezones
+    require 'active_support/all'
+    Time.zone = "Europe/Zurich"
+    time = Time.zone.parse("2012-12-27T12:12:12+08:00")
+    Timecop.freeze(time) do |frozen_time|
+      assert_equal time, frozen_time
+    end
+  end
+
   def test_set_scaling_factor_for_scale
     t_now = Time.now
     t = Time.local(2009, 10, 1, 0, 0, 30)

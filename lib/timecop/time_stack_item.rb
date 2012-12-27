@@ -1,91 +1,98 @@
-
 class Timecop
-  # A data class for carrying around "time movement" objects.  Makes it easy to keep track of the time
-  # movements on a simple stack.
-  class TimeStackItem #:nodoc:
-    attr_reader :mock_type
+    # A data class for carrying around "time movement" objects.  Makes it easy to keep track of the time
+    # movements on a simple stack.
+    class TimeStackItem #:nodoc:
+      attr_reader :mock_type
 
-    def initialize(mock_type, *args)
-      raise "Unknown mock_type #{mock_type}" unless [:freeze, :travel, :scale].include?(mock_type)
-      @scaling_factor = args.shift if mock_type == :scale
-      @mock_type      = mock_type
-      @time           = parse_time(*args)
-      @time_was       = Time.now_without_mock_time
-      @travel_offset  = compute_travel_offset
-      @dst_adjustment = compute_dst_adjustment(@time)
-    end
-
-    def year
-      time.year
-    end
-
-    def month
-      time.month
-    end
-
-    def day
-      time.day
-    end
-
-    def hour
-      time.hour
-    end
-
-    def min
-      time.min
-    end
-
-    def sec
-      time.sec
-    end
-
-    def utc_offset
-      time.utc_offset
-    end
-
-    def travel_offset
-      @travel_offset
-    end
-
-    def scaling_factor
-      @scaling_factor
-    end
-
-    def time(time_klass = Time) #:nodoc:
-      if travel_offset.nil?
-        time_klass.at(@time)
-      elsif scaling_factor.nil?
-        time_klass.at(Time.now_without_mock_time + travel_offset)
-      else
-        time_klass.at(scaled_time)
+      def initialize(mock_type, *args)
+        raise "Unknown mock_type #{mock_type}" unless [:freeze, :travel, :scale].include?(mock_type)
+        @scaling_factor = args.shift if mock_type == :scale
+        @mock_type      = mock_type
+        @time           = parse_time(*args)
+        @time_was       = Time.now_without_mock_time
+        @travel_offset  = compute_travel_offset
+        @dst_adjustment = compute_dst_adjustment(@time)
       end
-    end
 
-    def scaled_time
-      (@time + (Time.now_without_mock_time - @time_was) * scaling_factor).to_f
-    end
+      def year
+        time.year
+      end
 
-    def date(date_klass = Date)
-      date_klass.jd(time.__send__(:to_date).jd)
-    end
+      def month
+        time.month
+      end
 
-    def datetime(datetime_klass = DateTime)
-      our_offset = utc_offset + dst_adjustment
+      def day
+        time.day
+      end
 
-      if Float.method_defined?(:to_r)
-        fractions_of_a_second = time.to_f % 1
-        datetime_klass.new(year, month, day, hour, min, sec + fractions_of_a_second, utc_offset_to_rational(our_offset))
-      else
+      def hour
+        time.hour
+      end
+
+      def min
+        time.min
+      end
+
+      def sec
+        time.sec
+      end
+
+      def utc_offset
+        time.utc_offset
+      end
+
+      def travel_offset
+        @travel_offset
+      end
+
+      def scaling_factor
+        @scaling_factor
+      end
+
+      def time(time_klass = Time) #:nodoc:
+        actual_time = time_klass.at(@time)
+        calculated_time = time_klass.at(@time.to_f)
+
+        if travel_offset.nil?
+          if times_are_equal_within_epsilon(actual_time, calculated_time, 1)
+            actual_time
+          else
+            calculated_time
+          end
+        elsif scaling_factor.nil?
+          time_klass.at(Time.now_without_mock_time + travel_offset)
+        else
+          time_klass.at(scaled_time)
+        end
+      end
+
+      def scaled_time
+        (@time + (Time.now_without_mock_time - @time_was) * scaling_factor).to_f
+      end
+
+      def date(date_klass = Date)
+        date_klass.jd(time.__send__(:to_date).jd)
+      end
+
+      def datetime(datetime_klass = DateTime)
         our_offset = utc_offset + dst_adjustment
-        datetime_klass.new(year, month, day, hour, min, sec, utc_offset_to_rational(our_offset))
+
+        if Float.method_defined?(:to_r)
+          fractions_of_a_second = time.to_f % 1
+          datetime_klass.new(year, month, day, hour, min, sec + fractions_of_a_second, utc_offset_to_rational(our_offset))
+        else
+          our_offset = utc_offset + dst_adjustment
+          datetime_klass.new(year, month, day, hour, min, sec, utc_offset_to_rational(our_offset))
+        end
       end
-    end
 
-    def dst_adjustment
-      @dst_adjustment
-    end
+      def dst_adjustment
+        @dst_adjustment
+      end
 
-    private
+      private
+
       def rational_to_utc_offset(rational)
         ((24.0 / rational.denominator) * rational.numerator) * (60 * 60)
       end
@@ -139,5 +146,9 @@ class Timecop
         return nil if mock_type == :freeze
         time - Time.now_without_mock_time
       end
+
+      def times_are_equal_within_epsilon t1, t2, epsilon_in_seconds
+        (t1 - t2).abs < epsilon_in_seconds
+      end
+    end
   end
-end
