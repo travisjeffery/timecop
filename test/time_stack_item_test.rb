@@ -242,6 +242,6 @@ class TestTimeStackItem < Test::Unit::TestCase
     time = Time.now
     Timecop.freeze time
     assert_equal time, Time.now
-    assert_equal time.nsec, Time.now.nsec
+    assert_equal time.nsec, Time.now.nsec if (Time.now.respond_to?(:nsec))
   end
 end

@@ -51,15 +51,14 @@ class Timecop
       end
 
       def time(time_klass = Time) #:nodoc:
-        actual_time = time_klass.at(@time)
-        calculated_time = time_klass.at(@time.to_f)
+        begin
+          time = time_klass.at(@time)
+        rescue
+          time = time_klass.at(@time.to_f)
+        end
 
         if travel_offset.nil?
-          if times_are_equal_within_epsilon(actual_time, calculated_time, 1)
-            actual_time
-          else
-            calculated_time
-          end
+          time
         elsif scaling_factor.nil?
           time_klass.at(Time.now_without_mock_time + travel_offset)
         else
