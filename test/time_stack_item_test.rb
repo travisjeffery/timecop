@@ -244,4 +244,14 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal time, Time.now
     assert_equal time.nsec, Time.now.nsec if (Time.now.respond_to?(:nsec))
   end
+
+  def test_time_with_different_timezone
+    require 'active_support/all'
+    
+    Time.zone = "Tokyo"
+    t = Time.now
+    Timecop.freeze(t) do
+      assert_times_effectively_equal t, Time.now
+    end
+  end
 end

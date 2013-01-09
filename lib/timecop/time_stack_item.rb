@@ -52,7 +52,9 @@ class Timecop
 
       def time(time_klass = Time) #:nodoc:
         begin
-          time = time_klass.at(@time)
+          actual_time = time_klass.at(@time)
+          calculated_time = time_klass.at(@time.to_f)
+          time = times_are_equal_within_epsilon(actual_time, calculated_time, 1) ? actual_time : calculated_time
         rescue
           time = time_klass.at(@time.to_f)
         end
