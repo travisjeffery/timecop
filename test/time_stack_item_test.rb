@@ -255,12 +255,34 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal time.nsec, Time.now.nsec if (Time.now.respond_to?(:nsec))
   end
 
-  def test_time_with_different_timezone
+  def test_time_with_different_timezone_keeps_nsec
     Timecop.active_support = true
     Time.zone = "Tokyo"
     t = Time.now
     Timecop.freeze(t) do
-      assert_times_effectively_equal t, Time.now
+      assert_equal t, Time.now
+      assert_equal t.nsec, Time.now.nsec if (Time.now.respond_to?(:nsec))
+    end
+  end
+
+  def test_time_now_always_returns_local_time
+    Timecop.active_support = true
+
+    Time.zone = "Tokyo"
+    t = Time.utc(2000, 1, 1)
+    Timecop.freeze(t) do
+      assert_equal t.getlocal.zone, Time.now.zone
+    end
+  end
+
+  def test_time_zone_now_returns_time_in_that_zone
+    Timecop.active_support = true
+
+    Time.zone = "Hawaii"
+    t = Time.utc(2000, 1, 1)
+    Timecop.freeze(t) do
+      assert_equal t, Time.zone.now
+      assert_equal 'HST', Time.zone.now.zone
     end
   end
 end

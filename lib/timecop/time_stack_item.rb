@@ -51,12 +51,10 @@ class Timecop
       end
 
       def time(time_klass = Time) #:nodoc:
-        begin
-          actual_time = time_klass.at(@time)
-          calculated_time = time_klass.at(@time.to_f)
-          time = times_are_equal_within_epsilon(actual_time, calculated_time, 1) ? actual_time : calculated_time
-        rescue
-          time = time_klass.at(@time.to_f)
+        if Timecop.active_support != false && @time.respond_to?(:in_time_zone)
+          time = time_klass.at(@time.utc.to_r)
+        else
+          time = time_klass.at(@time)
         end
 
         if travel_offset.nil?
