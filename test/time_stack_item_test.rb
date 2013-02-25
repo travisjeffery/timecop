@@ -210,13 +210,6 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal tsi.send(:scaling_factor), 4, "Scaling factor not set"
   end
 
-  def test_parse_string_date_with_active_support
-    Timecop.active_support = true
-    date = '2012-01-02'
-    Time.expects(:parse).with(date).returns(Time.local(2012, 01, 02))
-    Timecop.freeze(date)
-  end
-
   def test_parse_only_string_with_active_support
     Time.expects(:parse).never
     Timecop.freeze(2011, 01, 02, hour=0, minute=0, second=0)
@@ -227,19 +220,6 @@ class TestTimeStackItem < Test::Unit::TestCase
     Timecop.active_support = false
     Time.expects(:parse).never
     Timecop.freeze(date)
-  end
-
-  def test_uses_active_supports_in_time_zone
-    Timecop.active_support = true
-    time = Time.now
-    Time.any_instance.expects(:in_time_zone).returns(time)
-    Timecop::TimeStackItem.new(:freeze, time)
-  end
-
-  def test_configured_off_active_support_in_time_zone_xxx
-    Timecop.active_support = false
-    Time.any_instance.expects(:in_time_zone).never
-    Timecop::TimeStackItem.new(:freeze, Time.now)
   end
 
   def test_parse_date
@@ -267,7 +247,6 @@ class TestTimeStackItem < Test::Unit::TestCase
 
   def test_time_now_always_returns_local_time
     Timecop.active_support = true
-
     Time.zone = "Tokyo"
     t = Time.utc(2000, 1, 1)
     Timecop.freeze(t) do
@@ -277,12 +256,26 @@ class TestTimeStackItem < Test::Unit::TestCase
 
   def test_time_zone_now_returns_time_in_that_zone
     Timecop.active_support = true
-
     Time.zone = "Hawaii"
     t = Time.utc(2000, 1, 1)
     Timecop.freeze(t) do
       assert_equal t, Time.zone.now
       assert_equal 'HST', Time.zone.now.zone
+    end
+  end
+
+  def test_freezing_a_time_with_zone_returns_proper_zones
+    Timecop.active_support = true
+    Time.zone = "Hawaii"
+    t = ActiveSupport::TimeWithZone.new(Time.utc(2000, 1, 1), ActiveSupport::TimeZone['Tokyo'])
+    Timecop.freeze(t) do
+      local_now = Time.now
+      assert_equal t, local_now
+      assert_equal t.getlocal.zone, local_now.zone
+
+      zoned_now = Time.zone.now
+      assert_equal t, zoned_now
+      assert_equal 'HST', zoned_now.zone
     end
   end
 end
