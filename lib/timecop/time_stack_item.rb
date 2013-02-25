@@ -51,12 +51,10 @@ class Timecop
       end
 
       def time(time_klass = Time) #:nodoc:
-        begin
-          actual_time = time_klass.at(@time)
-          calculated_time = time_klass.at(@time.to_f)
-          time = times_are_equal_within_epsilon(actual_time, calculated_time, 1) ? actual_time : calculated_time
-        rescue
-          time = time_klass.at(@time.to_f)
+        if Timecop.active_support != false && @time.respond_to?(:in_time_zone)
+          time = time_klass.at(@time.utc.to_r)
+        else
+          time = time_klass.at(@time)
         end
 
         if travel_offset.nil?
@@ -106,11 +104,7 @@ class Timecop
         time_klass = Time.respond_to?(:zone) && Time.zone ? Time.zone : Time
         arg = args.shift
         if arg.is_a?(Time)
-          if Timecop.active_support != false && arg.respond_to?(:in_time_zone)
-            arg.in_time_zone
-          else
-            arg.getlocal
-          end
+          arg
         elsif Object.const_defined?(:DateTime) && arg.is_a?(DateTime)
           expected_time = time_klass.local(arg.year, arg.month, arg.day, arg.hour, arg.min, arg.sec)
           expected_time += expected_time.utc_offset - rational_to_utc_offset(arg.offset)
