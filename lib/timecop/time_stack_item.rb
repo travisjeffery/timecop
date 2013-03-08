@@ -50,21 +50,21 @@ class Timecop
         @scaling_factor
       end
 
-      def time(time_klass = Time) #:nodoc:
+      def time(klass = time_klass) #:nodoc:
         begin
-          actual_time = time_klass.at(@time)
-          calculated_time = time_klass.at(@time.to_f)
+          actual_time = klass.at(@time)
+          calculated_time = klass.at(@time.to_f)
           time = times_are_equal_within_epsilon(actual_time, calculated_time, 1) ? actual_time : calculated_time
         rescue
-          time = time_klass.at(@time.to_f)
+          time = klass.at(@time.to_f)
         end
 
         if travel_offset.nil?
           time
         elsif scaling_factor.nil?
-          time_klass.at(Time.now_without_mock_time + travel_offset)
+          klass.at(Time.now_without_mock_time + travel_offset)
         else
-          time_klass.at(scaled_time)
+          klass.at(scaled_time)
         end
       end
 
@@ -103,7 +103,6 @@ class Timecop
       end
 
       def parse_time(*args)
-        time_klass = Time.respond_to?(:zone) && Time.zone ? Time.zone : Time
         arg = args.shift
         if arg.is_a?(Time)
           if Timecop.active_support != false && arg.respond_to?(:in_time_zone)
@@ -150,6 +149,10 @@ class Timecop
 
       def times_are_equal_within_epsilon t1, t2, epsilon_in_seconds
         (t1 - t2).abs < epsilon_in_seconds
+      end
+
+      def time_klass
+        Time.respond_to?(:zone) ? Time.zone : Time
       end
     end
   end

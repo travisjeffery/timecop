@@ -107,7 +107,7 @@ class Timecop
     private
     def send_travel(mock_type, *args, &block)
       val = instance.send(:travel, mock_type, *args, &block)
-      block_given? ? val : Time.now  
+      block_given? ? val : Time.now
     end
   end
 
