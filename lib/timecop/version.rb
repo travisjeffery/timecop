@@ -1,3 +1,3 @@
 class Timecop
-  VERSION = "0.5.9.2"
+  VERSION = "0.6.0"
 end
