@@ -192,6 +192,16 @@ class TestTimeStackItem < Test::Unit::TestCase
     end
   end
 
+  def test_timezones_apply_dates
+    require 'active_support/all'
+    Time.zone = "Marshall Is."
+    time = Time.zone.local(2013,1,3)
+
+    Timecop.freeze(time) do
+      assert_equal time.to_date, Date.today
+    end
+  end
+
   def test_set_scaling_factor_for_scale
     t_now = Time.now
     t = Time.local(2009, 10, 1, 0, 0, 30)
@@ -247,7 +257,7 @@ class TestTimeStackItem < Test::Unit::TestCase
 
   def test_time_with_different_timezone
     require 'active_support/all'
-    
+
     Time.zone = "Tokyo"
     t = Time.now
     Timecop.freeze(t) do
