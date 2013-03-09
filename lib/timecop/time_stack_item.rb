@@ -152,7 +152,7 @@ class Timecop
       end
 
       def time_klass
-        Time.respond_to?(:zone) ? Time.zone : Time
+        Time.respond_to?(:zone) && Time.zone ? Time.zone : Time
       end
     end
   end
