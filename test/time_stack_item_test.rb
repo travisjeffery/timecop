@@ -248,6 +248,14 @@ class TestTimeStackItem < Test::Unit::TestCase
     end
   end
 
+  def test_time_zone_returns_nil
+    c = class << Time; self end
+    c.send(:define_method, :zone) { nil }
+    assert_nothing_raised do
+      Timecop.freeze
+    end
+  end
+
   def test_nsecs_are_set
     time = Time.now
     Timecop.freeze time
