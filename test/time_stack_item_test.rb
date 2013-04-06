@@ -156,6 +156,15 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_date_times_equal t, tsi.datetime
   end
 
+  # Ensure DateTimes handle changing DST properly when changing from DateTime to Time
+  def test_datetime_for_dst_to_time_for_non_dst
+    Timecop.freeze(DateTime.parse("2009-12-1 00:38:00 -0500"))
+    t = DateTime.parse("2009-10-11 00:00:00 -0400")
+    tsi = Timecop::TimeStackItem.new(:freeze, t)
+
+    assert_date_times_equal t.to_time, tsi.time
+  end
+
   def test_datetime_for_non_dst_to_dst
     Timecop.freeze(DateTime.parse("2009-10-11 00:00:00 -0400"))
     t = DateTime.parse("2009-11-30 23:38:00 -0500")
