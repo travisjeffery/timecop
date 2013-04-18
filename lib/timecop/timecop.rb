@@ -168,7 +168,7 @@ class Timecop
     end
   end
 
-  class SafeModeException < Exception
+  class SafeModeException < StandardError
     def initialize
       super "Safe mode is enabled, only calls passing a block are allowed."
     end
