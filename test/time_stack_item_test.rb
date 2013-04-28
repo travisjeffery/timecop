@@ -5,14 +5,9 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 require 'active_support/all'
 
 class TestTimeStackItem < Test::Unit::TestCase
-  def setup
-    Timecop.active_support = false
-    Time.zone = nil
-  end
-
   def teardown
-    Timecop.active_support = nil
     Timecop.return
+    Time.zone = nil
   end
 
   def test_new_with_time
@@ -164,8 +159,6 @@ class TestTimeStackItem < Test::Unit::TestCase
   end
 
   def test_timezones
-    Timecop.active_support = true
-
     Time.zone = "Europe/Zurich"
     time = Time.zone.parse("2012-12-27T12:12:12+08:00")
     Timecop.freeze(time) do |frozen_time|
@@ -174,12 +167,11 @@ class TestTimeStackItem < Test::Unit::TestCase
   end
 
   def test_timezones_apply_dates
-    require 'active_support/all'
-    Time.zone = "Marshall Is."
+    Time.zone = "Central Time (US & Canada)"
     time = Time.zone.local(2013,1,3)
 
     Timecop.freeze(time) do
-      assert_equal time.to_date, Date.today
+      assert_equal time.to_date, Time.now.to_date
     end
   end
 
@@ -193,36 +185,9 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal tsi.send(:scaling_factor), 4, "Scaling factor not set"
   end
 
-  def test_parse_string_date_with_active_support
-    Timecop.active_support = true
-    date = '2012-01-02'
-    Time.expects(:parse).with(date).returns(Time.local(2012, 01, 02))
-    Timecop.freeze(date)
-  end
-
   def test_parse_only_string_with_active_support
     Time.expects(:parse).never
     Timecop.freeze(2011, 01, 02, hour=0, minute=0, second=0)
-  end
-
-  def test_parse_with_active_support_off
-    date = '2012-01-02'
-    Timecop.active_support = false
-    Time.expects(:parse).never
-    Timecop.freeze(date)
-  end
-
-  def test_uses_active_supports_in_time_zone
-    Timecop.active_support = true
-    time = Time.now
-    Time.any_instance.expects(:in_time_zone).returns(time)
-    Timecop::TimeStackItem.new(:freeze, time)
-  end
-
-  def test_configured_off_active_support_in_time_zone_xxx
-    Timecop.active_support = false
-    Time.any_instance.expects(:in_time_zone).never
-    Timecop::TimeStackItem.new(:freeze, Time.now)
   end
 
   def test_parse_date
@@ -245,13 +210,47 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal time.nsec, Time.now.nsec if (Time.now.respond_to?(:nsec))
   end
 
-  def test_time_with_different_timezone
-    Timecop.active_support = true
+  def test_time_with_different_timezone_keeps_nsec
 
     Time.zone = "Tokyo"
     t = Time.now
     Timecop.freeze(t) do
-      assert_times_effectively_equal t, Time.now
+      assert_equal t, Time.now
+      assert_equal t.nsec, Time.now.nsec if (Time.now.respond_to?(:nsec))
+    end
+  end
+
+  def test_time_now_always_returns_local_time
+
+    Time.zone = "Tokyo"
+    t = Time.utc(2000, 1, 1)
+    Timecop.freeze(t) do
+      assert_equal t.getlocal.zone, Time.now.zone
+    end
+  end
+
+  def test_time_zone_now_returns_time_in_that_zone
+
+    Time.zone = "Hawaii"
+    t = Time.utc(2000, 1, 1)
+    Timecop.freeze(t) do
+      assert_equal t, Time.zone.now
+      assert_equal 'HST', Time.zone.now.zone
+    end
+  end
+
+  def test_freezing_a_time_with_zone_returns_proper_zones
+
+    Time.zone = "Hawaii"
+    t = ActiveSupport::TimeWithZone.new(Time.utc(2000, 1, 1), ActiveSupport::TimeZone['Tokyo'])
+    Timecop.freeze(t) do
+      local_now = Time.now
+      assert_equal t, local_now
+      assert_equal t.getlocal.zone, local_now.zone
+
+      zoned_now = Time.zone.now
+      assert_equal t, zoned_now
+      assert_equal 'HST', zoned_now.zone
     end
   end
 end

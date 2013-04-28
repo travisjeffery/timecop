@@ -14,8 +14,6 @@ class Timecop
   include Singleton
 
   class << self
-    attr_accessor :active_support
-
     # Allows you to run a block of code and "fake" a time throughout the execution of that block.
     # This is particularly useful for writing test methods where the passage of time is critical to the business
     # logic being tested.  For example:
