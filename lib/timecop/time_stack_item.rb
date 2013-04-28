@@ -11,7 +11,6 @@ class Timecop
         @time           = parse_time(*args)
         @time_was       = Time.now_without_mock_time
         @travel_offset  = compute_travel_offset
-        @dst_adjustment = compute_dst_adjustment(@time)
       end
 
       def year
@@ -77,19 +76,12 @@ class Timecop
       end
 
       def datetime(datetime_klass = DateTime)
-        our_offset = utc_offset + dst_adjustment
-
         if Float.method_defined?(:to_r)
           fractions_of_a_second = time.to_f % 1
-          datetime_klass.new(year, month, day, hour, min, sec + fractions_of_a_second, utc_offset_to_rational(our_offset))
+          datetime_klass.new(year, month, day, hour, min, sec + fractions_of_a_second, utc_offset_to_rational(utc_offset))
         else
-          our_offset = utc_offset + dst_adjustment
-          datetime_klass.new(year, month, day, hour, min, sec, utc_offset_to_rational(our_offset))
+          datetime_klass.new(year, month, day, hour, min, sec, utc_offset_to_rational(utc_offset))
         end
-      end
-
-      def dst_adjustment
-        @dst_adjustment
       end
 
       private
@@ -111,9 +103,7 @@ class Timecop
             arg.getlocal
           end
         elsif Object.const_defined?(:DateTime) && arg.is_a?(DateTime)
-          expected_time = time_klass.local(arg.year, arg.month, arg.day, arg.hour, arg.min, arg.sec)
-          expected_time += expected_time.utc_offset - rational_to_utc_offset(arg.offset)
-          expected_time + compute_dst_adjustment(expected_time)
+          time_klass.new(arg.year, arg.month, arg.day, arg.hour, arg.min, arg.sec, arg.offset*24*60*60).getlocal
         elsif Object.const_defined?(:Date) && arg.is_a?(Date)
           time_klass.local(arg.year, arg.month, arg.day, 0, 0, 0)
         elsif args.empty? && arg.kind_of?(Integer)
@@ -134,12 +124,6 @@ class Timecop
             time_klass.local(year, month, day, hour, minute, second)
           end
         end
-      end
-
-      def compute_dst_adjustment(time)
-        return 0 if !(time.dst? ^ Time.now.dst?)
-        return -1 * 60 * 60 if time.dst?
-        return 60 * 60
       end
 
       def compute_travel_offset
