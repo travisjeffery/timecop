@@ -17,14 +17,9 @@ class Time #:nodoc:
     alias_method :new_without_mock_time, :new
 
     def new_with_mock_time(*args)
-      begin
-        raise ArgumentError.new if args.size <= 0
-        new_without_mock_time(*args)
-      rescue ArgumentError
-        now
-      end
+      args.size <= 0 ? now : new_without_mock_time(*args)
     end
-
+    
     alias_method :new, :new_with_mock_time
   end
 end 
