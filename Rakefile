@@ -20,8 +20,8 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-task :test do 
-  system "cd test && ./run_tests.sh"
+task :test do
+  system "cd test && ./run_tests.sh" or fail
 end
 
 desc 'Default: run tests'
