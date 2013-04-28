@@ -435,4 +435,22 @@ class TestTimecop < Test::Unit::TestCase
       Timecop.send_travel(:travel, Time.now - 100)
     end
   end
+
+  def test_datetime_to_time_for_dst_to_non_dst
+    # Start at a time subject to DST
+    Timecop.travel(2009, 4, 1, 0, 0, 0, -4*60*60) do
+
+      # Then freeze, via DateTime, at a time not subject to DST
+      t = DateTime.new(2009,01,01,0,0,0, "-0500")
+      Timecop.freeze(t) do
+
+        # Check the current time via DateTime.now--should be what we asked for
+        assert_date_times_equal t, DateTime.now
+
+        # Then check the current time via Time.now (not DateTime.now)
+        assert_times_effectively_equal Time.new(2009, 1, 1, 0, 0, 0, -5*60*60), Time.now
+      end
+    end
+  end
+
 end
