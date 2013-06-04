@@ -123,13 +123,14 @@ class Timecop
   def travel(mock_type, *args, &block) #:nodoc:
     stack_item = TimeStackItem.new(mock_type, *args)
 
+    stack_backup = @_stack.dup
     @_stack << stack_item
 
     if block_given?
       begin
         yield stack_item.time
       ensure
-        @_stack.pop
+        @_stack.replace stack_backup
       end
     end
   end
