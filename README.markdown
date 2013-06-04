@@ -49,7 +49,7 @@ describe "some set of tests to mock" do
   before do
     Timecop.freeze(Time.local(1990))
   end
-  
+
   after do
     Timecop.return
   end
@@ -62,7 +62,7 @@ Set the time for the test environment of a rails app -- this is particularly
 helpful if your whole application is time-sensitive.  It allows you to build
 your test data at a single point in time, and to move in/out of that time as
 appropriate (within your tests)
-  
+
 in config/environments/test.rb
 
 ```ruby
@@ -113,17 +113,10 @@ Time.now
 
 See #42 for more information, thanks to Ken Mayer, David Holcomb, and Pivotal Labs.
 
-## REFERENCES
-
-* {0.3.4 release}[http://blog.smartlogicsolutions.com/2009/12/07/timecop-0-3-4-released/]
-* {0.3.0 release}[http://blog.smartlogicsolutions.com/2009/09/20/timecop-0-3-0-released/]
-* {0.2.0 release}[http://blog.smartlogicsolutions.com/2008/12/24/timecop-2-released-freeze-and-rebase-time-ruby/]
-* {0.1.0 release}[http://blog.smartlogicsolutions.com/2008/11/19/timecop-freeze-time-in-ruby-for-better-testing/]
-
 ## Contribute
 
 timecop is maintained by [travisjeffery](http://github.com/travisjeffery), and
-was created by [jtrupiano](https://github.com/jtrupiano). 
+was created by [jtrupiano](https://github.com/jtrupiano).
 
 Here's the most direct way to get your work merged into the project.
 
