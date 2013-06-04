@@ -97,7 +97,7 @@ class Timecop
         if arg.is_a?(Time)
           arg
         elsif Object.const_defined?(:DateTime) && arg.is_a?(DateTime)
-          time_klass.new(arg.year, arg.month, arg.day, arg.hour, arg.min, arg.sec, arg.offset*24*60*60).getlocal
+          time_klass.at(arg.to_time.to_f).getlocal
         elsif Object.const_defined?(:Date) && arg.is_a?(Date)
           time_klass.local(arg.year, arg.month, arg.day, 0, 0, 0)
         elsif args.empty? && arg.kind_of?(Integer)
