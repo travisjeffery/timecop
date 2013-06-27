@@ -12,7 +12,7 @@ end
 group :development, :test do
   gem 'pry'
   gem 'mocha', :require => false
-  gem 'active_support', :require => "active_support/all"
+  gem 'activesupport', :require => "active_support/all"
   gem 'tzinfo'
   gem 'i18n'
   gem 'minitest-reporters'
