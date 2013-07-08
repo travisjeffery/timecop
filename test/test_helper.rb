@@ -48,7 +48,7 @@ class Test::Unit::TestCase
     end
   
     def assert_date_times_equal(dt1, dt2)
-      assert_equal dt1, dt2, "Failed for timezone: #{ENV['TZ']}: #{dt1.to_s} not equal to #{dt2.to_s}"
+      assert_in_delta dt1.to_time.to_f, dt2.to_time.to_f, 0.01, "Failed for timezone: #{ENV['TZ']}: #{dt1.to_s} not equal to #{dt2.to_s}"
     end
     
 end
