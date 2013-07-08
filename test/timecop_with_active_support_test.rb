@@ -4,7 +4,6 @@ require 'active_support/all'
 require File.join(File.dirname(__FILE__), "test_helper")
 require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
-
 class TestTimecopWithActiveSupport < Test::Unit::TestCase
   def teardown
     Timecop.return
@@ -16,5 +15,4 @@ class TestTimecopWithActiveSupport < Test::Unit::TestCase
     sleep(0.000001)
     assert_not_equal long_ago.to_f, Time.now.to_f
   end
-
 end
