@@ -113,6 +113,19 @@ class TestTimeStackItem < Test::Unit::TestCase
     assert_equal Rational(1, 24),  a_time_stack_item.send(:utc_offset_to_rational, 3600)
   end
 
+  def test_datetime_in_presence_of_activesupport_timezone
+    skip('requires ActiveSupport') unless Time.respond_to? :zone
+    backed_up_zone, backed_up_tzvar = Time.zone, ENV['TZ']
+
+    Time.zone = ENV['TZ'] = 'America/Los_Angeles'
+    t = DateTime.new(2001, 2, 28, 23, 59, 59.5)
+    tsi = Timecop::TimeStackItem.new(:freeze, t)
+
+    assert_date_times_equal t, tsi.datetime
+  ensure
+    Time.zone, ENV['TZ'] = backed_up_zone, backed_up_tzvar
+  end
+
   # Ensure DateTimes handle changing DST properly
   def test_datetime_for_dst_to_non_dst
     Timecop.freeze(DateTime.parse("2009-12-1 00:38:00 -0500"))
