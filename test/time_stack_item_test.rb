@@ -224,7 +224,6 @@ class TestTimeStackItem < Test::Unit::TestCase
   end
 
   def test_time_with_different_timezone_keeps_nsec
-
     Time.zone = "Tokyo"
     t = Time.now
     Timecop.freeze(t) do
@@ -234,7 +233,6 @@ class TestTimeStackItem < Test::Unit::TestCase
   end
 
   def test_time_now_always_returns_local_time
-
     Time.zone = "Tokyo"
     t = Time.utc(2000, 1, 1)
     Timecop.freeze(t) do
@@ -243,7 +241,6 @@ class TestTimeStackItem < Test::Unit::TestCase
   end
 
   def test_time_zone_now_returns_time_in_that_zone
-
     Time.zone = "Hawaii"
     t = Time.utc(2000, 1, 1)
     Timecop.freeze(t) do
@@ -253,7 +250,6 @@ class TestTimeStackItem < Test::Unit::TestCase
   end
 
   def test_freezing_a_time_with_zone_returns_proper_zones
-
     Time.zone = "Hawaii"
     t = ActiveSupport::TimeWithZone.new(Time.utc(2000, 1, 1), ActiveSupport::TimeZone['Tokyo'])
     Timecop.freeze(t) do
@@ -264,6 +260,13 @@ class TestTimeStackItem < Test::Unit::TestCase
       zoned_now = Time.zone.now
       assert_equal t, zoned_now
       assert_equal 'HST', zoned_now.zone
+    end
+  end
+
+  def test_datetime_timezones
+    dt = DateTime.new(2011,1,3,15,25,0,"-6")
+    Timecop.travel(dt) do
+      assert_equal dt, DateTime.now
     end
   end
 end
