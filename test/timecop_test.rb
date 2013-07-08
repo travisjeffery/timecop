@@ -463,7 +463,7 @@ class TestTimecop < Test::Unit::TestCase
   private
 
   def with_safe_mode(enabled=true)
-    mode = Timecop.safe_mode
+    mode = Timecop.safe_mode?
     Timecop.safe_mode = enabled
     yield
   ensure
