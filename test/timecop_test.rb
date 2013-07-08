@@ -8,16 +8,22 @@ class TestTimecop < Test::Unit::TestCase
   end
 
   def test_freeze_changes_and_resets_time
-    assert !Time.respond_to?(:zone) || Time.zone.nil?
+    outer_freeze_time = Time.local(2001, 01, 01)
+    inner_freeze_block = Time.local(2002, 02, 02)
+    inner_freeze_one = Time.local(2003, 03, 03)
+    inner_freeze_two = Time.local(2004, 04, 04)
 
-    t = Time.local(2008, 10, 10, 10, 10, 10)
-    assert_not_equal t, Time.now
-
-    Timecop.freeze(2008, 10, 10, 10, 10, 10) do
-      assert_equal t, Time.now
+    Timecop.freeze(outer_freeze_time) do
+      assert_times_effectively_equal outer_freeze_time, Time.now
+      Timecop.freeze(inner_freeze_block) do
+        assert_times_effectively_equal inner_freeze_block, Time.now
+        Timecop.freeze(inner_freeze_one)
+        assert_times_effectively_equal inner_freeze_one, Time.now
+        Timecop.freeze(inner_freeze_two)
+        assert_times_effectively_equal inner_freeze_two, Time.now
+      end
+      assert_times_effectively_equal outer_freeze_time, Time.now
     end
-
-    assert_not_equal t, Time.now
   end
 
   def test_freeze_yields_mocked_time
