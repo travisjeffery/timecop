@@ -6,7 +6,7 @@
 if Object.const_defined?(:Date) && Date.respond_to?(:today)
   Object.send(:remove_const, :Date)
   Object.send(:remove_const, :DateTime)
-  $LOADED_FEATURES.delete('date')
+  $LOADED_FEATURES.select {|f| f =~ /date/ }.each {|f| $LOADED_FEATURES.delete(f) }
 end
 
 # Require timecop first, before anything else that would load 'date'
