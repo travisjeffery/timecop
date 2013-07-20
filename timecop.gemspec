@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.name = %q{timecop}
   s.version = Timecop::VERSION
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.required_ruby_version = Gem::Requirement.new(">= 1.9.2")
   s.authors = ["Travis Jeffery", "John Trupiano"]
   s.date = Time.now.strftime("%Y-%m-%d")
   s.description = %q{A gem providing "time travel" and "time freezing" capabilities, making it dead simple to test time-dependent code.  It provides a unified method to mock Time.now, Date.today, and DateTime.now in a single call.}
