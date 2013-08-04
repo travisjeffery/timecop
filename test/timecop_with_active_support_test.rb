@@ -13,6 +13,6 @@ class TestTimecopWithActiveSupport < Test::Unit::TestCase
     Timecop.travel(1)
     long_ago = Time.now
     sleep(0.000001)
-    assert_not_equal long_ago.to_f, Time.now.to_f
+    assert_not_equal long_ago.nsec, Time.now.nsec
   end
 end
