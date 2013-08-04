@@ -102,6 +102,14 @@ class Timecop
       instance.instance_variable_get(:@_stack).last
     end
 
+    def safe_mode=(safe)
+      @safe_mode = safe
+    end
+
+    def safe_mode?
+      false || @safe_mode
+    end
+
     private
     def send_travel(mock_type, *args, &block)
       val = instance.send(:travel, mock_type, *args, &block)
@@ -121,6 +129,8 @@ class Timecop
   end
 
   def travel(mock_type, *args, &block) #:nodoc:
+    raise SafeModeException if Timecop.safe_mode? && !block_given?
+
     stack_item = TimeStackItem.new(mock_type, *args)
 
     stack_backup = @_stack.dup
@@ -154,6 +164,12 @@ class Timecop
       @_stack = [@_stack.shift]
     else
       unmock!
+    end
+  end
+
+  class SafeModeException < StandardError
+    def initialize
+      super "Safe mode is enabled, only calls passing a block are allowed."
     end
   end
 end

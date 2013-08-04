@@ -111,6 +111,23 @@ Time.now
 # => 2012-09-21 06:22:59 -0500
 ```
 
+### Timecop.safe_mode
+
+Safe mode forces you to use Timecop with the block syntax since it always puts time back the way it was. If you are running in safe mode and use Timecop without the block syntax `Timecop::SafeModeException` will be raised to tell the user they are not being safe.
+
+``` ruby
+# turn on safe mode
+Timecop.safe_mode = true
+
+# check if you are in safe mode
+Timecop.safe_mode?
+# => true
+
+# using method without block
+Timecop.freeze
+# => Timecop::SafeModeException: Safe mode is enabled, only calls passing a block are allowed.
+```
+
 See #42 for more information, thanks to Ken Mayer, David Holcomb, and Pivotal Labs.
 
 ## Contribute

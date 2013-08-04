@@ -459,4 +459,37 @@ class TestTimecop < Test::Unit::TestCase
     end
   end
 
+  def test_raises_when_safe_mode_and_no_block
+    with_safe_mode do
+      assert_raise Timecop::SafeModeException do
+        Timecop.freeze
+      end
+    end
+  end
+
+  def test_no_raise_when_safe_mode_and_block_used
+    with_safe_mode do
+      assert_nothing_raised do
+        Timecop.freeze {}
+      end
+    end
+  end
+
+  def test_no_raise_when_not_safe_mode_and_no_block
+    with_safe_mode(false) do
+      assert_nothing_raised do
+        Timecop.freeze
+      end
+    end
+  end
+
+  private
+
+  def with_safe_mode(enabled=true)
+    mode = Timecop.safe_mode?
+    Timecop.safe_mode = enabled
+    yield
+  ensure
+    Timecop.safe_mode = mode
+  end
 end
