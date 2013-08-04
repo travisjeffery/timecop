@@ -111,6 +111,7 @@ Time.now
 # => 2012-09-21 06:22:59 -0500
 ```
 
+<<<<<<< HEAD
 ### Timecop.safe_mode
 
 Safe mode forces you to use Timecop with the block syntax since it always puts time back the way it was. If you are running in safe mode and use Timecop without the block syntax `Timecop::SafeModeException` will be raised to tell the user they are not being safe.
@@ -128,7 +129,7 @@ Timecop.freeze
 # => Timecop::SafeModeException: Safe mode is enabled, only calls passing a block are allowed.
 ```
 
-See #42 for more information, thanks to Ken Mayer, David Holcomb, and Pivotal Labs.
+See [#42](https://github.com/travisjeffery/timecop/pull/42) for more information, thanks to Ken Mayer, David Holcomb, and Pivotal Labs.
 
 ## Contribute
 
@@ -145,5 +146,4 @@ Here's the most direct way to get your work merged into the project.
 - If necessary, rebase your commits into logical chunks without errors
 - Push the branch up to your fork
 - Send a pull request for your branch
-
 
