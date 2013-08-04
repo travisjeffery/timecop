@@ -458,5 +458,12 @@ class TestTimecop < Test::Unit::TestCase
       end
     end
   end
-
+ 
+  def test_datetime_nanoseconds_are_preserved
+    # aka issue 72.  NB: this test will randomly pass one in 1000 times.
+    t = DateTime.now
+    Timecop.freeze(t)
+    assert_equal t, DateTime.now
+  end
+ 
 end
