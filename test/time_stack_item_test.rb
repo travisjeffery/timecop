@@ -249,6 +249,14 @@ class TestTimeStackItem < Test::Unit::TestCase
     end
   end
 
+  def test_freezing_a_time_leaves_timezone_intact
+    Time.zone = "Tokyo"
+    t = Time.now
+    t_dup = t.dup
+    Timecop.freeze(t) {}
+    assert_equal t_dup.zone, t.zone
+  end
+
   def test_freezing_a_time_with_zone_returns_proper_zones
     Time.zone = "Hawaii"
     t = ActiveSupport::TimeWithZone.new(Time.utc(2000, 1, 1), ActiveSupport::TimeZone['Tokyo'])
