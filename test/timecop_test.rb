@@ -483,6 +483,12 @@ class TestTimecop < Test::Unit::TestCase
     end
   end
 
+  def test_date_strptime_without_year
+    Timecop.freeze(Time.new(1984,2,28)) do
+      assert_equal Date.strptime('04-14', '%m-%d'), Date.new(1984, 4, 14)
+    end
+  end
+
   private
 
   def with_safe_mode(enabled=true)
