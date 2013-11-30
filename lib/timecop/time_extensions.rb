@@ -1,4 +1,5 @@
 require 'date'
+require 'time'
 
 class Time #:nodoc:
   class << self
@@ -39,6 +40,14 @@ class Date #:nodoc:
     end
 
     alias_method :today, :today_with_mock_date
+
+    alias_method :strptime_without_mock_date, :strptime
+
+    def strptime_with_mock_date(str, fmt)
+      Time.strptime(str, fmt).to_date
+    end
+
+    alias_method :strptime, :strptime_with_mock_date
   end
 end
 
