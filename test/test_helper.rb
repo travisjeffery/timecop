@@ -24,11 +24,13 @@ class Test::Unit::TestCase
       assert !times_effectively_equal(time1, time2, seconds_interval), "#{msg}: time1 = #{time1.to_s}, time2 = #{time2.to_s}"
     end
     
-    def local_offset
-      DateTime.now_without_mock_time.offset
+    # Gets the local offset (supplied by ENV['TZ'] or your computer's clock)
+    # At the given timestamp, or Time.now if not time is given.
+    def local_offset(time = Time.now)
+      Time.at(time.to_i).to_datetime.offset
     end
   
-    TIMEZONES = ["Europe/Paris", "UTC", "EDT"]
+    TIMEZONES = ["Europe/Paris", "UTC", "America/Chicago"]
   
     def each_timezone
       old_tz = ENV["TZ"]

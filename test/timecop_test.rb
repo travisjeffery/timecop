@@ -249,6 +249,11 @@ class TestTimecop < Test::Unit::TestCase
     each_timezone do
       t = DateTime.parse("2009-10-11 00:38:00 +0200")
       Timecop.freeze(t) do
+        if ENV['TZ'] == 'UTC'
+          assert_equal(local_offset, 0, "Local offset not be zero for #{ENV['TZ']}")
+        else
+          assert_not_equal(local_offset, 0, "Local offset should not be zero for #{ENV['TZ']}")
+        end
         assert_equal local_offset, DateTime.now.offset, "Failed for timezone: #{ENV['TZ']}"
       end
     end
