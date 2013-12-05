@@ -15,5 +15,5 @@ group :development, :test do
   gem 'activesupport', :require => "active_support/all"
   gem 'tzinfo'
   gem 'i18n'
-  gem 'minitest-reporters'
+  gem 'minitest-reporters', '~> 0.14.20'
 end
