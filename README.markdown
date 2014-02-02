@@ -2,9 +2,6 @@
 
 [![Build Status](https://secure.travis-ci.org/travisjeffery/timecop.png)](http://travis-ci.org/travisjeffery/timecop)
 
-- [Source](http://github.com/travisjeffery/timecop)
-- [Documentation](http://johntrupiano.rubyforge.org/timecop)
-
 ## DESCRIPTION
 
 A gem providing "time travel" and "time freezing" capabilities, making it dead simple to test time-dependent code.  It provides a unified method to mock Time.now, Date.today, and DateTime.now in a single call.
