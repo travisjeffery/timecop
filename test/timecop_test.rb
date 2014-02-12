@@ -500,6 +500,14 @@ class TestTimecop < Test::Unit::TestCase
     end
   end
 
+  def test_date_strptime_with_invalid_date
+    begin
+      Date.strptime('', '%Y-%m-%d')
+    rescue ArgumentError => e
+      assert_equal 'invalid date', e.message
+    end
+  end
+
   private
 
   def with_safe_mode(enabled=true)
