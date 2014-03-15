@@ -16,4 +16,5 @@ group :development, :test do
   gem 'tzinfo'
   gem 'i18n'
   gem 'minitest-reporters', '~> 0.14.20'
+  gem 'rspec'
 end
