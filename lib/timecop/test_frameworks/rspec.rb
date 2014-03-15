@@ -8,14 +8,8 @@ class Timecop
 
           config.before(:each, when_tagged_with_timecop) do |ex|
             example = ex.example
-
             options = example.metadata[:timecop]
-            begin
-              Timecop.send(options[:mode], options[:time])
-            rescue
-              raise ArgumentError, 'Pass a hash like timecop: ' \
-                                   '{ mode: :freeze, time: Time.local(1990) }'
-            end
+            TimecopCaller.new(options).call
           end
 
           config.after(:each, when_tagged_with_timecop) do |ex|
@@ -24,12 +18,33 @@ class Timecop
         end
       end
 
-      def self.handle_errors(options)
-        raise ArgumentError, 'missing :mode key' unless options.key?(:mode)
-        raise ArgumentError, 'missing :time key' unless options.key?(:time)
-        unless [:freeze, :travel, :scale].include?(options[:mode])
-          raise ArgumentError, 'invalid mode, valid are :freeze, :travel and :scale'
+      class TimecopCaller
+
+        VALID_MODES = [:freeze, :travel, :scale]
+
+        def initialize(options)
+          @options = options
         end
+
+        def call
+          handle_errors
+          Timecop.send(options[:mode], options[:time])
+        end
+
+        private
+          attr_reader :options
+
+          def handle_errors
+            missing_key?(:mode)
+            missing_key?(:time)
+            unless VALID_MODES.include?(options[:mode])
+              raise ArgumentError, 'invalid mode, valid are :freeze, :travel and :scale'
+            end
+          end
+
+          def missing_key?(key)
+            raise ArgumentError, "missing :#{key} key" unless options.key?(key)
+          end
       end
     end
   end

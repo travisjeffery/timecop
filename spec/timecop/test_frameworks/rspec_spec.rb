@@ -31,7 +31,9 @@ describe Timecop::RSpec::Metadata do
 
   describe 'without the metadata' do
 
-    xit 'not change the time'
+    it 'freeze the correct time' do
+      expect(Time.now).to_not eq(freeze_time)
+    end
   end
 
   describe 'works at group level', timecop: { mode: :freeze, time: Time.local(2001, 01, 01) } do
@@ -56,44 +58,68 @@ describe Timecop::RSpec::Metadata do
     end
   end
 
-  describe 'handle of errors' do
+  describe Timecop::RSpec::Metadata::TimecopCaller do
 
-    context 'with missing mode' do
+    describe '#call' do
 
-      let(:options) do
-        { time: 3600 }
+      subject do
+        Timecop::RSpec::Metadata::TimecopCaller.new(options)
       end
 
-      it 'raises correct error' do
-        expect do
-          Timecop::RSpec::Metadata.handle_errors(options)
-        end.to raise_error(ArgumentError, 'missing :mode key')
-      end
-    end
+      describe 'handle of errors' do
 
-    context 'with missing time' do
+        context 'with missing mode' do
 
-      let(:options) do
-        { mode: :freeze }
-      end
+          let(:options) do
+            { time: 3600 }
+          end
 
-      it 'raises correct error' do
-        expect do
-          Timecop::RSpec::Metadata.handle_errors(options)
-        end.to raise_error(ArgumentError, 'missing :time key')
-      end
-    end
+          it 'raises correct error' do
+            expect do
+              subject.call
+            end.to raise_error(ArgumentError, 'missing :mode key')
+          end
+        end
 
-    context 'with invalid mode' do
+        context 'with missing time' do
 
-      let(:options) do
-        { mode: :wrong, time: 3600 }
-      end
+          let(:options) do
+            { mode: :freeze }
+          end
 
-      it 'raises correct error' do
-        expect do
-          Timecop::RSpec::Metadata.handle_errors(options)
-        end.to raise_error(ArgumentError, 'invalid mode, valid are :freeze, :travel and :scale')
+          it 'raises correct error' do
+            expect do
+              subject.call
+            end.to raise_error(ArgumentError, 'missing :time key')
+          end
+        end
+
+        context 'with invalid mode' do
+
+          let(:options) do
+            { mode: :wrong, time: 3600 }
+          end
+
+          it 'raises correct error' do
+            expect do
+              subject.call
+            end.to raise_error(ArgumentError, 'invalid mode, valid are :freeze, ' \
+                                              ':travel and :scale')
+          end
+        end
+
+        context 'with invalid time' do
+
+          let(:options) do
+            { mode: :freeze, time: 'wrong' }
+          end
+
+          it 'raises correct error' do
+            expect do
+              subject.call
+            end.to raise_error(ArgumentError, 'no time information in "wrong"')
+          end
+        end
       end
     end
   end
