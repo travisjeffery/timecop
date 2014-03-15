@@ -24,6 +24,7 @@ A gem providing "time travel" and "time freezing" capabilities, making it dead s
   - a single integer argument that is interpreted as an offset in seconds from Time.now
 - Nested calls to Timecop#travel and Timecop#freeze are supported -- each block will maintain its interpretation of now.
 - Works with regular Ruby projects, and Ruby on Rails projects
+- Easy integration with RSpec using metadata
 
 ## USAGE
 
@@ -126,6 +127,23 @@ Timecop.freeze
 ```
 
 See [#42](https://github.com/travisjeffery/timecop/pull/42) for more information, thanks to Ken Mayer, David Holcomb, and Pivotal Labs.
+
+## RSpec metadata
+
+Timecop provides easy integration with RSpec using metadata. To set this
+up, call `Timecop.configure_rspec_metadata!`, you can add this to your `spec_helper.rb`.
+
+Once you've done that, you can have an example group or example use
+Timecop by passing :timecop as an additional argument after the description
+string as key of a hash of configuration like.
+
+```ruby
+it 'my spec', timecop: { mode: :freeze, time: Time.local(1990) } do
+  # my spec content
+end
+```
+
+The valid mode are the same as the API of `Timecop` so we have `:freeze`, `:travel` and `:scale`.
 
 ## Contribute
 

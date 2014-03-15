@@ -1,5 +1,6 @@
 require 'singleton'
 require File.join(File.dirname(__FILE__), "time_extensions")
+require File.join(File.dirname(__FILE__), "test_frameworks/rspec")
 require File.join(File.dirname(__FILE__), "time_stack_item")
 
 # Timecop
@@ -100,6 +101,13 @@ class Timecop
 
     def top_stack_item #:nodoc:
       instance.instance_variable_get(:@_stack).last
+    end
+
+    def configure_rspec_metadata!
+      unless @rspec_metadata_configured
+        Timecop::RSpec::Metadata.configure!
+        @rspec_metadata_configured = true
+      end
     end
 
     def safe_mode=(safe)
