@@ -21,7 +21,7 @@ Rake::RDocTask.new do |rdoc|
 end
 
 task :test do
-  system "cd test && ./run_tests.sh" or fail
+  system "rspec spec && cd test && ./run_tests.sh" or fail
 end
 
 desc 'Default: run tests'
