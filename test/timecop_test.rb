@@ -491,6 +491,7 @@ class TestTimecop < Test::Unit::TestCase
   def test_date_strptime_without_year
     Timecop.freeze(Time.new(1984,2,28)) do
       assert_equal Date.strptime('04-14', '%m-%d'), Date.new(1984, 4, 14)
+      assert_equal DateTime.strptime('04-14', '%m-%d'), DateTime.new(1984, 4, 14)
     end
   end
 
