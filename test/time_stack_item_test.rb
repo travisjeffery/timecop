@@ -4,7 +4,7 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
 require 'active_support/all'
 
-class TestTimeStackItem < Test::Unit::TestCase
+class TestTimeStackItem < MiniTest::Unit::TestCase
   def teardown
     Timecop.return
     Time.zone = nil
@@ -204,16 +204,12 @@ class TestTimeStackItem < Test::Unit::TestCase
   end
 
   def test_parse_date
-    assert_nothing_raised do
-      Timecop.freeze(Date.new(2012, 6, 9))
-    end
+    Timecop.freeze(Date.new(2012, 6, 9))
   end
 
   def test_time_zone_returns_nil
     Time.zone = nil
-    assert_nothing_raised do
-      Timecop.freeze
-    end
+    Timecop.freeze
   end
 
   def test_nsecs_are_set

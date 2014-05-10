@@ -2,7 +2,7 @@
 require File.join(File.dirname(__FILE__), "test_helper")
 require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
-class TestTimecopWithoutDate < Test::Unit::TestCase
+class TestTimecopWithoutDate < MiniTest::Unit::TestCase
   
   def setup
     Object.send(:remove_const, :Date) if Object.const_defined?(:Date)
@@ -19,11 +19,11 @@ class TestTimecopWithoutDate < Test::Unit::TestCase
     assert !Time.respond_to?(:zone) || Time.zone.nil?
     
     t = Time.local(2008, 10, 10, 10, 10, 10)
-    assert_not_equal t, Time.now
+    assert t != Time.now
     Timecop.freeze(2008, 10, 10, 10, 10, 10) do
       assert_equal t, Time.now
     end
-    assert_not_equal t, Time.now
+    assert t != Time.now
   end
   
   def test_recursive_freeze
@@ -47,7 +47,7 @@ class TestTimecopWithoutDate < Test::Unit::TestCase
         raise "blah exception"
       end
     rescue
-      assert_not_equal t, Time.now
+      assert t != Time.now
       assert_nil Time.send(:mock_time)
     end
   end

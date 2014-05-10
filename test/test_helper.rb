@@ -1,14 +1,14 @@
 require 'rubygems'
 require 'bundler/setup'
-require 'test/unit'
+require 'minitest/autorun'
+
 begin
   require 'mocha/setup'
 rescue LoadError
   require 'mocha'
 end
 
-class Test::Unit::TestCase
-
+class MiniTest::Unit::TestCase
   private
     # Tests to see that two times are within the given distance,
     # in seconds, from each other.

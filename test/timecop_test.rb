@@ -2,7 +2,7 @@ require 'date'
 require File.join(File.dirname(__FILE__), "test_helper")
 require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
-class TestTimecop < Test::Unit::TestCase
+class TestTimecop < MiniTest::Unit::TestCase
   def teardown
     Timecop.return
   end
@@ -60,7 +60,7 @@ class TestTimecop < Test::Unit::TestCase
     # requires to_r on Float (>= 1.9)
     if Float.method_defined?(:to_r)
       Timecop.travel(1)
-      assert_not_equal DateTime.now, DateTime.now
+      assert DateTime.now != DateTime.now
     end
   end
 
@@ -113,7 +113,7 @@ class TestTimecop < Test::Unit::TestCase
       end
       assert_equal t, Time.now
     end
-    assert_not_equal t, Time.now
+    assert t != Time.now
   end
 
   def test_freeze_with_time_instance_works_as_expected
@@ -124,9 +124,9 @@ class TestTimecop < Test::Unit::TestCase
       assert_equal Date.new(2008, 10, 10), Date.today
     end
 
-    assert_not_equal t, Time.now
-    assert_not_equal DateTime.new(2008, 10, 10, 10, 10, 10, local_offset), DateTime.now
-    assert_not_equal Date.new(2008, 10, 10), Date.today
+    assert t != Time.now
+    assert DateTime.new(2008, 10, 10, 10, 10, 10, local_offset) != DateTime.now
+    assert Date.new(2008, 10, 10) != Date.today
   end
 
   def test_freeze_with_datetime_on_specific_timezone_during_dst
@@ -185,9 +185,9 @@ class TestTimecop < Test::Unit::TestCase
       assert_equal Time.local(2008, 10, 10, 0, 0, 0), Time.now
       assert_date_times_equal DateTime.new(2008, 10, 10, 0, 0, 0, local_offset), DateTime.now
     end
-    assert_not_equal d, Date.today
-    assert_not_equal Time.local(2008, 10, 10, 0, 0, 0), Time.now
-    assert_not_equal DateTime.new(2008, 10, 10, 0, 0, 0, local_offset), DateTime.now
+    assert d != Date.today
+    assert Time.local(2008, 10, 10, 0, 0, 0) != Time.now
+    assert DateTime.new(2008, 10, 10, 0, 0, 0, local_offset) != DateTime.now
   end
 
   def test_freeze_with_integer_instance_works_as_expected
@@ -202,9 +202,9 @@ class TestTimecop < Test::Unit::TestCase
         assert_equal Date.new(2008, 10, 10), Date.today
       end
     end
-    assert_not_equal t, Time.now
-    assert_not_equal DateTime.new(2008, 10, 10, 10, 10, 10), DateTime.now
-    assert_not_equal Date.new(2008, 10, 10), Date.today
+    assert t != Time.now
+    assert DateTime.new(2008, 10, 10, 10, 10, 10) != DateTime.now
+    assert Date.new(2008, 10, 10) != Date.today
   end
 
   def test_exception_thrown_in_freeze_block_properly_resets_time
@@ -215,7 +215,7 @@ class TestTimecop < Test::Unit::TestCase
         raise "blah exception"
       end
     rescue
-      assert_not_equal t, Time.now
+      assert t != Time.now
       assert_nil Time.send(:mock_time)
     end
   end
@@ -252,7 +252,7 @@ class TestTimecop < Test::Unit::TestCase
         if ENV['TZ'] == 'UTC'
           assert_equal(local_offset, 0, "Local offset not be zero for #{ENV['TZ']}")
         else
-          assert_not_equal(local_offset, 0, "Local offset should not be zero for #{ENV['TZ']}")
+          assert(local_offset, 0 != "Local offset should not be zero for #{ENV['TZ']}")
         end
         assert_equal local_offset, DateTime.now.offset, "Failed for timezone: #{ENV['TZ']}"
       end
@@ -442,7 +442,7 @@ class TestTimecop < Test::Unit::TestCase
   end
 
   def test_not_callable_send_travel
-    assert_raise NoMethodError do
+    assert_raises NoMethodError do
       Timecop.send_travel(:travel, Time.now - 100)
     end
   end
@@ -466,7 +466,7 @@ class TestTimecop < Test::Unit::TestCase
 
   def test_raises_when_safe_mode_and_no_block
     with_safe_mode do
-      assert_raise Timecop::SafeModeException do
+      assert_raises Timecop::SafeModeException do
         Timecop.freeze
       end
     end
@@ -474,17 +474,13 @@ class TestTimecop < Test::Unit::TestCase
 
   def test_no_raise_when_safe_mode_and_block_used
     with_safe_mode do
-      assert_nothing_raised do
-        Timecop.freeze {}
-      end
+      Timecop.freeze {}
     end
   end
 
   def test_no_raise_when_not_safe_mode_and_no_block
     with_safe_mode(false) do
-      assert_nothing_raised do
-        Timecop.freeze
-      end
+      Timecop.freeze
     end
   end
 
