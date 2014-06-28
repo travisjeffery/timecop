@@ -4,7 +4,7 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
 require 'active_support/all'
 
-class TestTimeStackItem < MiniTest::Unit::TestCase
+class TestTimeStackItem < Minitest::Unit::TestCase
   def teardown
     Timecop.return
     Time.zone = nil

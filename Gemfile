@@ -15,5 +15,5 @@ group :development, :test do
   gem 'activesupport', '>= 3.0.0', '< 4.0.0', :require => "active_support/all"
   gem 'tzinfo'
   gem 'i18n'
-  gem 'minitest'
+  gem 'minitest', :require => 'minitest/autorun'
 end

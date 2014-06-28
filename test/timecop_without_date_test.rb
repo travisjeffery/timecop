@@ -1,23 +1,22 @@
-
 require File.join(File.dirname(__FILE__), "test_helper")
 require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
-class TestTimecopWithoutDate < MiniTest::Unit::TestCase
-  
+class TestTimecopWithoutDate < Minitest::Unit::TestCase
+
   def setup
     Object.send(:remove_const, :Date) if Object.const_defined?(:Date)
     Object.send(:remove_const, :DateTime) if Object.const_defined?(:DateTime)
   end
-  
+
   # just in case...let's really make sure that Timecop is disabled between tests...
   def teardown
     Timecop.return
   end
-  
+
   def test_freeze_changes_and_resets_time
     # depending on how we're invoked (individually or via the rake test suite)
     assert !Time.respond_to?(:zone) || Time.zone.nil?
-    
+
     t = Time.local(2008, 10, 10, 10, 10, 10)
     assert t != Time.now
     Timecop.freeze(2008, 10, 10, 10, 10, 10) do
@@ -25,10 +24,10 @@ class TestTimecopWithoutDate < MiniTest::Unit::TestCase
     end
     assert t != Time.now
   end
-  
+
   def test_recursive_freeze
     t = Time.local(2008, 10, 10, 10, 10, 10)
-    Timecop.freeze(2008, 10, 10, 10, 10, 10) do 
+    Timecop.freeze(2008, 10, 10, 10, 10, 10) do
       assert_equal t, Time.now
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.freeze(2008, 9, 9, 9, 9, 9) do
@@ -38,7 +37,7 @@ class TestTimecopWithoutDate < MiniTest::Unit::TestCase
     end
     assert_nil Time.send(:mock_time)
   end
-  
+
   def test_exception_thrown_in_freeze_block_properly_resets_time
     t = Time.local(2008, 10, 10, 10, 10, 10)
     begin
@@ -51,7 +50,7 @@ class TestTimecopWithoutDate < MiniTest::Unit::TestCase
       assert_nil Time.send(:mock_time)
     end
   end
-  
+
   def test_freeze_freezes_time
     t = Time.local(2008, 10, 10, 10, 10, 10)
     now = Time.now
@@ -63,7 +62,7 @@ class TestTimecopWithoutDate < MiniTest::Unit::TestCase
       assert_equal new_t, Time.now
     end
   end
-  
+
   def test_travel_keeps_time_moving
     t = Time.local(2008, 10, 10, 10, 10, 10)
     now = Time.now
@@ -74,10 +73,10 @@ class TestTimecopWithoutDate < MiniTest::Unit::TestCase
       assert_times_effectively_not_equal new_now, Time.now, 0.25, "Looks like time is not moving"
     end
   end
-  
+
   def test_recursive_travel_maintains_each_context
     t = Time.local(2008, 10, 10, 10, 10, 10)
-    Timecop.travel(2008, 10, 10, 10, 10, 10) do 
+    Timecop.travel(2008, 10, 10, 10, 10, 10) do
       assert((t - Time.now).abs < 50, "Failed to travel time.")
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.travel(2008, 9, 9, 9, 9, 9) do
@@ -88,10 +87,10 @@ class TestTimecopWithoutDate < MiniTest::Unit::TestCase
     end
     assert_nil Time.send(:mock_time)
   end
-  
+
   def test_recursive_travel_then_freeze
     t = Time.local(2008, 10, 10, 10, 10, 10)
-    Timecop.travel(2008, 10, 10, 10, 10, 10) do 
+    Timecop.travel(2008, 10, 10, 10, 10, 10) do
       assert((t - Time.now).abs < 50, "Failed to travel time.")
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.freeze(2008, 9, 9, 9, 9, 9) do
@@ -101,10 +100,10 @@ class TestTimecopWithoutDate < MiniTest::Unit::TestCase
     end
     assert_nil Time.send(:mock_time)
   end
-  
+
   def test_recursive_freeze_then_travel
     t = Time.local(2008, 10, 10, 10, 10, 10)
-    Timecop.freeze(t) do 
+    Timecop.freeze(t) do
       assert_equal t, Time.now
       t2 = Time.local(2008, 9, 9, 9, 9, 9)
       Timecop.travel(t2) do
@@ -113,7 +112,7 @@ class TestTimecopWithoutDate < MiniTest::Unit::TestCase
       end
       assert_equal t, Time.now
     end
-    assert_nil Time.send(:mock_time)    
+    assert_nil Time.send(:mock_time)
   end
 
 end

@@ -1,8 +1,7 @@
-require 'date'
 require File.join(File.dirname(__FILE__), "test_helper")
 require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
-class TestTimecop < MiniTest::Unit::TestCase
+class TestTimecop < Minitest::Unit::TestCase
   def teardown
     Timecop.return
   end
@@ -31,7 +30,7 @@ class TestTimecop < MiniTest::Unit::TestCase
       assert_equal frozen_time, Time.now
     end
   end
-  
+
   def test_freeze_then_return_unsets_mock_time
     Timecop.freeze(1)
     Timecop.return
@@ -314,13 +313,13 @@ class TestTimecop < MiniTest::Unit::TestCase
   end
 
   def test_recursive_travel_yields_correct_time
-    Timecop.travel(2008, 10, 10, 10, 10, 10) do 
+    Timecop.travel(2008, 10, 10, 10, 10, 10) do
       Timecop.travel(2008, 9, 9, 9, 9, 9) do |inner_freeze|
         assert_times_effectively_equal inner_freeze, Time.now, 1, "Failed to yield current time back to block"
       end
     end
   end
-  
+
   def test_recursive_travel_then_freeze
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.travel(2008, 10, 10, 10, 10, 10) do
