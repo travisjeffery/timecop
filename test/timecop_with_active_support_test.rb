@@ -4,7 +4,7 @@ require 'active_support/all'
 require File.join(File.dirname(__FILE__), "test_helper")
 require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
 
-class TestTimecopWithActiveSupport < MiniTest::Unit::TestCase
+class TestTimecopWithActiveSupport < Minitest::Unit::TestCase
   def teardown
     Timecop.return
   end
