@@ -110,6 +110,27 @@ Time.now
 
 See [#42](https://github.com/travisjeffery/timecop/pull/42) for more information, thanks to Ken Mayer, David Holcomb, and Pivotal Labs.
 
+### Timecop.scale_sleep
+
+By default, Timecop won't scale time for sleep operations.  Each call to sleep
+in your code with a duration will reflect "real-world" time rather than
+respecting the scaling factor set by Timecop.scale.  For most uses of
+Timecop.scale, this is the desired behavior.  But if your time-dependent
+application testing requires support for mocking of `Kernel#sleep`
+(and/or `ConditionVariable#wait`), this can be explicitly enabled.
+
+```ruby
+# turn on mocking of sleep operations
+Timecop.scale_sleep = true
+
+# check if mocking of sleep operations is enabled
+Timecop.scale_sleep?
+# => true
+
+Timecop.scale(3600)
+sleep 3600 # This sleep will last only one second in "real-world" time
+```
+
 ### Timecop.safe_mode
 
 Safe mode forces you to use Timecop with the block syntax since it always puts time back the way it was. If you are running in safe mode and use Timecop without the block syntax `Timecop::SafeModeException` will be raised to tell the user they are not being safe.
