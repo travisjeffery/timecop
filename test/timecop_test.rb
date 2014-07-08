@@ -273,6 +273,36 @@ class TestTimecop < Minitest::Unit::TestCase
     assert_times_effectively_equal t, Timecop.scale(4, t)
   end
 
+  def test_scale_sleep_accessor
+    assert Timecop.scale_sleep? == false, "Wrong default value for scale_sleep"
+    Timecop.scale_sleep = true
+    assert Timecop.scale_sleep? == true,  "Failed to set scale_sleep to true"
+    Timecop.scale_sleep = false
+    assert Timecop.scale_sleep? == false, "Failed to set scale_sleep to false"
+  end
+
+  def test_scaling_with_scale_sleep_enabled_scales_kernel_sleep
+    Timecop.scale_sleep = true
+    Timecop.scale(99999) do
+      start = Time.now
+      sleep 99999 * 0.25
+      assert_times_effectively_equal Time.at((start + 99999*0.25).to_f), Time.now, 1000, "Looks like time is not moving at 99999x"
+    end
+    Timecop.scale_sleep = false
+  end
+
+  def test_scaling_with_scale_sleep_enabled_scales_condition_variable_wait
+    mutex = Mutex.new
+    cond = ConditionVariable.new
+    Timecop.scale_sleep = true
+    Timecop.scale(99999) do
+      start = Time.now
+      mutex.synchronize { cond.wait mutex, 99999 * 0.25 }
+      assert_times_effectively_equal Time.at((start + 99999*0.25).to_f), Time.now, 1000, "Looks like time is not moving at 99999x"
+    end
+    Timecop.scale_sleep = false
+  end
+
   def test_freeze_with_utc_time
     each_timezone do
       t = Time.utc(2008, 10, 10, 10, 10, 10)
