@@ -150,6 +150,7 @@ class Timecop
     current_baseline = @baseline
     unmock!
     yield
+  ensure
     @_stack = current_stack
     @baseline = current_baseline
   end

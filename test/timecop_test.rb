@@ -219,6 +219,14 @@ class TestTimecop < Minitest::Unit::TestCase
     end
   end
 
+  def test_exception_thrown_in_return_block_restores_previous_time
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    Timecop.freeze(t) do
+      Timecop.return { raise 'foobar' } rescue nil
+      assert_equal t, Time.now
+    end
+  end
+
   def test_freeze_freezes_time
     t = Time.local(2008, 10, 10, 10, 10, 10)
     now = Time.now
