@@ -206,6 +206,20 @@ class TestTimecop < Minitest::Unit::TestCase
     assert Date.new(2008, 10, 10) != Date.today
   end
 
+  def test_freeze_without_arguments_instance_works_as_expected
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    Timecop.freeze(t) do
+      assert_equal t, Time.now
+      Timecop.freeze do
+        assert_equal t, Time.now
+        assert_equal Time.local(2008, 10, 10, 10, 10, 20), Time.now
+        assert_equal Date.new(2008, 10, 10), Date.today
+      end
+    end
+    assert t != Time.now
+  end
+
+
   def test_exception_thrown_in_freeze_block_properly_resets_time
     t = Time.local(2008, 10, 10, 10, 10, 10)
     begin

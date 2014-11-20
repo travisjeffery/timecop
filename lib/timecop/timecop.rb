@@ -31,6 +31,7 @@ class Timecop
     # 3. Timecop.freeze(date_inst)
     # 4. Timecop.freeze(offset_in_seconds)
     # 5. Timecop.freeze(year, month, day, hour=0, minute=0, second=0)
+    # 6. Timecop.freeze() # Defaults to Time.now
     #
     # When a block is also passed, Time.now, DateTime.now and Date.today are all reset to their
     # previous values after the block has finished executing.  This allows us to nest multiple
