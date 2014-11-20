@@ -1,6 +1,8 @@
 # timecop
 
-[![Build Status](https://secure.travis-ci.org/travisjeffery/timecop.png)](http://travis-ci.org/travisjeffery/timecop)
+Root: [![Build Status](https://secure.travis-ci.org/travisjeffery/timecop.png)](http://travis-ci.org/travisjeffery/timecop)
+
+This Fork: [![Build Status](https://travis-ci.org/txangel/timecop.svg)](https://github.com/txangel/timecop)
 
 ## DESCRIPTION
 
