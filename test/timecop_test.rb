@@ -212,7 +212,7 @@ class TestTimecop < Minitest::Unit::TestCase
       assert_equal t, Time.now
       Timecop.freeze do
         assert_equal t, Time.now
-        assert_equal Time.local(2008, 10, 10, 10, 10, 20), Time.now
+        assert_equal Time.local(2008, 10, 10, 10, 10, 10), Time.now
         assert_equal Date.new(2008, 10, 10), Date.today
       end
     end
