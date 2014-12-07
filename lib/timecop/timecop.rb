@@ -107,7 +107,7 @@ class Timecop
     end
 
     def safe_mode?
-      false || @safe_mode
+      @safe_mode ||= false
     end
 
     private

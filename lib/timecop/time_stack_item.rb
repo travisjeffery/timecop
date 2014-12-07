@@ -6,6 +6,7 @@ class Timecop
 
       def initialize(mock_type, *args)
         raise "Unknown mock_type #{mock_type}" unless [:freeze, :travel, :scale].include?(mock_type)
+        @travel_offset  = @scaling_factor = nil
         @scaling_factor = args.shift if mock_type == :scale
         @mock_type      = mock_type
         @time           = parse_time(*args)
@@ -137,4 +138,4 @@ class Timecop
         Time.respond_to?(:zone) && Time.zone ? Time.zone : Time
       end
     end
-  end
+end

@@ -2,6 +2,8 @@ require 'rubygems'
 require 'bundler/setup'
 require 'minitest/autorun'
 
+$VERBOSE = true # enable ruby warnings
+
 begin
   require 'mocha/setup'
 rescue LoadError
