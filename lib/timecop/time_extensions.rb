@@ -63,13 +63,11 @@ class DateTime #:nodoc:
       mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.datetime(self)
     end
 
-    def now_without_mock_time
-      Time.now_without_mock_time.to_datetime
-    end
-
     def now_with_mock_time
       mock_time || now_without_mock_time
     end
+
+    alias_method :now_without_mock_time, :now
 
     alias_method :now, :now_with_mock_time
   end
