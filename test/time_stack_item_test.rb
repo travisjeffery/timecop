@@ -269,7 +269,7 @@ class TestTimeStackItem < Minitest::Unit::TestCase
 
   def test_datetime_timezones
     dt = DateTime.new(2011,1,3,15,25,0,"-6")
-    Timecop.travel(dt) do
+    Timecop.freeze(dt) do
       now = DateTime.now
       assert_equal dt, now, "#{dt.to_f}, #{now.to_f}"
     end

@@ -58,7 +58,10 @@ class TestTimecop < Minitest::Unit::TestCase
   def test_travel_does_not_reduce_precision_of_datetime
     # requires to_r on Float (>= 1.9)
     if Float.method_defined?(:to_r)
-      Timecop.travel(1)
+      Timecop.travel(Time.new(2014, 1, 1, 0, 0, 0))
+      assert DateTime.now != DateTime.now
+
+      Timecop.travel(Time.new(2014, 1, 1, 0, 0, 59))
       assert DateTime.now != DateTime.now
     end
   end
