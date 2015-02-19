@@ -64,13 +64,14 @@ class Date #:nodoc:
 
     alias_method :strptime, :strptime_with_mock_date
 
-    def parse_with_mock_date(str)
+    def parse_with_mock_date(*args)
+      str = args.first
       if WEEKDAYS.keys.include?(str.downcase)
         offset = WEEKDAYS[str.downcase] - Date.today.wday
 
         Date.today + offset
       else
-        parse_without_mock_date(str)
+        parse_without_mock_date(*args)
       end
     end
 
@@ -95,7 +96,8 @@ class DateTime #:nodoc:
 
     alias_method :now, :now_with_mock_time
 
-    def parse_with_mock_date(str)
+    def parse_with_mock_date(*args)
+      str = args.first
       if Date::WEEKDAYS.keys.include?(str.downcase)
         offset = Date::WEEKDAYS[str.downcase] - DateTime.now.wday
 
@@ -103,7 +105,7 @@ class DateTime #:nodoc:
 
         DateTime.new(parsed_weekday.year, parsed_weekday.month, parsed_weekday.day, 0, 0, 0, 0)
       else
-        parse_without_mock_date(str)
+        parse_without_mock_date(*args)
       end
     end
 
