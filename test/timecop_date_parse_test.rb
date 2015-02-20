@@ -11,70 +11,62 @@ class TestTimecop < Minitest::Unit::TestCase
     Timecop.return
   end
 
-  # Test for Date
-  def test_date_parse_sunday_after_travel
-    assert_equal Date.parse("2008-08-31"), Date.parse('Sunday')
+
+  def parse_sunday_after_travel(klass)
+    assert_equal klass.parse("2008-08-31"), klass.parse('Sunday')
   end
 
-  def test_date_parse_monday_after_travel
-    assert_equal Date.parse("2008-09-01"), Date.parse('Monday')
+  def parse_monday_after_travel(klass)
+    assert_equal klass.parse("2008-09-01"), klass.parse('Monday')
   end
 
-  def test_date_parse_tuesday_after_travel
-    assert_equal Date.parse("2008-09-02"), Date.parse('Tuesday')
+  def parse_tuesday_after_travel(klass)
+    assert_equal klass.parse("2008-09-02"), klass.parse('Tuesday')
   end
 
-  def test_date_parse_wednesday_after_travel
-    assert_equal Date.parse("2008-09-03"), Date.parse('Wednesday')
+  def parse_wednesday_after_travel(klass)
+    assert_equal klass.parse("2008-09-03"), klass.parse('Wednesday')
   end
 
-  def test_date_parse_thursday_after_travel
-    assert_equal Date.parse("2008-09-04"), Date.parse('Thursday')
+  def parse_thursday_after_travel(klass)
+    assert_equal klass.parse("2008-09-04"), klass.parse('Thursday')
   end
 
-  def test_date_parse_friday_after_travel
-    assert_equal Date.parse("2008-09-05"), Date.parse('Friday')
+  def parse_friday_after_travel(klass)
+    assert_equal klass.parse("2008-09-05"), klass.parse('Friday')
   end
 
-  def test_date_parse_saturday_after_travel
-    assert_equal Date.parse("2008-09-06"), Date.parse('Saturday')
+  def parse_saturday_after_travel(klass)
+    assert_equal klass.parse("2008-09-06"), klass.parse('Saturday')
   end
 
-  def test_date_parse_with_additional_args
-    assert_equal Date.parse("2008-09-06", false), Date.parse('Saturday')
+  def parse_with_additional_args(klass)
+    assert_equal klass.parse("2008-09-06", false), klass.parse('Saturday')
   end
 
-
-  # Tests for DateTime
-  def test_date_time_parse_sunday_after_travel
-    assert_equal DateTime.parse("2008-08-31"), DateTime.parse('Sunday')
+  def parse_nil(klass)
+    assert_raises ::TypeError do
+      klass.parse(nil)
+    end
   end
 
-  def test_date_time_parse_monday_after_travel
-    assert_equal DateTime.parse("2008-09-01"), DateTime.parse('Monday')
+  def run_all_test_for_klass(klass)
+    parse_sunday_after_travel(klass)
+    parse_monday_after_travel(klass)
+    parse_tuesday_after_travel(klass)
+    parse_wednesday_after_travel(klass)
+    parse_thursday_after_travel(klass)
+    parse_friday_after_travel(klass)
+    parse_saturday_after_travel(klass)
+    parse_with_additional_args(klass)
+    parse_nil(klass)
   end
 
-  def test_date_time_parse_tuesday_after_travel
-    assert_equal DateTime.parse("2008-09-02"), DateTime.parse('Tuesday')
+  def test_date_klass
+    run_all_test_for_klass(Date)
   end
 
-  def test_date_time_parse_wednesday_after_travel
-    assert_equal DateTime.parse("2008-09-03"), DateTime.parse('Wednesday')
-  end
-
-  def test_date_time_parse_thursday_after_travel
-    assert_equal DateTime.parse("2008-09-04"), DateTime.parse('Thursday')
-  end
-
-  def test_date_time_parse_friday_after_travel
-    assert_equal DateTime.parse("2008-09-05"), DateTime.parse('Friday')
-  end
-
-  def test_date_time_parse_saturday_after_travel
-    assert_equal DateTime.parse("2008-09-06"), DateTime.parse('Saturday')
-  end
-
-  def test_date_time_parse_with_additional_args
-    assert_equal DateTime.parse("2008-09-06", false), DateTime.parse('Saturday')
+  def test_date_time_klass
+    run_all_test_for_klass(DateTime)
   end
 end
