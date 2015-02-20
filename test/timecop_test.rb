@@ -58,7 +58,10 @@ class TestTimecop < Minitest::Unit::TestCase
   def test_travel_does_not_reduce_precision_of_datetime
     # requires to_r on Float (>= 1.9)
     if Float.method_defined?(:to_r)
-      Timecop.travel(1)
+      Timecop.travel(Time.new(2014, 1, 1, 0, 0, 0))
+      assert DateTime.now != DateTime.now
+
+      Timecop.travel(Time.new(2014, 1, 1, 0, 0, 59))
       assert DateTime.now != DateTime.now
     end
   end
@@ -219,6 +222,14 @@ class TestTimecop < Minitest::Unit::TestCase
     end
   end
 
+  def test_exception_thrown_in_return_block_restores_previous_time
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    Timecop.freeze(t) do
+      Timecop.return { raise 'foobar' } rescue nil
+      assert_equal t, Time.now
+    end
+  end
+
   def test_freeze_freezes_time
     t = Time.local(2008, 10, 10, 10, 10, 10)
     now = Time.now
@@ -281,6 +292,19 @@ class TestTimecop < Minitest::Unit::TestCase
         assert_equal local, Time.now, "Failed for timezone: #{ENV['TZ']}"
       end
     end
+  end
+  
+  def test_freeze_without_arguments_instance_works_as_expected
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    Timecop.freeze(t) do
+      assert_equal t, Time.now
+      Timecop.freeze do
+        assert_equal t, Time.now
+        assert_equal Time.local(2008, 10, 10, 10, 10, 10), Time.now
+        assert_equal Date.new(2008, 10, 10), Date.today
+      end
+    end
+    assert t != Time.now
   end
 
   def test_destructive_methods_on_frozen_time
