@@ -51,7 +51,8 @@ describe "some set of tests to mock" do
     Timecop.return
   end
 
-  it "should do blah blah blah" {}
+  it "should do blah blah blah" do
+  end
 end
 ```
 
