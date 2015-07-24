@@ -293,7 +293,7 @@ class TestTimecop < Minitest::Unit::TestCase
       end
     end
   end
-  
+
   def test_freeze_without_arguments_instance_works_as_expected
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.freeze(t) do
@@ -517,6 +517,23 @@ class TestTimecop < Minitest::Unit::TestCase
     Timecop.freeze(Time.new(1984,2,28)) do
       assert_equal Date.strptime('1999-04-14'), Date.new(1999, 4, 14)
     end
+  end
+
+  def test_frozen_after_freeze
+    Timecop.freeze
+    assert Timecop.frozen?
+  end
+
+  def test_frozen_inside_freeze
+    Timecop.freeze do
+      assert Timecop.frozen?
+    end
+  end
+
+  def test_not_frozen_after_return
+    Timecop.freeze
+    Timecop.return
+    assert !Timecop.frozen?
   end
 
   private
