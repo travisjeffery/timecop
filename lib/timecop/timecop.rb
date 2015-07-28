@@ -111,6 +111,11 @@ class Timecop
       @safe_mode ||= false
     end
 
+    # Returns whether or not Timecop is currently frozen/travelled
+    def frozen?
+      !instance.instance_variable_get(:@_stack).empty?
+    end
+
     private
     def send_travel(mock_type, *args, &block)
       val = instance.send(:travel, mock_type, *args, &block)
