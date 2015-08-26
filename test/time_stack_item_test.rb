@@ -1,6 +1,6 @@
 require 'date'
-require File.join(File.dirname(__FILE__), "test_helper")
-require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
+require_relative "test_helper"
+require 'timecop'
 
 require 'active_support/all'
 

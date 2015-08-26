@@ -1,14 +1,9 @@
-require 'rubygems'
 require 'bundler/setup'
 require 'minitest/autorun'
 
 $VERBOSE = true # enable ruby warnings
 
-begin
-  require 'mocha/setup'
-rescue LoadError
-  require 'mocha'
-end
+require 'mocha/setup'
 
 class Minitest::Unit::TestCase
   private

@@ -1,10 +1,8 @@
-require File.join(File.dirname(__FILE__), "test_helper")
+require_relative "test_helper"
+require "time"
 
 class TestTimecopWithoutDateButWithTime < Minitest::Unit::TestCase
-  TIMECOP_LIB = File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
-
   def test_loads_properly_when_time_is_required_instead_of_date
-    require "time"
-    require TIMECOP_LIB
+    require 'timecop'
   end
 end
