@@ -1,8 +1,10 @@
 require 'date'
+
+require 'bundler/setup'
 require 'active_support/all'
 
-require File.join(File.dirname(__FILE__), "test_helper")
-require File.join(File.dirname(__FILE__), '..', 'lib', 'timecop')
+require_relative "test_helper"
+require 'timecop'
 
 class TestTimecopWithActiveSupport < Minitest::Unit::TestCase
   def teardown
