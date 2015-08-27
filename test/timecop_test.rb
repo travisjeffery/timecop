@@ -294,6 +294,16 @@ class TestTimecop < Minitest::Unit::TestCase
     end
   end
 
+  def test_changes_timezone_to_frozen_time
+    each_timezone do
+      t = Time.utc(2008, 10, 10, 10, 10, 10)
+      assert_equal "2008-10-10 10:10:10 UTC", t.to_s
+      Timecop.freeze(t) do
+        assert_equal "2008-10-10 10:10:10 UTC", Time.new(2008, 10, 10, 10, 10, 10).to_s, "Timezone was not switched"
+      end
+    end
+  end
+
   def test_freeze_without_arguments_instance_works_as_expected
     t = Time.local(2008, 10, 10, 10, 10, 10)
     Timecop.freeze(t) do
