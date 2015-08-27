@@ -21,6 +21,7 @@ end
 task :test do
   failed = Dir["test/*_test.rb"].map do |test|
     command = "ruby #{test}"
+    puts
     puts command
     command unless system(command)
   end.compact
