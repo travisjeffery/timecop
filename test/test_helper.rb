@@ -2,6 +2,7 @@ require 'bundler/setup'
 require 'minitest/autorun'
 
 $VERBOSE = true # enable ruby warnings
+ENV["TZ"] = "UTC"
 
 require 'mocha/setup'
 
