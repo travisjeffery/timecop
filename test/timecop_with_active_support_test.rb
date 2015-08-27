@@ -6,7 +6,7 @@ require 'active_support/all'
 require_relative "test_helper"
 require 'timecop'
 
-class TestTimecopWithActiveSupport < Minitest::Unit::TestCase
+class TestTimecopWithActiveSupport < Minitest::Test
   def teardown
     Timecop.return
   end

@@ -1,7 +1,7 @@
 require_relative "test_helper"
 require 'timecop'
 
-class TestTimecop < Minitest::Unit::TestCase
+class TestTimecop < Minitest::Test
   def teardown
     Timecop.return
   end

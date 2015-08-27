@@ -5,7 +5,7 @@ $VERBOSE = true # enable ruby warnings
 
 require 'mocha/setup'
 
-class Minitest::Unit::TestCase
+class Minitest::Test
   private
     # Tests to see that two times are within the given distance,
     # in seconds, from each other.

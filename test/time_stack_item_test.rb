@@ -4,7 +4,7 @@ require 'timecop'
 
 require 'active_support/all'
 
-class TestTimeStackItem < Minitest::Unit::TestCase
+class TestTimeStackItem < Minitest::Test
   def teardown
     Timecop.return
     Time.zone = nil

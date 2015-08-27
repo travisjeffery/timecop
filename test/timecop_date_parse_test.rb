@@ -1,7 +1,7 @@
 require_relative "test_helper"
 require 'timecop'
 
-class TestTimecop < Minitest::Unit::TestCase
+class TestTimecop < Minitest::Test
   def setup
     t = Time.local(2008, 9, 1, 10, 5, 0) # monday
     Timecop.travel(t)
