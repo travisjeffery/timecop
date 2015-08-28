@@ -3,8 +3,6 @@ require 'bundler/gem_tasks'
 require 'rake/testtask'
 require 'rdoc/task'
 
-$LOAD_PATH.unshift("lib")
-
 Rake::RDocTask.new do |rdoc|
   if File.exist?('VERSION')
     version = File.read('VERSION')
@@ -21,7 +19,15 @@ Rake::RDocTask.new do |rdoc|
 end
 
 task :test do
-  system "cd test && ./run_tests.sh" or fail
+  failed = Dir["test/*_test.rb"].map do |test|
+    command = "ruby #{test}"
+    puts
+    puts command
+    command unless system(command)
+  end.compact
+  if failed.any?
+    abort "#{failed.count} Tests failed\n#{failed.join("\n")}"
+  end
 end
 
 desc 'Default: run tests'

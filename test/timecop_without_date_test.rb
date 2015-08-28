@@ -1,7 +1,7 @@
 require_relative "test_helper"
 require 'timecop'
 
-class TestTimecopWithoutDate < Minitest::Unit::TestCase
+class TestTimecopWithoutDate < Minitest::Test
 
   def setup
     Object.send(:remove_const, :Date) if Object.const_defined?(:Date)
