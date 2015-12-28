@@ -179,6 +179,15 @@ class TestTimeStackItem < Minitest::Test
     end
   end
 
+  def test_timezones_with_parsed_string
+    Time.zone = "Europe/Zurich"
+    time_string = "2012-12-27 12:12"
+    expected_time = Time.zone.parse(time_string)
+    Timecop.freeze(time_string) do |frozen_time|
+      assert_equal expected_time, frozen_time
+    end
+  end
+
   def test_timezones_apply_dates
     Time.zone = "Central Time (US & Canada)"
     time = Time.zone.local(2013,1,3)
