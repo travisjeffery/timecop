@@ -106,12 +106,12 @@ class Timecop
         elsif Object.const_defined?(:Date) && arg.is_a?(Date)
           time_klass.local(arg.year, arg.month, arg.day, 0, 0, 0)
         elsif args.empty? && (arg.kind_of?(Integer) || arg.kind_of?(Float))
-          Time.now + arg
+          time_klass.now + arg
         elsif arg.nil?
-          Time.now
+          time_klass.now
         else
           if arg.is_a?(String) && Time.respond_to?(:parse)
-            Time.parse(arg)
+            time_klass.parse(arg)
           else
             # we'll just assume it's a list of y/m/d/h/m/s
             year   = arg        || 2000
