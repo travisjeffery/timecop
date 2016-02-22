@@ -63,6 +63,8 @@ class Date #:nodoc:
         parsed_date
       when date_hash[:mon] && date_hash[:mday]
         Date.new(mocked_time_stack_item.year, date_hash[:mon], date_hash[:mday])
+      when date_hash[:wday]
+        closest_wday(date_hash[:wday])
       else
         parsed_date + mocked_time_stack_item.travel_offset_days
       end
@@ -73,6 +75,13 @@ class Date #:nodoc:
 
     def mocked_time_stack_item
       Timecop.top_stack_item
+    end
+
+    def closest_wday(wday)
+      today = Date.today
+      result = today - today.wday
+      result += 1 until wday == result.wday
+      result
     end
   end
 end
@@ -101,6 +110,8 @@ class DateTime #:nodoc:
         parsed_date
       when date_hash[:mon] && date_hash[:mday]
         DateTime.new(mocked_time_stack_item.year, date_hash[:mon], date_hash[:mday])
+      when date_hash[:wday]
+        Date.closest_wday(date_hash[:wday]).to_datetime
       else
         parsed_date + mocked_time_stack_item.travel_offset_days
       end

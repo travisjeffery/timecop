@@ -47,7 +47,7 @@ class Timecop
       end
 
       def travel_offset_days
-        Integer(@travel_offset / 60 / 60 / 24)
+        (@travel_offset / 60 / 60 / 24).round
       end
 
       def scaling_factor
