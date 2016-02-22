@@ -125,7 +125,6 @@ class Timecop
         end
       end
 
-      require 'byebug'
       def compute_travel_offset
         time - Time.now_without_mock_time
       end

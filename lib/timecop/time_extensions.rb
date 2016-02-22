@@ -54,9 +54,9 @@ class Date #:nodoc:
     alias_method :strptime, :strptime_with_mock_date
 
     def parse_with_mock_date(*args)
-      date_hash = Date._parse(*args)
       parsed_date = parse_without_mock_date(*args)
       return parsed_date unless mocked_time_stack_item
+      date_hash = Date._parse(*args)
 
       case
       when date_hash[:year] && date_hash[:mon] && date_hash[:mday]
@@ -92,25 +92,16 @@ class DateTime #:nodoc:
     alias_method :now, :now_with_mock_time
 
     def parse_with_mock_date(*args)
-<<<<<<< e1eb6789d8df873d7dd75526dafc7655627bf1ba
-      str = args.first
-      if str.respond_to?(:downcase) && Date::WEEKDAYS.keys.include?(str.downcase)
-        offset = Date::WEEKDAYS[str.downcase] - DateTime.now.wday
-
-        parsed_weekday =(DateTime.now + offset)
-
-        DateTime.new(parsed_weekday.year, parsed_weekday.month, parsed_weekday.day, 0, 0, 0, 0)
-=======
       date_hash = Date._parse(*args)
       parsed_date = parse_without_mock_date(*args)
       return parsed_date unless mocked_time_stack_item
+      date_hash = DateTime._parse(*args)
 
       case
       when date_hash[:year] && date_hash[:mon] && date_hash[:mday]
         parsed_date
       when date_hash[:mon] && date_hash[:mday]
         DateTime.new(mocked_time_stack_item.year, date_hash[:mon], date_hash[:mday])
->>>>>>> fixes for #171 and #158 issues
       else
         parsed_date + mocked_time_stack_item.travel_offset_days
       end
