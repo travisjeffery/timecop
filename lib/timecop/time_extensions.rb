@@ -54,9 +54,9 @@ class Date #:nodoc:
     alias_method :strptime, :strptime_with_mock_date
 
     def parse_with_mock_date(*args)
-      date_hash = Date._parse(*args)
       parsed_date = parse_without_mock_date(*args)
       return parsed_date unless mocked_time_stack_item
+      date_hash = Date._parse(*args)
 
       case
       when date_hash[:year] && date_hash[:mon] && date_hash[:mday]
@@ -92,9 +92,9 @@ class DateTime #:nodoc:
     alias_method :now, :now_with_mock_time
 
     def parse_with_mock_date(*args)
-      date_hash = Date._parse(*args)
       parsed_date = parse_without_mock_date(*args)
       return parsed_date unless mocked_time_stack_item
+      date_hash = DateTime._parse(*args)
 
       case
       when date_hash[:year] && date_hash[:mon] && date_hash[:mday]
