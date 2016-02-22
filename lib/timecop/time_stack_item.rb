@@ -43,7 +43,7 @@ class Timecop
       end
 
       def travel_offset
-        @travel_offset
+        @travel_offset unless mock_type == :freeze
       end
 
       def travel_offset_days
@@ -125,8 +125,8 @@ class Timecop
         end
       end
 
+      require 'byebug'
       def compute_travel_offset
-        return nil if mock_type == :freeze
         time - Time.now_without_mock_time
       end
 

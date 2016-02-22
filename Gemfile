@@ -12,4 +12,5 @@ group :development do
   gem 'i18n'
   gem 'minitest'
   gem 'minitest-rg'
+  gem 'byebug'
 end
