@@ -56,6 +56,8 @@ class Date #:nodoc:
     def parse_with_mock_date(*args)
       date_hash = Date._parse(*args)
       parsed_date = parse_without_mock_date(*args)
+      return parsed_date unless mocked_time_stack_item
+
       case
       when date_hash[:year] && date_hash[:mon] && date_hash[:mday]
         parsed_date
@@ -101,6 +103,8 @@ class DateTime #:nodoc:
 =======
       date_hash = Date._parse(*args)
       parsed_date = parse_without_mock_date(*args)
+      return parsed_date unless mocked_time_stack_item
+
       case
       when date_hash[:year] && date_hash[:mon] && date_hash[:mday]
         parsed_date
