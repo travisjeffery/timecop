@@ -87,6 +87,19 @@ class TestTimeStackItem < Minitest::Test
     assert_equal s,   stack_item.sec
   end
 
+  def test_new_with_float
+    t = Time.now
+    y, m, d, h, min, s = t.year, t.month, t.day, t.hour, t.min, t.sec
+    stack_item = Timecop::TimeStackItem.new(:freeze, 0.0)
+
+    assert_equal y,   stack_item.year
+    assert_equal m,   stack_item.month
+    assert_equal d,   stack_item.day
+    assert_equal h,   stack_item.hour
+    assert_equal min, stack_item.min
+    assert_equal s,   stack_item.sec
+  end
+
   def test_new_with_individual_arguments
     y, m, d, h, min, s = 2008, 10, 10, 10, 10, 10
     stack_item = Timecop::TimeStackItem.new(:freeze, y, m, d, h, min, s)
