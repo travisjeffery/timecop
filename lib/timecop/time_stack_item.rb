@@ -101,7 +101,7 @@ class Timecop
           time_klass.at(arg.to_time.to_f).getlocal
         elsif Object.const_defined?(:Date) && arg.is_a?(Date)
           time_klass.local(arg.year, arg.month, arg.day, 0, 0, 0)
-        elsif args.empty? && arg.kind_of?(Integer)
+        elsif args.empty? && (arg.kind_of?(Integer) || arg.kind_of?(Float))
           Time.now + arg
         elsif arg.nil?
           Time.now
