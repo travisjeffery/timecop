@@ -108,7 +108,28 @@ class Timecop
     end
 
     def safe_mode?
-      @safe_mode ||= false
+      !!@safe_mode
+    end
+
+    def thread_safe=(safe)
+      @thread_safe = safe
+    end
+
+    def thread_safe?
+      !!@thread_safe
+    end
+
+    alias __singleton_instance instance
+
+    def instance
+      if thread_safe?
+        instance = Thread.current[:timecop_instance]
+        return instance if instance
+        instance = Timecop.__singleton_instance
+        Thread.current[:timecop_instance] = instance
+      else
+        __singleton_instance
+      end
     end
 
     # Returns whether or not Timecop is currently frozen/travelled
