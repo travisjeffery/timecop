@@ -100,7 +100,7 @@ class Timecop
     end
 
     def top_stack_item #:nodoc:
-      instance.instance_variable_get(:@_stack).last
+      instance.send(:stack).last
     end
 
     def safe_mode=(safe)
@@ -111,9 +111,17 @@ class Timecop
       @safe_mode ||= false
     end
 
+    def thread_safe=(t)
+      instance.send(:thread_safe=, t)
+    end
+
+    def thread_safe
+      instance.send(:thread_safe)
+    end
+
     # Returns whether or not Timecop is currently frozen/travelled
     def frozen?
-      !instance.instance_variable_get(:@_stack).empty?
+      !instance.send(:stack).empty?
     end
 
     private
@@ -125,13 +133,56 @@ class Timecop
 
   private
 
-  def baseline=(baseline)
-    @baseline = baseline
-    @_stack << TimeStackItem.new(:travel, baseline)
+  def baseline=(b)
+    set_baseline(b)
+    stack << TimeStackItem.new(:travel, b)
+  end
+
+  def baseline
+    if @thread_safe
+      Thread.current[:timecop_baseline]
+    else
+      @baseline
+    end
+  end
+
+  def set_baseline(b)
+    if @thread_safe
+      Thread.current[:timecop_baseline] = b
+    else
+      @baseline = b
+    end
+  end
+
+  def stack
+    if @thread_safe
+      Thread.current[:timecop_stack] ||= []
+      Thread.current[:timecop_stack]
+    else
+      @_stack
+    end
+  end
+
+  def set_stack(s)
+    if @thread_safe
+      Thread.current[:timecop_stack] = s
+    else
+      @_stack = s
+    end
   end
 
   def initialize #:nodoc:
     @_stack = []
+    @thread_safe = false
+  end
+
+  def thread_safe=(t)
+    initialize
+    @thread_safe = t
+  end
+
+  def thread_safe
+    @thread_safe
   end
 
   def travel(mock_type, *args, &block) #:nodoc:
@@ -139,36 +190,36 @@ class Timecop
 
     stack_item = TimeStackItem.new(mock_type, *args)
 
-    stack_backup = @_stack.dup
-    @_stack << stack_item
+    stack_backup = stack.dup
+    stack << stack_item
 
     if block_given?
       begin
         yield stack_item.time
       ensure
-        @_stack.replace stack_backup
+        stack.replace stack_backup
       end
     end
   end
 
   def return(&block)
-    current_stack = @_stack
-    current_baseline = @baseline
+    current_stack = stack
+    current_baseline = baseline
     unmock!
     yield
   ensure
-    @_stack = current_stack
-    @baseline = current_baseline
+    set_stack current_stack
+    set_baseline current_baseline
   end
 
   def unmock! #:nodoc:
-    @baseline = nil
-    @_stack = []
+    set_baseline nil
+    set_stack []
   end
 
   def return_to_baseline
-    if @baseline
-      @_stack = [@_stack.shift]
+    if baseline
+      set_stack [stack.shift]
     else
       unmock!
     end

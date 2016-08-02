@@ -536,6 +536,23 @@ class TestTimecop < Minitest::Test
     assert !Timecop.frozen?
   end
 
+  def test_thread_safe_timecop
+    Timecop.thread_safe = true
+    date = Time.local(2011, 01, 02)
+    thread = Thread.new do
+      Timecop.freeze(date) do
+        sleep 1 #give main thread time to run
+        assert_equal date, Time.now
+      end
+    end
+
+    sleep 0.25
+    assert Time.now != date
+    thread.join
+  ensure
+    Timecop.thread_safe = false
+  end
+
   private
 
   def with_safe_mode(enabled=true)
