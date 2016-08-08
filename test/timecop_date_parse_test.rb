@@ -44,6 +44,34 @@ class TestTimecop < Minitest::Test
     assert_equal Date.parse("2008-09-06", false), Date.parse('Saturday')
   end
 
+  def test_date_parse_sun_after_travel
+    assert_equal Date.parse("2008-08-31"), Date.parse('Sun')
+  end
+
+  def test_date_parse_mon_after_travel
+    assert_equal Date.parse("2008-09-01"), Date.parse('Mon')
+  end
+
+  def test_date_parse_tue_after_travel
+    assert_equal Date.parse("2008-09-02"), Date.parse('Tue')
+  end
+
+  def test_date_parse_wed_after_travel
+    assert_equal Date.parse("2008-09-03"), Date.parse('Wed')
+  end
+
+  def test_date_parse_thu_after_travel
+    assert_equal Date.parse("2008-09-04"), Date.parse('Thu')
+  end
+
+  def test_date_parse_fri_after_travel
+    assert_equal Date.parse("2008-09-05"), Date.parse('Fri')
+  end
+
+  def test_date_parse_sat_after_travel
+    assert_equal Date.parse("2008-09-06"), Date.parse('Sat')
+  end
+
   def test_date_parse_nil_raises_type_error
     assert_raises(TypeError) { Date.parse(nil) }
   end
@@ -79,6 +107,34 @@ class TestTimecop < Minitest::Test
 
   def test_date_time_parse_with_additional_args
     assert_equal DateTime.parse("2008-09-06", false), DateTime.parse('Saturday')
+  end
+
+  def test_date_time_parse_sun_after_travel
+    assert_equal DateTime.parse("2008-08-31"), DateTime.parse('Sun')
+  end
+
+  def test_date_time_parse_mon_after_travel
+    assert_equal DateTime.parse("2008-09-01"), DateTime.parse('Mon')
+  end
+
+  def test_date_time_parse_tue_after_travel
+    assert_equal DateTime.parse("2008-09-02"), DateTime.parse('Tue')
+  end
+
+  def test_date_time_parse_wed_after_travel
+    assert_equal DateTime.parse("2008-09-03"), DateTime.parse('Wed')
+  end
+
+  def test_date_time_parse_thu_after_travel
+    assert_equal DateTime.parse("2008-09-04"), DateTime.parse('Thu')
+  end
+
+  def test_date_time_parse_fri_after_travel
+    assert_equal DateTime.parse("2008-09-05"), DateTime.parse('Fri')
+  end
+
+  def test_date_time_parse_sat_after_travel
+    assert_equal DateTime.parse("2008-09-06"), DateTime.parse('Sat')
   end
 
   def test_date_time_parse_nil_raises_type_error
