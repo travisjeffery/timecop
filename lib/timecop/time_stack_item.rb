@@ -76,7 +76,7 @@ class Timecop
 
       def datetime(datetime_klass = DateTime)
         if Float.method_defined?(:to_r)
-          fractions_of_a_second = time.to_f % 1
+          fractions_of_a_second = time.to_r - time.to_i
           datetime_klass.new(year, month, day, hour, min, (fractions_of_a_second + sec), utc_offset_to_rational(utc_offset))
         else
           datetime_klass.new(year, month, day, hour, min, sec, utc_offset_to_rational(utc_offset))
@@ -98,7 +98,7 @@ class Timecop
         if arg.is_a?(Time)
           arg
         elsif Object.const_defined?(:DateTime) && arg.is_a?(DateTime)
-          time_klass.at(arg.to_time.to_f).getlocal
+          time_klass.at(arg.to_time).getlocal
         elsif Object.const_defined?(:Date) && arg.is_a?(Date)
           time_klass.local(arg.year, arg.month, arg.day, 0, 0, 0)
         elsif args.empty? && (arg.kind_of?(Integer) || arg.kind_of?(Float))

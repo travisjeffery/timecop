@@ -66,6 +66,18 @@ class TestTimecop < Minitest::Test
     end
   end
 
+  def test_freeze_preserves_nanoseconds_for_datetime
+    dt = DateTime.new(2008, 10, 10, 10, 10, 10.123456789)
+    Timecop.freeze(dt)
+    assert_equal dt.sec_fraction, DateTime.now.sec_fraction
+  end
+
+  def test_freeze_preserves_nanoseconds_for_time
+    t = Time.local(2008, 10, 10, 10, 10, 10.123456789)
+    Timecop.freeze(t)
+    assert_equal t.nsec, Time.now.nsec
+  end
+
   def test_freeze_in_time_subclass_returns_mocked_subclass
     t = Time.local(2008, 10, 10, 10, 10, 10)
     custom_timeklass = Class.new(Time) do
