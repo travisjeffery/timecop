@@ -52,7 +52,7 @@ class Timecop
 
       def time(time_klass = Time) #:nodoc:
         if @time.respond_to?(:in_time_zone)
-          time = time_klass.at(@time.dup.utc.to_r)
+          time = time_klass.at(@time.dup.localtime)
         else
           time = time_klass.at(@time)
         end
