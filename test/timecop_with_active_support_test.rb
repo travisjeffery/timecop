@@ -15,6 +15,7 @@ class TestTimecopWithActiveSupport < Minitest::Test
     Timecop.travel(1)
     long_ago = Time.now
     sleep(0.000001)
-    assert long_ago.nsec != Time.now.nsec
+    diff = long_ago.nsec - Time.now.nsec
+    assert_equal 0, diff, "Expected zero difference but was #{diff}"
   end
 end
