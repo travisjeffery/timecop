@@ -14,8 +14,7 @@ class TestTimecopWithActiveSupport < Minitest::Test
   def test_travel_does_not_reduce_precision_of_time
     Timecop.travel(1)
     long_ago = Time.now
-    sleep(0.000001)
-    diff = long_ago.nsec - Time.now.nsec
-    assert_equal 0, diff, "Expected zero difference but was #{diff}"
+    sleep(0.000002)
+    assert long_ago.nsec != Time.now.nsec
   end
 end
