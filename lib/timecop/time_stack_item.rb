@@ -60,7 +60,7 @@ class Timecop
         if travel_offset.nil?
           time
         elsif scaling_factor.nil?
-          time_klass.at((Time.now_without_mock_time + travel_offset).to_f)
+          time_klass.at(Time.now_without_mock_time + travel_offset)
         else
           time_klass.at(scaled_time)
         end
