@@ -251,7 +251,7 @@ class TestTimecop < Minitest::Test
       new_now = Time.now
       assert_times_effectively_equal(new_now, t, 1, "Looks like we failed to actually travel time")
       sleep(0.25)
-      assert_times_effectively_not_equal new_now, Time.now, 0.25, "Looks like time is not moving"
+      assert_times_effectively_not_equal new_now, Time.now, 0.24, "Looks like time is not moving"
     end
   end
 
