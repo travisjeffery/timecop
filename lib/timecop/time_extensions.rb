@@ -59,7 +59,12 @@ class Date #:nodoc:
           "supports Date::ITALY for the start argument."
       end
 
-      Time.strptime(str, fmt).to_date
+      begin
+        Time.strptime(str, fmt).to_date
+      rescue ArgumentError => error
+        raise unless error.message.include? 'invalid strptime format'
+        raise ArgumentError, 'invalid date'
+      end
     end
 
     alias_method :strptime, :strptime_with_mock_date

@@ -519,6 +519,11 @@ class TestTimecop < Minitest::Test
     end
   end
 
+  def test_date_strptime_with_invalid_format
+    error = assert_raises(ArgumentError) { Date.strptime('', '%m/%d/%Y') }
+    assert_equal 'invalid date', error.message
+  end
+
   def test_frozen_after_freeze
     Timecop.freeze
     assert Timecop.frozen?
