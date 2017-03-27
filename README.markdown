@@ -104,7 +104,7 @@ being able to simulate activity via subsequent calls to your application.
 Timecop.scale(3600)
 Time.now
 # => 2012-09-20 21:23:25 -0500
-# seconds later, hours have past it's gone from 9pm at night to 6am in the morning
+# seconds later, hours have passed and it's gone from 9pm at night to 6am in the morning
 Time.now
 # => 2012-09-21 06:22:59 -0500
 ```
