@@ -43,7 +43,11 @@ class Timecop
       end
 
       def travel_offset
-        @travel_offset
+        @travel_offset unless mock_type == :freeze
+      end
+
+      def travel_offset_days
+        (@travel_offset / 60 / 60 / 24).round
       end
 
       def scaling_factor
@@ -122,7 +126,6 @@ class Timecop
       end
 
       def compute_travel_offset
-        return nil if mock_type == :freeze
         time - Time.now_without_mock_time
       end
 

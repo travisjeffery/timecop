@@ -27,19 +27,8 @@ class Time #:nodoc:
 end
 
 class Date #:nodoc:
-  WEEKDAYS = {
-    "sunday"    => 0,
-    "monday"    => 1,
-    "tuesday"   => 2,
-    "wednesday" => 3,
-    "thursday"  => 4,
-    "friday"    => 5,
-    "saturday"  => 6
-  }
-
   class << self
     def mock_date
-      mocked_time_stack_item = Timecop.top_stack_item
       mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.date(self)
     end
 
@@ -65,26 +54,41 @@ class Date #:nodoc:
     alias_method :strptime, :strptime_with_mock_date
 
     def parse_with_mock_date(*args)
-      str = args.first
-      if str && WEEKDAYS.keys.include?(str.downcase)
-        offset = WEEKDAYS[str.downcase] - Date.today.wday
+      parsed_date = parse_without_mock_date(*args)
+      return parsed_date unless mocked_time_stack_item
+      date_hash = Date._parse(*args)
 
-        Date.today + offset
+      case
+      when date_hash[:year] && date_hash[:mon] && date_hash[:mday]
+        parsed_date
+      when date_hash[:mon] && date_hash[:mday]
+        Date.new(mocked_time_stack_item.year, date_hash[:mon], date_hash[:mday])
+      when date_hash[:wday]
+        closest_wday(date_hash[:wday])
       else
-        parse_without_mock_date(*args)
+        parsed_date + mocked_time_stack_item.travel_offset_days
       end
     end
 
     alias_method :parse_without_mock_date, :parse
     alias_method :parse, :parse_with_mock_date
 
+    def mocked_time_stack_item
+      Timecop.top_stack_item
+    end
+
+    def closest_wday(wday)
+      today = Date.today
+      result = today - today.wday
+      result += 1 until wday == result.wday
+      result
+    end
   end
 end
 
 class DateTime #:nodoc:
   class << self
     def mock_time
-      mocked_time_stack_item = Timecop.top_stack_item
       mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.datetime(self)
     end
 
@@ -97,19 +101,27 @@ class DateTime #:nodoc:
     alias_method :now, :now_with_mock_time
 
     def parse_with_mock_date(*args)
-      str = args.first
-      if str && Date::WEEKDAYS.keys.include?(str.downcase)
-        offset = Date::WEEKDAYS[str.downcase] - DateTime.now.wday
+      parsed_date = parse_without_mock_date(*args)
+      return parsed_date unless mocked_time_stack_item
+      date_hash = DateTime._parse(*args)
 
-        parsed_weekday =(DateTime.now + offset)
-
-        DateTime.new(parsed_weekday.year, parsed_weekday.month, parsed_weekday.day, 0, 0, 0, 0)
+      case
+      when date_hash[:year] && date_hash[:mon] && date_hash[:mday]
+        parsed_date
+      when date_hash[:mon] && date_hash[:mday]
+        DateTime.new(mocked_time_stack_item.year, date_hash[:mon], date_hash[:mday])
+      when date_hash[:wday]
+        Date.closest_wday(date_hash[:wday]).to_datetime
       else
-        parse_without_mock_date(*args)
+        parsed_date + mocked_time_stack_item.travel_offset_days
       end
     end
 
     alias_method :parse_without_mock_date, :parse
     alias_method :parse, :parse_with_mock_date
+
+    def mocked_time_stack_item
+      Timecop.top_stack_item
+    end
   end
 end
