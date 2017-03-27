@@ -48,6 +48,10 @@ class TestTimecop < Minitest::Test
     assert_raises(TypeError) { Date.parse(nil) }
   end
 
+  def test_date_parse_non_string_raises_type_error
+    assert_raises(TypeError) { Date.parse(5) }
+  end
+
   # Tests for DateTime
   def test_date_time_parse_sunday_after_travel
     assert_equal DateTime.parse("2008-08-31"), DateTime.parse('Sunday')
@@ -83,5 +87,9 @@ class TestTimecop < Minitest::Test
 
   def test_datetime_parse_nil_raises_type_error
     assert_raises(TypeError) { DateTime.parse(nil) }
+  end
+
+  def test_datetime_parse_non_string_raises_type_error
+    assert_raises(TypeError) { DateTime.parse(5) }
   end
 end
