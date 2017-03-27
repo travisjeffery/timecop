@@ -66,7 +66,7 @@ class Date #:nodoc:
 
     def parse_with_mock_date(*args)
       str = args.first
-      if str && WEEKDAYS.keys.include?(str.downcase)
+      if str.respond_to?(:downcase) && WEEKDAYS.keys.include?(str.downcase)
         offset = WEEKDAYS[str.downcase] - Date.today.wday
 
         Date.today + offset
@@ -98,7 +98,7 @@ class DateTime #:nodoc:
 
     def parse_with_mock_date(*args)
       str = args.first
-      if str && Date::WEEKDAYS.keys.include?(str.downcase)
+      if str.respond_to?(:downcase) && Date::WEEKDAYS.keys.include?(str.downcase)
         offset = Date::WEEKDAYS[str.downcase] - DateTime.now.wday
 
         parsed_weekday =(DateTime.now + offset)
