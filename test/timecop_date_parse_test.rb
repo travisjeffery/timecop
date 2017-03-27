@@ -44,6 +44,10 @@ class TestTimecop < Minitest::Test
     assert_equal Date.parse("2008-09-06", false), Date.parse('Saturday')
   end
 
+  def test_date_parse_non_string_raises_type_error
+    assert_raises(TypeError) { Date.parse(Object.new) }
+  end
+
   def test_date_parse_nil_raises_type_error
     assert_raises(TypeError) { Date.parse(nil) }
   end
@@ -81,15 +85,11 @@ class TestTimecop < Minitest::Test
     assert_equal DateTime.parse("2008-09-06", false), DateTime.parse('Saturday')
   end
 
-  def test_date_time_parse_with_array
-    assert_raises(TypeError) { DateTime.parse([]) }
+  def test_date_time_parse_non_string_raises_type_error
+    assert_raises(TypeError) { DateTime.parse(Object.new) }
   end
 
-  def test_date_time_parse_with_hash
-    assert_raises(TypeError) { DateTime.parse({}) } 
-  end
-
-  def test_datetime_parse_nil_raises_type_error
+  def test_date_time_parse_nil_raises_type_error
     assert_raises(TypeError) { DateTime.parse(nil) }
   end
 end
