@@ -495,10 +495,20 @@ class TestTimecop < Minitest::Test
     end
   end
 
-  # NOTE: we had this side effect before, might not want this test in here
-  # Keep here for now just to make sure
   def test_raises_when_safe_mode_and_no_block_though_already_frozen
     Timecop.freeze
+    with_safe_mode do
+      assert_raises Timecop::SafeModeException do
+        Timecop.freeze
+      end
+    end
+  end
+
+  def test_raises_when_safe_mode_and_no_block_though_previously_block_given
+    Timecop.freeze do
+      Timecop.freeze
+    end
+
     with_safe_mode do
       assert_raises Timecop::SafeModeException do
         Timecop.freeze
