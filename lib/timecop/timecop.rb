@@ -135,7 +135,7 @@ class Timecop
   end
 
   def unsafe?
-    Timecop.safe_mode? && !@_in_block
+    Timecop.safe_mode? && !@_travel_safe
   end
 
   def travel(mock_type, *args, &block) #:nodoc:
@@ -147,13 +147,13 @@ class Timecop
     @_stack << stack_item
 
     if block_given?
-      in_block_backup = @_in_block
-      @_in_block = true
+      travel_safe_backup = @_travel_safe
+      @_travel_safe = true
       begin
         yield stack_item.time
       ensure
         @_stack.replace stack_backup
-        @_in_block = in_block_backup
+        @_travel_safe = travel_safe_backup
       end
     end
   end
