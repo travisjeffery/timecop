@@ -52,7 +52,7 @@ class Timecop
 
       def time(time_klass = Time) #:nodoc:
         if @time.respond_to?(:in_time_zone)
-          time = time_klass.at(@time.dup.utc.to_r)
+          time = time_klass.at(@time.dup.localtime)
         else
           time = time_klass.at(@time)
         end
@@ -60,7 +60,7 @@ class Timecop
         if travel_offset.nil?
           time
         elsif scaling_factor.nil?
-          time_klass.at((Time.now_without_mock_time + travel_offset).to_f)
+          time_klass.at(Time.now_without_mock_time + travel_offset)
         else
           time_klass.at(scaled_time)
         end

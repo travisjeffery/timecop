@@ -81,7 +81,7 @@ class TestTimecop < Minitest::Test
     assert_equal DateTime.parse("2008-09-06", false), DateTime.parse('Saturday')
   end
 
-  def test_datetime_parse_nil_raises_type_error
+  def test_date_time_parse_nil_raises_type_error
     assert_raises(TypeError) { DateTime.parse(nil) }
   end
 end

@@ -4,7 +4,8 @@ gemspec
 
 group :development do
   gem 'rake'
-  gem 'rack', '< 2.0.0', :platforms => [:ruby_19, :ruby_20, :ruby_21]
+  gem 'rack', '< 2.0.0', :platforms => [:ruby_19, :ruby_20, :ruby_21, :jruby_19]
+  gem 'nokogiri', '< 1.7.0', :platforms => [:ruby_19, :ruby_20]
   gem 'jeweler', '< 2.1.2'
   gem 'pry'
   gem 'mocha'
