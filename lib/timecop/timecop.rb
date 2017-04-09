@@ -132,6 +132,7 @@ class Timecop
 
   def initialize #:nodoc:
     @_stack = []
+    @_travel_safe = nil
   end
 
   def unsafe?
