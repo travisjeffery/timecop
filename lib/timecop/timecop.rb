@@ -135,12 +135,8 @@ class Timecop
     @_safe = nil
   end
 
-  def unsafe?
-    Timecop.safe_mode? && !@_safe
-  end
-
   def travel(mock_type, *args, &block) #:nodoc:
-    raise SafeModeException if !block_given? && unsafe?
+    raise SafeModeException if Timecop.safe_mode? && !block_given? && !@_safe
 
     stack_item = TimeStackItem.new(mock_type, *args)
 
