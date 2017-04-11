@@ -519,7 +519,7 @@ class TestTimecop < Minitest::Test
     end
   end
 
-  def test_no_raise_when_safe_mode_and_no_block_and_in_block_scope
+  def test_no_raise_when_safe_mode_and_no_block_and_in_block_context
     with_safe_mode do
       Timecop.freeze do
         Timecop.freeze
