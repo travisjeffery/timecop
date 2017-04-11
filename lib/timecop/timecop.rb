@@ -159,7 +159,7 @@ class Timecop
       Thread.current[:timecop_stack] ||= []
       Thread.current[:timecop_stack]
     else
-      @_stack
+      @stack
     end
   end
 
@@ -167,12 +167,13 @@ class Timecop
     if @thread_safe
       Thread.current[:timecop_stack] = s
     else
-      @_stack = s
+      @stack = s
     end
   end
 
   def initialize #:nodoc:
-    @_stack = []
+    @stack = []
+    @safe = nil
     @thread_safe = false
   end
 
@@ -186,7 +187,7 @@ class Timecop
   end
 
   def travel(mock_type, *args, &block) #:nodoc:
-    raise SafeModeException if Timecop.safe_mode? && !block_given?
+    raise SafeModeException if Timecop.safe_mode? && !block_given? && !@safe
 
     stack_item = TimeStackItem.new(mock_type, *args)
 
@@ -194,10 +195,13 @@ class Timecop
     stack << stack_item
 
     if block_given?
+      safe_backup = @safe
+      @safe = true
       begin
         yield stack_item.time
       ensure
-        stack.replace stack_backup
+        @stack.replace stack_backup
+        @safe = safe_backup
       end
     end
   end
