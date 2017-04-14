@@ -51,4 +51,8 @@ class Minitest::Test
       assert_in_delta dt1.to_time.to_f, dt2.to_time.to_f, 0.01, "Failed for timezone: #{ENV['TZ']}: #{dt1.to_s} not equal to #{dt2.to_s}"
     end
 
+    def jruby?
+      RUBY_PLATFORM == "java"
+    end
+
 end
