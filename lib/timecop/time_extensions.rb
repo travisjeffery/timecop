@@ -112,4 +112,15 @@ class DateTime #:nodoc:
     alias_method :parse_without_mock_date, :parse
     alias_method :parse, :parse_with_mock_date
   end
+
+  # for ruby1.8
+  unless Time::public_instance_methods.include? :to_datetime
+    class DateTime
+      class << self
+        def now_without_mock_time
+          Time.now_without_mock_time.send(:to_datetime)
+        end
+      end
+    end
+  end
 end
