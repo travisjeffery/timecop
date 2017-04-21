@@ -128,6 +128,12 @@ Timecop.freeze
 # => Timecop::SafeModeException: Safe mode is enabled, only calls passing a block are allowed.
 ```
 
+### Rails v Ruby Date/Time libraries
+
+Sometimes [Rails Date/Time methods don't play nicely with Ruby Date/Time methods.](https://rails.lighthouseapp.com/projects/8994/tickets/6410-dateyesterday-datetoday)
+
+Be careful mixing Ruby `Date.today` with Rails `Date.tomorrow` / `Date.yesterday` as things might break.
+
 ## Contribute
 
 timecop is maintained by [travisjeffery](http://github.com/travisjeffery), and
