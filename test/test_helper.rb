@@ -3,6 +3,7 @@ require 'minitest/autorun'
 require 'minitest/rg'
 
 $VERBOSE = true # enable ruby warnings
+ENV["TZ"] = "UTC"
 
 require 'mocha/setup'
 
