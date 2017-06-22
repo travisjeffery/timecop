@@ -27,7 +27,6 @@ Gem::Specification.new do |s|
      "lib/timecop/time_stack_item.rb",
      "lib/timecop/version.rb",
      "lib/timecop/timecop.rb",
-     "test/run_tests.sh",
      "test/test_helper.rb",
      "test/time_stack_item_test.rb",
      "test/timecop_test.rb",
