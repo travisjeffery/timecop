@@ -60,6 +60,10 @@ class TestTimecop < Minitest::Test
     assert_equal Date.parse("2008-10-10"), Date.parse('Date 10/10')
   end
 
+  def test_date_parse_month_year
+    assert_equal Date.parse("2012-12-01"), Date.parse('DEC 2012')
+  end
+
   def test_date_parse_nil_raises_type_error
     assert_raises(TypeError) { Date.parse(nil) }
   end
@@ -111,6 +115,10 @@ class TestTimecop < Minitest::Test
 
   def test_date_time_parse_Date_10_slash_10
     assert_equal DateTime.parse("2008-10-10"), DateTime.parse('Date 10/10')
+  end
+
+  def test_date_time_parse_month_year
+    assert_equal DateTime.parse("2012-12-01"), Date.parse('DEC 2012')
   end
 
   def test_datetime_parse_nil_raises_type_error

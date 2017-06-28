@@ -59,7 +59,7 @@ class Date #:nodoc:
       date_hash = Date._parse(*args)
 
       case
-      when date_hash[:year] && date_hash[:mon] && date_hash[:mday]
+      when date_hash[:year] && date_hash[:mon]
         parsed_date
       when date_hash[:mon] && date_hash[:mday]
         Date.new(mocked_time_stack_item.year, date_hash[:mon], date_hash[:mday])
@@ -107,7 +107,7 @@ class DateTime #:nodoc:
       date_hash = DateTime._parse(*args)
 
       case
-      when date_hash[:year] && date_hash[:mon] && date_hash[:mday]
+      when date_hash[:year] && date_hash[:mon]
         parsed_date
       when date_hash[:mon] && date_hash[:mday]
         DateTime.new(mocked_time_stack_item.year, date_hash[:mon], date_hash[:mday])
