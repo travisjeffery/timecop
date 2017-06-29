@@ -101,7 +101,6 @@ class DateTime #:nodoc:
     alias_method :now, :now_with_mock_time
 
     def parse_with_mock_date(*args)
-      date_hash = Date._parse(*args)
       parsed_date = parse_without_mock_date(*args)
       return parsed_date unless mocked_time_stack_item
       date_hash = DateTime._parse(*args)
