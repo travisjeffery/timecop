@@ -1,5 +1,9 @@
 # History
 
+## v0.9.1
+
+- fix Date.parse when month/year only given (#206)
+
 ## v0.9.0
 
 - add thread_safe option (#184)
