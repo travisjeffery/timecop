@@ -93,6 +93,7 @@ class Timecop
         nil
       end
     end
+    alias :unfreeze :return
 
     def return_to_baseline
       instance.send(:return_to_baseline)

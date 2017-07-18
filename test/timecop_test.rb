@@ -37,6 +37,12 @@ class TestTimecop < Minitest::Test
     assert_nil Time.send(:mock_time)
   end
 
+  def test_freeze_then_unfreeze_unsets_mock_time
+    Timecop.freeze(1)
+    Timecop.unfreeze
+    assert_nil Time.send(:mock_time)
+  end
+
   def test_travel_then_return_unsets_mock_time
     Timecop.travel(1)
     Timecop.return
