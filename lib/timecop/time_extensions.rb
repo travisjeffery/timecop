@@ -53,10 +53,10 @@ class Date #:nodoc:
 
     alias_method :strptime, :strptime_with_mock_date
 
-    def parse_with_mock_date(*args)
-      parsed_date = parse_without_mock_date(*args)
+    def parse_with_mock_date(str = '-4712-01-01', complete = true, start = Date::ITALY)
+      parsed_date = parse_without_mock_date(str, complete, start)
       return parsed_date unless mocked_time_stack_item
-      date_hash = Date._parse(*args)
+      date_hash = Date._parse(str, complete)
 
       case
       when date_hash[:year] && date_hash[:mon]

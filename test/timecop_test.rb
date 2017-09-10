@@ -573,6 +573,12 @@ class TestTimecop < Minitest::Test
     Timecop.thread_safe = false
   end
 
+  def test_date_parse_interface
+    t = Date.parse_without_mock_date('-4712-01-01', true, Date::ITALY)
+    Timecop.freeze
+    assert_equal t, Date.parse('-4712-01-01', true, Date::ITALY)
+  end
+
   private
 
   def with_safe_mode(enabled=true)
