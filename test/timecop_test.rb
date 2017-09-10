@@ -579,6 +579,12 @@ class TestTimecop < Minitest::Test
     assert_equal t, Date.parse('-4712-01-01', true, Date::ITALY)
   end
 
+  def test_datetime_parse_interface
+    t = DateTime.parse_without_mock_date('-4712-01-01T00:0:00+00:00', true, Date::ITALY)
+    Timecop.freeze
+    assert_equal t, DateTime.parse('-4712-01-01T00:0:00+00:00', true, Date::ITALY)
+  end
+
   private
 
   def with_safe_mode(enabled=true)
