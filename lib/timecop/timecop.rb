@@ -200,7 +200,7 @@ class Timecop
       begin
         yield stack_item.time
       ensure
-        @stack.replace stack_backup
+        stack.replace stack_backup
         @safe = safe_backup
       end
     end

@@ -556,7 +556,7 @@ class TestTimecop < Minitest::Test
     assert !Timecop.frozen?
   end
 
-  def test_thread_safe_timecop
+  def test_thread_safe_timecop_in_parallel
     Timecop.thread_safe = true
     date = Time.local(2011, 01, 02)
     thread = Thread.new do
@@ -569,6 +569,16 @@ class TestTimecop < Minitest::Test
     sleep 0.25
     assert Time.now != date
     thread.join
+  ensure
+    Timecop.thread_safe = false
+  end
+
+  def test_thread_safe_timecop_returns_after_block
+    Timecop.thread_safe = true
+    date = Time.local(2017, 10, 8)
+
+    Timecop.freeze(date) { }
+    assert Time.now != date
   ensure
     Timecop.thread_safe = false
   end
