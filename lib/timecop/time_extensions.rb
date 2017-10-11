@@ -48,7 +48,17 @@ class Date #:nodoc:
           "supports Date::ITALY for the start argument."
       end
 
-      Time.strptime(str, fmt).to_date
+      d = Date._strptime(str, fmt) || Date.strptime_without_mock_date(str, fmt)
+      now = Time.now.to_date
+      year = d[:year] || now.year
+      mon = d[:mon] || now.mon
+      if d[:mday]
+        Date.new(year, mon, d[:mday])
+      elsif d[:wday]
+        Date.new(year, mon, now.mday) + (d[:wday] - now.wday)
+      else
+        Date.new(year, mon, now.mday)
+      end
     end
 
     alias_method :strptime, :strptime_with_mock_date
