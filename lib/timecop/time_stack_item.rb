@@ -106,6 +106,9 @@ class Timecop
         elsif Object.const_defined?(:Date) && arg.is_a?(Date)
           time_klass.local(arg.year, arg.month, arg.day, 0, 0, 0)
         elsif args.empty? && (arg.kind_of?(Integer) || arg.kind_of?(Float))
+          if arg > 1300000000
+            raise "Please pass an offset to this method instead of a timestamp"
+          end
           time_klass.now + arg
         elsif arg.nil?
           time_klass.now
