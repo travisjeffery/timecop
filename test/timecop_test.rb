@@ -397,6 +397,14 @@ class TestTimecop < Minitest::Test
     assert_equal expected, actual
   end
 
+  def test_local_time_with_same_components_is_equal_the_current_time
+    Timecop.travel(2008, 10, 10, 10, 10, 10) do
+      current_time = Time.now
+      same_time = Time.local(current_time.year, current_time.month,  current_time.day,  current_time.hour, current_time.min, current_time.sec, current_time.nsec / 1000.0 )
+      assert_equal current_time, same_time
+    end
+  end
+
   def test_freeze_time_returns_now_if_no_block_given
     t_future = Time.local(2030, 10, 10, 10, 10, 10)
     assert_times_effectively_equal t_future, Timecop.freeze(t_future)
