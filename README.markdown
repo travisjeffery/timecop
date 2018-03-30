@@ -43,12 +43,8 @@ You can mock the time for a set of tests easily via setup/teardown methods
 
 ```ruby
 describe "some set of tests to mock" do
-  before do
-    Timecop.freeze(Time.local(1990))
-  end
-
-  after do
-    Timecop.return
+  around do |example|
+    Timecop.freeze(Time.local(1990), &example)
   end
 
   it "should do blah blah blah" do
@@ -149,4 +145,3 @@ Here's the most direct way to get your work merged into the project.
 - If necessary, rebase your commits into logical chunks without errors
 - Push the branch up to your fork
 - Send a pull request for your branch
-
