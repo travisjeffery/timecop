@@ -5,9 +5,10 @@ class Timecop
       attr_reader :mock_type
 
       def initialize(mock_type, *args)
-        raise "Unknown mock_type #{mock_type}" unless [:freeze, :travel, :scale].include?(mock_type)
-        @travel_offset  = @scaling_factor = nil
+        raise "Unknown mock_type #{mock_type}" unless [:freeze, :travel, :scale, :increment].include?(mock_type)
+        @travel_offset  = @scaling_factor = @increment = nil
         @scaling_factor = args.shift if mock_type == :scale
+        @increment = args.shift if mock_type == :increment
         @mock_type      = mock_type
         @time           = parse_time(*args)
         @time_was       = Time.now_without_mock_time
@@ -54,6 +55,10 @@ class Timecop
         @scaling_factor
       end
 
+      def increment
+        @increment
+      end
+
       def time(time_klass = Time) #:nodoc:
         if @time.respond_to?(:in_time_zone)
           time = time_klass.at(@time.dup.localtime)
@@ -61,7 +66,9 @@ class Timecop
           time = time_klass.at(@time)
         end
 
-        if travel_offset.nil?
+        if increment
+          time_klass.at(incremented_time)
+        elsif travel_offset.nil?
           time
         elsif scaling_factor.nil?
           time_klass.at(Time.now_without_mock_time + travel_offset)
@@ -72,6 +79,10 @@ class Timecop
 
       def scaled_time
         (@time + (Time.now_without_mock_time - @time_was) * scaling_factor).to_f
+      end
+
+      def incremented_time
+        (@time = @time + increment).to_f
       end
 
       def date(date_klass = Date)

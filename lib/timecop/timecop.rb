@@ -74,6 +74,18 @@ class Timecop
       send_travel(:scale, *args, &block)
     end
 
+    # Allows you to run a block of code and "increment" time throughout the execution of that block.
+    # The first argument is the increment in seconds, for example:
+    #   Timecop.increment(2) do
+    #     ... every call to Time.now or similar will return a time 2 seconds later than previous value
+    #   end
+    # See Timecop#freeze for exact usage of the other arguments
+    #
+    # Returns the value of the block if one is given, or the mocked time.
+    def increment(*args, &block)
+      send_travel(:increment, *args, &block)
+    end
+
     def baseline
       instance.send(:baseline)
     end
