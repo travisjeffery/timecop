@@ -8,7 +8,7 @@ class Timecop
         raise "Unknown mock_type #{mock_type}" unless [:freeze, :travel, :scale, :increment].include?(mock_type)
         @travel_offset  = @scaling_factor = @increment = nil
         @scaling_factor = args.shift if mock_type == :scale
-        @increment = args.shift if mock_type == :increment
+        @increment      = args.shift if mock_type == :increment
         @mock_type      = mock_type
         @time           = parse_time(*args)
         @time_was       = Time.now_without_mock_time

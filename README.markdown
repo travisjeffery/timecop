@@ -15,6 +15,7 @@ A gem providing "time travel" and "time freezing" capabilities, making it dead s
 - Freeze time to a specific point.
 - Travel back to a specific point in time, but allow time to continue moving forward from there.
 - Scale time by a given scaling factor that will cause time to move at an accelerated pace.
+- Force time to move forward by a fixed amount between calls.
 - No dependencies, can be used with _any_ ruby project
 - Timecop api allows arguments to be passed into #freeze and #travel as one of the following:
   - Time instance
@@ -110,6 +111,43 @@ Time.now
 ```
 
 See [#42](https://github.com/travisjeffery/timecop/pull/42) for more information, thanks to Ken Mayer, David Holcomb, and Pivotal Labs.
+
+### Timecop.increment
+
+Suppose you're testing code which may depend on two different lines to run at different times.
+But the granularity of time is finite, so they might run at the same time by the clock if
+the code runs on a very fast machine.  For example, code might mistakenly make objects with
+`created_at` members, and might attempt to associated objects that were cretaed at the same time,
+like:
+
+```ruby
+class Child
+  def initialize(parent)
+    @created_at = Time.new
+  end
+
+  def parent # buggy implementation- we want to test this
+    Parent.where(created_at: created_at)
+  end
+end
+a = Parent.new
+b = Child.new(a)
+b.parent # may or may not return a
+```
+
+Your tests can assure that time is moving forward like this:
+
+```ruby
+def test_parent_child
+  Timecop.increment(1) do
+    a = Parent.new
+    b = Child.new(a)
+    assert_equal a, b.parent
+  end
+end
+```
+
+which would demonstrate that the implementation of `Child#parent` is buggy.
 
 ### Timecop.safe_mode
 
