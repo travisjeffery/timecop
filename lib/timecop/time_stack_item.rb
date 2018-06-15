@@ -82,7 +82,9 @@ class Timecop
       end
 
       def incremented_time
-        (@time = @time + increment).to_f
+        pre_increment = @time
+        @time = @time + increment
+        pre_increment.to_f
       end
 
       def date(date_klass = Date)

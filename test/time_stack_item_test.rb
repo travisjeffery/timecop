@@ -223,7 +223,7 @@ class TestTimeStackItem < Minitest::Test
   def test_set_increment_amount_for_increment
     t_now = Time.now
     t = Time.local(2009, 10, 1, 0, 0, 30)
-    expected_offset = (t - t_now) + 5
+    expected_offset = t - t_now
     tsi = Timecop::TimeStackItem.new(:increment, 5, t)
 
     assert_times_effectively_equal expected_offset, tsi.send(:travel_offset), 1, "Offset not calculated correctly"
@@ -233,9 +233,9 @@ class TestTimeStackItem < Minitest::Test
   def test_increment_performs_uniform_incrementation
     t = Time.local(2009, 10, 1, 0, 0, 30)
     tsi = Timecop::TimeStackItem.new(:increment, 10, t)
-    assert_equal tsi.time, t + 20, "Increment amount incorrect"
-    assert_equal tsi.time, t + 30, "Second increment amount incorrect"
-    assert_equal tsi.time, t + 40, "Third increment amount incorrect"
+    assert_equal tsi.time, t + 10, "Increment amount incorrect"
+    assert_equal tsi.time, t + 20, "Second increment amount incorrect"
+    assert_equal tsi.time, t + 30, "Third increment amount incorrect"
   end
 
   def test_increment_supports_zero_increment
