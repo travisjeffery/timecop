@@ -117,7 +117,7 @@ See [#42](https://github.com/travisjeffery/timecop/pull/42) for more information
 Suppose you're testing code which may depend on two different lines to run at different times.
 But the granularity of time is finite, so they might run at the same time by the clock if
 the code runs on a very fast machine.  For example, code might mistakenly make objects with
-`created_at` members, and might attempt to associated objects that were cretaed at the same time,
+`created_at` members, and might attempt to associated objects that were created at the same time,
 like:
 
 ```ruby
