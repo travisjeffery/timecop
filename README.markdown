@@ -75,7 +75,7 @@ end
 
 freeze is used to statically mock the concept of now. As your program executes,
 Time.now will not change unless you make subsequent calls into the Timecop API.
-travel, on the other hand, computes an offset between what we currently think
+Travel, on the other hand, computes an offset between what we currently think
 Time.now is (recall that we support nested traveling) and the time passed in.
 It uses this offset to simulate the passage of time.  To demonstrate, consider
 the following code snippets:
