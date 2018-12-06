@@ -75,7 +75,11 @@ class Timecop
       end
 
       def date(date_klass = Date)
-        date_klass.jd(time.__send__(:to_date).jd)
+        if Time.respond_to?(:zone_default)
+          date_klass.jd(time.__send__(:in_time_zone, Time.zone_default).to_date.jd)
+        else
+          date_klass.jd(time.__send__(:utc).to_date.jd)
+        end
       end
 
       def datetime(datetime_klass = DateTime)
