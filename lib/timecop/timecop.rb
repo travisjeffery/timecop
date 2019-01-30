@@ -1,5 +1,4 @@
 require 'singleton'
-require File.join(File.dirname(__FILE__), "time_extensions")
 require File.join(File.dirname(__FILE__), "time_stack_item")
 
 # Timecop
@@ -235,3 +234,6 @@ class Timecop
     end
   end
 end
+
+# This must be done after TimeCop is available
+require File.join(File.dirname(__FILE__), "time_extensions")
