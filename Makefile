@@ -4,6 +4,9 @@ VOLUMES=-v $(PWD):/tmp/src
 image:
 	docker build -t $(IMAGE_NAME) .
 
+clean:
+	rm Gemfile.lock
+
 test: image
 	docker run $(IMAGE_NAME) rake
 
