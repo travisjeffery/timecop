@@ -554,6 +554,11 @@ class TestTimecop < Minitest::Test
     end
   end
 
+  def test_ancient_strptime
+    ancient = Date.strptime('11-01-08', '%Y-%m-%d').strftime
+    assert_equal '0011-01-08', ancient # Failed before fix to strptime_with_mock_date
+  end
+
   def test_frozen_after_freeze
     Timecop.freeze
     assert Timecop.frozen?
