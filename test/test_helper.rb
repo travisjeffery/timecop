@@ -1,6 +1,7 @@
 require 'bundler/setup'
 require 'minitest/autorun'
 require 'minitest/rg'
+require 'pry'
 
 $VERBOSE = true # enable ruby warnings
 
