@@ -128,11 +128,29 @@ Timecop.freeze
 # => Timecop::SafeModeException: Safe mode is enabled, only calls passing a block are allowed.
 ```
 
+## Warnings
+
 ### Rails v Ruby Date/Time libraries
 
 Sometimes [Rails Date/Time methods don't play nicely with Ruby Date/Time methods.](https://rails.lighthouseapp.com/projects/8994/tickets/6410-dateyesterday-datetoday)
 
 Be careful mixing Ruby `Date.today` with Rails `Date.tomorrow` / `Date.yesterday` as things might break.
+
+### Other components time
+
+Timecop is only modifying data at a ruby level. SQL or Javascript time will not be modified.  
+
+* SQL: this will return false:
+
+```ruby
+Timecop.freeze(1.year.ago)
+sql_now = ActiveRecord::Base.connection.execute('SELECT now()').first['now']
+sql_now.to_date.year == Time.current.year
+```
+
+* Javascript: you can use the [sinon.js fake timers library](https://sinonjs.org/releases/latest/fake-timers/) to modify current time.
+
+
 
 ## Contribute
 
