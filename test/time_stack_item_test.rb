@@ -181,7 +181,7 @@ class TestTimeStackItem < Minitest::Test
     t = Time.local(2009, 10, 1, 0, 0, 30)
     tsi = Timecop::TimeStackItem.new(:freeze, t)
 
-    assert_equal nil, tsi.send(:travel_offset)
+    assert_nil tsi.send(:travel_offset)
   end
 
   def test_timezones
