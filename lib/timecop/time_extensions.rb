@@ -113,21 +113,25 @@ class DateTime #:nodoc:
     alias_method :strptime_without_mock_date, :strptime
 
     def strptime_with_mock_date(str = '-4712-01-01T00:00:00+00:00', fmt = '%F', start = Date::ITALY)
+      
       unless start == Date::ITALY
         raise ArgumentError, "Timecop's #{self}::#{__method__} only " +
           "supports Date::ITALY for the start argument."
       end
 
       d = DateTime._strptime(str, fmt) || DateTime.strptime_without_mock_date(str, fmt)
-      now = DateTime.now.to_date
+      now = DateTime.now.to_datetime
       year = d[:year] || now.year
       mon = d[:mon] || now.mon
+      hour = d[:hour] || now.hour
+      min = d[:min] || now.min
+      sec = d[:sec] || now.sec
       if d[:mday]
-        DateTime.new(year, mon, d[:mday])
+        DateTime.new(year, mon, d[:mday], hour, min, sec)
       elsif d[:wday]
-        DateTime.new(year, mon, now.mday) + (d[:wday] - now.wday)
+        DateTime.new(year, mon, now.mday, hour, min, sec) + (d[:wday] - now.wday)
       else
-        DateTime.new(year, mon, now.mday)
+        DateTime.new(year, mon, now.mday, hour, min, sec)
       end
     end
 

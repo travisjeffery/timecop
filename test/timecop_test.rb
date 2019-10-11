@@ -565,22 +565,28 @@ class TestTimecop < Minitest::Test
     assert_equal '0011-01-08', ancient # Failed before fix to strptime_with_mock_date
   end
 
+  def test_date_time_strptime
+    Timecop.freeze(Time.new(1984,2,28)) do
+      assert_equal DateTime.strptime('04-14 8:20:33 PM', '%m-%d %H:%M:%S %p'), DateTime.new(1984, 4, 14, 20, 20, 33)
+    end
+  end
+
   def test_date_time_strptime_without_year
     Timecop.freeze(Time.new(1984,2,28)) do
-      assert_equal DateTime.strptime('04-14', '%m-%d'), DateTime.new(1984, 4, 14)
+      assert_equal DateTime.strptime('04-14', '%m-%d'), DateTime.new(1984, 4, 14, 0, 0, 0)
     end
   end
 
   def test_date_time_strptime_without_specifying_format
     Timecop.freeze(Time.new(1984,2,28)) do
-      assert_equal DateTime.strptime('1999-04-14'), DateTime.new(1999, 4, 14)
+      assert_equal DateTime.strptime('1999-04-14'), DateTime.new(1999, 4, 14, 0, 0, 0)
     end
   end
 
   def test_date_time_strptime_with_day_of_week
     Timecop.freeze(Time.new(1984,2,28)) do
-      assert_equal DateTime.strptime('Thursday', '%A'), DateTime.new(1984, 3, 1)
-      assert_equal DateTime.strptime('Monday', '%A'), DateTime.new(1984, 2, 27)
+      assert_equal DateTime.strptime('Thursday', '%A'), DateTime.new(1984, 3, 1, 0, 0, 0)
+      assert_equal DateTime.strptime('Monday', '%A'), DateTime.new(1984, 2, 27, 0, 0, 0)
     end
   end
 
@@ -593,8 +599,8 @@ class TestTimecop < Minitest::Test
   end
 
   def test_ancient_date_time_strptime
-    ancient = DateTime.strptime('11-01-08', '%Y-%m-%d').strftime
-    assert_equal '0011-01-08T00:00:00+00:00', ancient # Failed before fix to strptime_with_mock_date
+    ancient = DateTime.strptime('11-01-08 8:20:33 PM', '%Y-%m-%d %H:%M:%S %p').strftime
+    assert_equal '0011-01-08T20:20:33+00:00', ancient # Failed before fix to strptime_with_mock_date
   end
 
   def test_frozen_after_freeze
