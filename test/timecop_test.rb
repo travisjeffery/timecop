@@ -579,8 +579,8 @@ class TestTimecop < Minitest::Test
 
   def test_date_time_strptime_with_day_of_week
     Timecop.freeze(Time.new(1984,2,28)) do
-      assert_equal DateTime.strptime('Thursday', '%A'), Date.new(1984, 3, 1)
-      assert_equal DateTime.strptime('Monday', '%A'), Date.new(1984, 2, 27)
+      assert_equal DateTime.strptime('Thursday', '%A'), DateTime.new(1984, 3, 1)
+      assert_equal DateTime.strptime('Monday', '%A'), DateTime.new(1984, 2, 27)
     end
   end
 
