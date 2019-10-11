@@ -599,8 +599,8 @@ class TestTimecop < Minitest::Test
   end
 
   def test_ancient_date_time_strptime
-    ancient = DateTime.strptime('11-01-08 8:20:33 PM', '%Y-%m-%d %H:%M:%S %p').strftime
-    assert_equal '0011-01-08T20:20:33+00:00', ancient # Failed before fix to strptime_with_mock_date
+    ancient = DateTime.strptime('11-01-08', '%Y-%m-%d').strftime
+    assert_equal '0011-01-08T00:00:00+00:00', ancient
   end
 
   def test_frozen_after_freeze

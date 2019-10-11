@@ -123,9 +123,9 @@ class DateTime #:nodoc:
       now = DateTime.now.to_datetime
       year = d[:year] || now.year
       mon = d[:mon] || now.mon
-      hour = d[:hour] || now.hour
-      min = d[:min] || now.min
-      sec = d[:sec] || now.sec
+      hour = d[:hour] || 0
+      min = d[:min] || 0
+      sec = d[:sec] || 0
       if d[:mday]
         DateTime.new(year, mon, d[:mday], hour, min, sec)
       elsif d[:wday]
