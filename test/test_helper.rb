@@ -5,7 +5,7 @@ require 'pry'
 
 $VERBOSE = true # enable ruby warnings
 
-require 'mocha/setup'
+require 'mocha/minitest'
 
 class Minitest::Test
   private
