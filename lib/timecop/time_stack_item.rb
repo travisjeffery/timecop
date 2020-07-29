@@ -9,6 +9,7 @@ class Timecop
         @travel_offset  = @scaling_factor = nil
         @scaling_factor = args.shift if mock_type == :scale
         @mock_type      = mock_type
+        @monotonic      = current_monotonic
         @time           = parse_time(*args)
         @time_was       = Time.now_without_mock_time
         @travel_offset  = compute_travel_offset
@@ -52,6 +53,20 @@ class Timecop
 
       def scaling_factor
         @scaling_factor
+      end
+
+      def monotonic
+        if travel_offset.nil?
+          @monotonic
+        elsif scaling_factor.nil?
+          current_monotonic + travel_offset * (10 ** 9)
+        else
+          (@monotonic + (current_monotonic - @monotonic) * scaling_factor).to_i
+        end
+      end
+
+      def current_monotonic
+        Process.clock_gettime_without_mock(Process::CLOCK_MONOTONIC, :nanosecond)
       end
 
       def time(time_klass = Time) #:nodoc:
@@ -106,6 +121,7 @@ class Timecop
         elsif Object.const_defined?(:Date) && arg.is_a?(Date)
           time_klass.local(arg.year, arg.month, arg.day, 0, 0, 0)
         elsif args.empty? && (arg.kind_of?(Integer) || arg.kind_of?(Float))
+          @monotonic += arg * 1_000_000_000
           time_klass.now + arg
         elsif arg.nil?
           time_klass.now
