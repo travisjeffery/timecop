@@ -137,57 +137,58 @@ class DateTime #:nodoc:
   end
 end
 
-module Process #:nodoc:
-  class << self
-    alias_method :clock_gettime_without_mock, :clock_gettime
+if RUBY_VERSION >= '2.1.0'
+  module Process #:nodoc:
+    class << self
+      alias_method :clock_gettime_without_mock, :clock_gettime
 
-    def clock_gettime_mock_time(clock_id, unit = :float_second)
-      mock_time = case clock_id
-                  when Process::CLOCK_MONOTONIC
-                    mock_time_monotonic
-                  when Process::CLOCK_REALTIME
-                    mock_time_realtime
+      def clock_gettime_mock_time(clock_id, unit = :float_second)
+        mock_time = case clock_id
+                    when Process::CLOCK_MONOTONIC
+                      mock_time_monotonic
+                    when Process::CLOCK_REALTIME
+                      mock_time_realtime
+                    end
+
+        return clock_gettime_without_mock(clock_id, unit) unless mock_time
+
+        divisor = case unit
+                  when :float_second
+                    1_000_000_000.0
+                  when :second
+                    1_000_000_000
+                  when :float_millisecond
+                    1_000_000.0
+                  when :millisecond
+                    1_000_000
+                  when :float_microsecond
+                    1000.0
+                  when :microsecond
+                    1000
+                  when :nanosecond
+                    1
                   end
 
-      return clock_gettime_without_mock(clock_id, unit) unless mock_time
+        (mock_time / divisor)
+      end
 
-      divisor = case unit
-                when :float_second
-                  1_000_000_000.0
-                when :second
-                  1_000_000_000
-                when :float_millisecond
-                  1_000_000.0
-                when :millisecond
-                  1_000_000
-                when :float_microsecond
-                  1000.0
-                when :microsecond
-                  1000
-                when :nanosecond
-                  1
-                end
+      alias_method :clock_gettime, :clock_gettime_mock_time
 
-      (mock_time / divisor)
-    end
+      private
 
-    alias_method :clock_gettime, :clock_gettime_mock_time
+      def mock_time_monotonic
+        mocked_time_stack_item = Timecop.top_stack_item
+        mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.monotonic
+      end
 
-    private
+      def mock_time_realtime
+        mocked_time_stack_item = Timecop.top_stack_item
 
-    def mock_time_monotonic
-      mocked_time_stack_item = Timecop.top_stack_item
-      mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.monotonic
-    end
+        return nil if mocked_time_stack_item.nil?
 
-    def mock_time_realtime
-      mocked_time_stack_item = Timecop.top_stack_item
-
-      return nil if mocked_time_stack_item.nil?
-
-      t = mocked_time_stack_item.time
-      t.to_i * 1_000_000_000 + t.nsec
+        t = mocked_time_stack_item.time
+        t.to_i * 1_000_000_000 + t.nsec
+      end
     end
   end
 end
-

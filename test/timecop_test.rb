@@ -449,7 +449,7 @@ class TestTimecop < Minitest::Test
     Timecop.travel Time.now - 60
     time_now = Timecop.return_to_baseline
     assert times_effectively_equal(baseline, time_now),
-      "expected to return to #{baseline}, but returned to #{time_now}"
+           "expected to return to #{baseline}, but returned to #{time_now}"
   end
 
   def test_return_eliminates_baseline
@@ -599,86 +599,90 @@ class TestTimecop < Minitest::Test
     Timecop.thread_safe = false
   end
 
-  def test_process_clock_gettime_monotonic
-    Timecop.freeze do
-      assert_equal monotonic, monotonic, "CLOCK_MONOTONIC is not frozen"
-    end
+  if RUBY_VERSION >= '2.1.0'
+    def test_process_clock_gettime_monotonic
+      Timecop.freeze do
+        assert_equal monotonic, monotonic, "CLOCK_MONOTONIC is not frozen"
+      end
 
-    current = monotonic
-    Timecop.freeze(-0.5) do
-      assert monotonic < current, "CLOCK_MONOTONIC is not traveeling back in time"
-    end
-  end
-
-  def test_process_clock_gettime_monotonic_travel
-    current = monotonic
-    Timecop.travel do
-      refute_equal monotonic, monotonic, "CLOCK_MONOTONIC is frozen"
-      assert monotonic > current, "CLOCK_MONOTONIC is not moving forward"
-    end
-
-    Timecop.travel(-0.5) do
-      refute_equal monotonic, monotonic, "CLOCK_MONOTONIC is frozen"
-      assert monotonic < current, "CLOCK_MONOTONIC is not travelling properly"
-      sleep 0.5
-      assert monotonic > current, "CLOCK_MONOTONIC is not travelling properly"
-    end
-  end
-
-  def test_process_clock_gettime_monotonic_scale
-    scale = 4
-    sleep_length = 0.25
-    Timecop.scale(scale) do
       current = monotonic
-      sleep(sleep_length)
-      assert current + scale * sleep_length < monotonic, "CLOCK_MONOTONIC is not scaling"
-    end
-  end
-
-  def test_process_clock_gettime_realtime
-    Timecop.freeze do
-      assert_equal realtime, realtime, "CLOCK_REALTIME is not frozen"
+      Timecop.freeze(-0.5) do
+        assert monotonic < current, "CLOCK_MONOTONIC is not traveeling back in time"
+      end
     end
 
-    current = realtime
-    Timecop.freeze(-20) do
-      assert realtime < current, "CLOCK_REALTIME is not traveeling back in time"
-    end
-  end
+    def test_process_clock_gettime_monotonic_travel
+      current = monotonic
+      Timecop.travel do
+        refute_equal monotonic, monotonic, "CLOCK_MONOTONIC is frozen"
+        assert monotonic > current, "CLOCK_MONOTONIC is not moving forward"
+      end
 
-  def test_process_clock_gettime_realtime_travel
-    current = realtime
-    Timecop.travel do
-      refute_equal realtime, realtime, "CLOCK_REALTIME is frozen"
-      assert realtime > current, "CLOCK_REALTIME is not moving forward"
+      Timecop.travel(-0.5) do
+        refute_equal monotonic, monotonic, "CLOCK_MONOTONIC is frozen"
+        assert monotonic < current, "CLOCK_MONOTONIC is not travelling properly"
+        sleep 0.5
+        assert monotonic > current, "CLOCK_MONOTONIC is not travelling properly"
+      end
     end
 
-    Timecop.travel(Time.now - 0.5) do
-      refute_equal realtime, realtime, "CLOCK_REALTIME is frozen"
-      assert realtime < current, "CLOCK_REALTIME is not travelling properly"
-      sleep 0.5
-      assert realtime > current, "CLOCK_REALTIME is not travelling properly"
+    def test_process_clock_gettime_monotonic_scale
+      scale = 4
+      sleep_length = 0.25
+      Timecop.scale(scale) do
+        current = monotonic
+        sleep(sleep_length)
+        assert current + scale * sleep_length < monotonic, "CLOCK_MONOTONIC is not scaling"
+      end
     end
-  end
 
-  def test_process_clock_gettime_realtime_scale
-    scale = 4
-    sleep_length = 0.25
-    Timecop.scale(scale) do
+    def test_process_clock_gettime_realtime
+      Timecop.freeze do
+        assert_equal realtime, realtime, "CLOCK_REALTIME is not frozen"
+      end
+
       current = realtime
-      sleep(sleep_length)
-      assert current + scale * sleep_length < realtime, "CLOCK_REALTIME is not scaling"
+      Timecop.freeze(-20) do
+        assert realtime < current, "CLOCK_REALTIME is not traveeling back in time"
+      end
+    end
+
+    def test_process_clock_gettime_realtime_travel
+      current = realtime
+      Timecop.travel do
+        refute_equal realtime, realtime, "CLOCK_REALTIME is frozen"
+        assert realtime > current, "CLOCK_REALTIME is not moving forward"
+      end
+
+      Timecop.travel(Time.now - 0.5) do
+        refute_equal realtime, realtime, "CLOCK_REALTIME is frozen"
+        assert realtime < current, "CLOCK_REALTIME is not travelling properly"
+        sleep 0.5
+        assert realtime > current, "CLOCK_REALTIME is not travelling properly"
+      end
+    end
+
+    def test_process_clock_gettime_realtime_scale
+      scale = 4
+      sleep_length = 0.25
+      Timecop.scale(scale) do
+        current = realtime
+        sleep(sleep_length)
+        assert current + scale * sleep_length < realtime, "CLOCK_REALTIME is not scaling"
+      end
     end
   end
 
   private
 
-  def monotonic
-    Process.clock_gettime(Process::CLOCK_MONOTONIC)
-  end
+  if RUBY_VERSION >= '2.1.0'
+    def monotonic
+      Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    end
 
-  def realtime
-    Process.clock_gettime(Process::CLOCK_REALTIME)
+    def realtime
+      Process.clock_gettime(Process::CLOCK_REALTIME)
+    end
   end
 
   def with_safe_mode(enabled=true)
