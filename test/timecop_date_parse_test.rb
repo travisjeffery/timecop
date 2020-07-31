@@ -45,8 +45,7 @@ class TestTimecop < Minitest::Test
   end
 
   def test_date_parse_non_string_raises_expected_error
-    expected_error = jruby? ? NoMethodError : TypeError
-    assert_raises(expected_error) { Date.parse(Object.new) }
+    assert_raises(TypeError) { Date.parse(Object.new) }
   end
 
   def test_date_parse_nil_raises_type_error
@@ -87,8 +86,7 @@ class TestTimecop < Minitest::Test
   end
 
   def test_date_time_parse_non_string_raises_expected_error
-    expected_error = jruby? ? NoMethodError : TypeError
-    assert_raises(expected_error) { DateTime.parse(Object.new) }
+    assert_raises(TypeError) { DateTime.parse(Object.new) }
   end
 
   def test_date_time_parse_nil_raises_type_error
