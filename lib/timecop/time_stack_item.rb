@@ -123,7 +123,7 @@ class Timecop
       elsif Object.const_defined?(:Date) && arg.is_a?(Date)
         time_klass.local(arg.year, arg.month, arg.day, 0, 0, 0)
       elsif args.empty? && (arg.kind_of?(Integer) || arg.kind_of?(Float))
-        @monotonic += arg * 1_000_000_000
+        @monotonic += arg * 1_000_000_000 if RUBY_VERSION >= '2.1.0'
         time_klass.now + arg
       elsif arg.nil?
         time_klass.now
