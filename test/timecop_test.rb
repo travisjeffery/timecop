@@ -552,6 +552,12 @@ class TestTimecop < Minitest::Test
     end
   end
 
+  def test_date_strptime_with_commercial_week_date
+    Timecop.freeze(Time.new(1984,2,28)) do
+      assert_equal Date.strptime('1984-09', '%G-%V'), Date.new(1984, 2, 27)
+    end
+  end
+
   def test_date_strptime_with_invalid_date
     begin
       Date.strptime('', '%Y-%m-%d')
