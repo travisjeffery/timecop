@@ -57,7 +57,7 @@ class Date #:nodoc:
       elsif d[:wday]
         Date.new(year, mon, now.mday) + (d[:wday] - now.wday)
       else
-        Date.new(year, mon, now.mday)
+        Date.new(year, mon)
       end
     end
 
