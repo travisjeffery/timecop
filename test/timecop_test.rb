@@ -552,7 +552,7 @@ class TestTimecop < Minitest::Test
     end
   end
 
-  def test_date_strptime_without_day_of_week
+  def test_date_strptime_without_day
     Timecop.freeze(Time.new(1984,2,28)) do
       assert_equal Date.strptime('1999-04', '%Y-%m'), Date.new(1999, 4, 1)
     end
