@@ -75,6 +75,8 @@ class Date #:nodoc:
         Date.new(mocked_time_stack_item.year, date_hash[:mon], date_hash[:mday])
       when date_hash[:wday]
         closest_wday(date_hash[:wday])
+      when date_hash[:cwyear] && date_hash[:cweek]
+        Date.commercial(date_hash[:cwyear], date_hash[:cweek])
       else
         parsed_date + mocked_time_stack_item.travel_offset_days
       end

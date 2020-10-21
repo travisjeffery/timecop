@@ -60,6 +60,14 @@ module DateParseScenarios
     assert_equal Date.parse("2012-12-01"), Date.parse('DEC 2012')
   end
 
+  def test_date_parse_month_year
+    assert_equal Date.parse("2012-12-01"), Date.parse('DEC 2012')
+  end
+
+  def test_date_parse_with_commercial_week_date
+    assert_equal Date.new(1984, 2, 27), Date.parse('1984-W09')
+  end
+
   def test_date_parse_nil_raises_type_error
     assert_raises(TypeError) { Date.parse(nil) }
   end
