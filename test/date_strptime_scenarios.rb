@@ -67,4 +67,25 @@ module DateStrptimeScenarios
 
     end
   end
+
+  def test_strptime_raises_when_unparsable
+    assert_raises(ArgumentError) do
+      Date.strptime('')
+    end
+    assert_raises(ArgumentError) do
+      Date.strptime('2001-02-29', '%F')
+    end
+    assert_raises(ArgumentError) do
+      Date.strptime('01-31-2011', '%m/%d/%Y')
+    end
+  end
+
+  def test_strptime_of_time_string_raises
+    #TODO: this is a bug
+    skip("TODO: broken contract")
+    assert_raises(ArgumentError) do
+      Date.strptime('23:55', '%H:%M')
+    end
+  end
+
 end
