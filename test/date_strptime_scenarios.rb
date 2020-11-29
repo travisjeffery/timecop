@@ -1,16 +1,20 @@
 module DateStrptimeScenarios
 
   def test_date_strptime_without_year
-      assert_equal Date.strptime('04-14', '%m-%d'), Date.new(1984, 4, 14)
+    assert_equal Date.strptime('04-14', '%m-%d'), Date.new(1984, 4, 14)
+  end
+
+  def test_date_strptime_without_day
+    assert_equal Date.strptime('1999-04', '%Y-%m'), Date.new(1999, 4, 1)
   end
 
   def test_date_strptime_without_specifying_format
-      assert_equal Date.strptime('1999-04-14'), Date.new(1999, 4, 14)
+    assert_equal Date.strptime('1999-04-14'), Date.new(1999, 4, 14)
   end
 
   def test_date_strptime_with_day_of_week
-      assert_equal Date.strptime('Thursday', '%A'), Date.new(1984, 3, 1)
-      assert_equal Date.strptime('Monday', '%A'), Date.new(1984, 2, 27)
+    assert_equal Date.strptime('Thursday', '%A'), Date.new(1984, 3, 1)
+    assert_equal Date.strptime('Monday', '%A'), Date.new(1984, 2, 27)
   end
 
   def test_date_strptime_with_invalid_date
