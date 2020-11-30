@@ -9,6 +9,10 @@ module DateStrptimeScenarios
     assert_equal Date.strptime('1999-04', '%Y-%m'), Date.new(1999, 4, 1)
   end
 
+  def test_date_strptime_day_of_year_without_year
+    assert_equal Date.strptime("153", '%j'), Date.new(1984, 6, 1)
+  end
+
   def test_date_strptime_without_specifying_format
     assert_equal Date.strptime('1999-04-14'), Date.new(1999, 4, 14)
   end
