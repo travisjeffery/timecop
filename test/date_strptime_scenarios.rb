@@ -42,10 +42,10 @@ module DateStrptimeScenarios
         '%Y %m %d',
         '%C %y %m %d',
 
-        #TODO Support these formats
-        # '%Y %j',
-        # '%C %y %j',
+        '%Y %j',
+        '%C %y %j',
 
+        #TODO Support these formats
         # '%G %V %w',
         # '%G %V %u',
         # '%C %g %V %w',
