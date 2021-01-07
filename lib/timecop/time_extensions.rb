@@ -57,7 +57,11 @@ class Date #:nodoc:
       elsif d[:wday]
         Date.new(year, mon, now.mday) + (d[:wday] - now.wday)
       elsif d[:cwyear] && d[:cweek]
-        Date.commercial(d[:cwyear], d[:cweek])
+        if d[:cwday]
+          Date.commercial(d[:cwyear], d[:cweek], d[:cwday])
+        else
+          Date.commercial(d[:cwyear], d[:cweek])
+        end
       else
         Date.new(year, mon, now.mday)
       end
