@@ -22,6 +22,8 @@ class Time #:nodoc:
       args.size <= 0 ? now : new_without_mock_time(*args)
     end
 
+    ruby2_keywords :new_with_mock_time if Module.private_method_defined?(:ruby2_keywords)
+
     alias_method :new, :new_with_mock_time
   end
 end
