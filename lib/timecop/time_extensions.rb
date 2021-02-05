@@ -58,6 +58,12 @@ class Date #:nodoc:
         Date.new(year, mon, now.mday) + (d[:wday] - now.wday)
       elsif d[:yday]
         Date.new(year).next_day(d[:yday] - 1)
+      elsif d[:cwyear] && d[:cweek]
+        if d[:cwday]
+          Date.commercial(d[:cwyear], d[:cweek], d[:cwday])
+        else
+          Date.commercial(d[:cwyear], d[:cweek])
+        end
       else
         Date.new(year, mon)
       end
