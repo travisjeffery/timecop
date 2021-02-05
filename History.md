@@ -1,5 +1,9 @@
 # History
 
+## Master (unreleased)
+
+- Fix returning to previous date after block when `Timecop.thread_safe = true` (#216)
+
 ## v0.9.2
 
 - Make `require 'timecop'` threadsafe (#239)
