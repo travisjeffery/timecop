@@ -22,6 +22,14 @@ module DateStrptimeScenarios
     assert_equal Date.strptime('Monday', '%A'), Date.new(1984, 2, 27)
   end
 
+  def test_date_strptime_with_commercial_week_date
+    assert_equal Date.strptime('1984-09', '%G-%V'), Date.new(1984, 2, 27)
+  end
+
+  def test_date_strptime_with_iso_8601_week_date
+    assert_equal Date.strptime('1984-W09-1', '%G-W%V-%u'), Date.new(1984, 2, 27)
+  end
+
   def test_date_strptime_with_invalid_date
     assert_raises(ArgumentError) { Date.strptime('', '%Y-%m-%d') }
   end
