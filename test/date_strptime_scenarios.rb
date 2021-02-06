@@ -30,6 +30,14 @@ module DateStrptimeScenarios
     assert_equal Date.strptime('1984-W09-1', '%G-W%V-%u'), Date.new(1984, 2, 27)
   end
 
+  def test_date_strptime_with_seconds_since_epoch
+    assert_equal Date.strptime('446731200', '%s'), Date.new(1984, 2, 27)
+  end
+
+  def test_date_strptime_with_miliseconds_since_epoch
+    assert_equal Date.strptime('446731200000', '%Q'), Date.new(1984, 2, 27)
+  end
+
   def test_date_strptime_with_invalid_date
     assert_raises(ArgumentError) { Date.strptime('', '%Y-%m-%d') }
   end

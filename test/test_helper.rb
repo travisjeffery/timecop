@@ -29,7 +29,7 @@ class Minitest::Test
       Time.at(time.to_i).to_datetime.offset
     end
 
-    TIMEZONES = ["Europe/Paris", "UTC", "America/Chicago"]
+    TIMEZONES = ["Pacific/Midway", "Europe/Paris", "UTC", "America/Chicago"]
 
     def each_timezone
       old_tz = ENV["TZ"]

@@ -64,6 +64,8 @@ class Date #:nodoc:
         else
           Date.commercial(d[:cwyear], d[:cweek])
         end
+      elsif d[:seconds]
+        Time.at(d[:seconds]).to_date
       else
         Date.new(year, mon)
       end
