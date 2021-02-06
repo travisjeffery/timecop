@@ -1,8 +1,11 @@
 # History
 
-## Master (unreleased)
+## v0.9.3
 
 - Fix returning to previous date after block when `Timecop.thread_safe = true` (#216)
+- Fix %s and %Q for Date strptime (#275)
+- Fix '%G-%V' for Date strptime (#261)
+- Fix default day for strptime (#266)
 
 ## v0.9.2
 
