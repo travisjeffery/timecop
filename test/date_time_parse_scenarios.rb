@@ -1,5 +1,6 @@
 module DateTimeParseScenarios
 
+  #calling freeze and travel tests are making the date Time.local(2008,9,1,10,5,0) Monday 10:05am
   def test_date_time_parse_sunday_after_travel
     assert_equal DateTime.parse("2008-08-31"), DateTime.parse('Sunday')
     assert_equal DateTime.parse("2008-08-31"), DateTime.parse('Sun')
@@ -60,6 +61,17 @@ module DateTimeParseScenarios
     assert_equal DateTime.parse("2012-12-01"), Date.parse('DEC 2012')
   end
 
+  def test_date_time_parse_with_time
+    assert_equal DateTime.new(2008,9,2,0,0,0), DateTime.parse('Tuesday')
+    assert_equal DateTime.new(2008,9,2,15,0,0), DateTime.parse('Tuesday 3pm')
+    assert_equal DateTime.new(2008,9,2,15,5,0), DateTime.parse('Tuesday 3:05pm')
+  end
+
+  # TODO
+  # DateTime.parse('Tuesday 3:05.05pm')
+  # Strange case. Date hash comes back {:wday=>2, :hour=>3, :min=>5, :mday=>5}
+  # MRI makes it <DateTime: 2021-02-05T03:05:00+00:00
+  # So i guess mday overrides wday if both come back
   def test_date_time_parse_non_string_raises_expected_error
     assert_raises(TypeError) { DateTime.parse(Object.new) }
   end

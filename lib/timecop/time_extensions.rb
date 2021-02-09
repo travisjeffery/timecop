@@ -132,7 +132,8 @@ class DateTime #:nodoc:
       when date_hash[:mon] && date_hash[:mday]
         DateTime.new(mocked_time_stack_item.year, date_hash[:mon], date_hash[:mday])
       when date_hash[:wday]
-        Date.closest_wday(date_hash[:wday]).to_datetime
+        date = Date.closest_wday(date_hash[:wday])
+        DateTime.new(date.year, date.month, date.day, date_hash[:hour] || 0, date_hash[:min] || 0, 0)
       else
         parsed_date + mocked_time_stack_item.travel_offset_days
       end
