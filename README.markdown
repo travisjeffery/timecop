@@ -1,6 +1,7 @@
 # timecop
 
 [![Gem Version](https://badge.fury.io/rb/timecop.svg)](https://rubygems.org/gems/timecop)
+[![Build Status](https://github.com/travisjeffery/timecop/workflows/CI/badge.svg)](https://github.com/travisjeffery/timecop/actions?query=workflow%3ACI)
 [![Build Status](https://secure.travis-ci.org/travisjeffery/timecop.svg)](http://travis-ci.org/travisjeffery/timecop)
 
 ## DESCRIPTION
