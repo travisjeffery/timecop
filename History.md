@@ -1,5 +1,7 @@
 # History
 
+## v0.9.4
+- Add ruby 3.1 support (#288)
 ## v0.9.3
 
 - Fix returning to previous date after block when `Timecop.thread_safe = true` (#216)
