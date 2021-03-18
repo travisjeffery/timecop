@@ -85,6 +85,8 @@ class Date #:nodoc:
         parsed_date
       when date_hash[:mon] && date_hash[:mday]
         Date.new(mocked_time_stack_item.year, date_hash[:mon], date_hash[:mday])
+      when date_hash[:mday]
+        Date.new(mocked_time_stack_item.year, mocked_time_stack_item.month, date_hash[:mday])
       when date_hash[:wday]
         closest_wday(date_hash[:wday])
       else
@@ -133,6 +135,8 @@ class DateTime #:nodoc:
         parsed_date
       when date_hash[:mon] && date_hash[:mday]
         DateTime.new(mocked_time_stack_item.year, date_hash[:mon], date_hash[:mday])
+      when date_hash[:mday]
+        DateTime.new(mocked_time_stack_item.year, mocked_time_stack_item.month, date_hash[:mday])
       when date_hash[:wday]
         Date.closest_wday(date_hash[:wday]).to_datetime
       else

@@ -40,6 +40,10 @@ module DateTimeParseScenarios
     assert_equal DateTime.parse("2008-09-06", false), DateTime.parse('Sat')
   end
 
+  def test_date_time_parse_10
+    assert_equal DateTime.parse("2008-09-10"), DateTime.parse('10')
+  end
+
   def test_date_time_parse_october_10
     assert_equal DateTime.parse("2008-10-10"), DateTime.parse('October 10')
   end
