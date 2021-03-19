@@ -61,7 +61,7 @@ module DateTimeParseScenarios
   end
 
   def test_date_time_parse_month_year
-    assert_equal DateTime.parse("2012-12-01"), Date.parse('DEC 2012')
+    assert_equal DateTime.parse("2012-12-01"), DateTime.parse('DEC 2012')
   end
 
   def test_date_time_parse_non_string_raises_expected_error
