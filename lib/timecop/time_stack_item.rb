@@ -79,11 +79,24 @@ class Timecop
       end
 
       def datetime(datetime_klass = DateTime)
+        current_time = time
         if Float.method_defined?(:to_r)
-          fractions_of_a_second = time.to_f % 1
-          datetime_klass.new(year, month, day, hour, min, (fractions_of_a_second + sec), utc_offset_to_rational(utc_offset))
+          fractions_of_a_second = current_time.to_f % 1
+          datetime_klass.new(current_time.year,
+                             current_time.month,
+                             current_time.day,
+                             current_time.hour,
+                             current_time.min,
+                             (fractions_of_a_second + current_time.sec),
+                             utc_offset_to_rational(current_time.utc_offset))
         else
-          datetime_klass.new(year, month, day, hour, min, sec, utc_offset_to_rational(utc_offset))
+          datetime_klass.new(current_time.year,
+                             current_time.month,
+                             current_time.day,
+                             current_time.hour,
+                             current_time.min,
+                             current_time.sec,
+                             utc_offset_to_rational(current_time.utc_offset))
         end
       end
 
