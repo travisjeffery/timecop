@@ -2,6 +2,9 @@ require 'bundler/setup'
 require 'bundler/gem_tasks'
 require 'rake/testtask'
 require 'rdoc/task'
+require 'rspec/core/rake_task'
+
+RSpec::Core::RakeTask.new(:spec)
 
 Rake::RDocTask.new do |rdoc|
   if File.exist?('VERSION')
@@ -31,4 +34,4 @@ task :test do
 end
 
 desc 'Default: run tests'
-task :default => [:test]
+task default: [:test, :spec]
