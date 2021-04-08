@@ -10,16 +10,24 @@ class Time #:nodoc:
 
     alias_method :now_without_mock_time, :now
 
-    def now_with_mock_time
-      mock_time || now_without_mock_time
+    def now_with_mock_time(*args)
+      mock_time || now_without_mock_time(*args)
     end
 
     alias_method :now, :now_with_mock_time
 
     alias_method :new_without_mock_time, :new
 
-    def new_with_mock_time(*args)
-      args.size <= 0 ? now : new_without_mock_time(*args)
+    def new_with_mock_time(*args, **kwargs)
+      if args.size <= 0
+        now(*args)
+      else
+        if kwargs == {}
+          new_without_mock_time(*args)
+        else
+          new_without_mock_time(*args, **kwargs)
+        end
+      end
     end
 
     ruby2_keywords :new_with_mock_time if Module.private_method_defined?(:ruby2_keywords)
