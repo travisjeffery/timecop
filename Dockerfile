@@ -10,4 +10,4 @@ RUN bundle -j 4
 
 COPY . .
 
-CMD ['bundle', 'console']
+CMD ["bin/console"]
