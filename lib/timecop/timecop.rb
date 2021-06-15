@@ -124,6 +124,14 @@ class Timecop
       !instance.send(:stack).empty?
     end
 
+    def scale_sleep=(scale_sleep)
+      @scale_sleep = scale_sleep
+    end
+
+    def scale_sleep?
+      !!@scale_sleep
+    end
+
     private
     def send_travel(mock_type, *args, &block)
       val = instance.send(:travel, mock_type, *args, &block)
