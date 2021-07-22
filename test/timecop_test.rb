@@ -73,7 +73,6 @@ class TestTimecop < Minitest::Test
   end
 
   def test_freeze_in_time_subclass_returns_mocked_subclass
-    t = Time.local(2008, 10, 10, 10, 10, 10)
     custom_timeklass = Class.new(Time) do
       def custom_format_method() strftime('%F') end
     end
@@ -86,7 +85,6 @@ class TestTimecop < Minitest::Test
   end
 
   def test_freeze_in_date_subclass_returns_mocked_subclass
-    t = Time.local(2008, 10, 10, 10, 10, 10)
     custom_dateklass = Class.new(Date) do
       def custom_format_method() strftime('%F') end
     end
@@ -99,7 +97,6 @@ class TestTimecop < Minitest::Test
   end
 
   def test_freeze_in_datetime_subclass_returns_mocked_subclass
-    t = Time.local(2008, 10, 10, 10, 10, 10)
     custom_datetimeklass = Class.new(DateTime) do
       def custom_format_method() strftime('%F') end
     end
@@ -238,7 +235,6 @@ class TestTimecop < Minitest::Test
 
   def test_freeze_freezes_time
     t = Time.local(2008, 10, 10, 10, 10, 10)
-    now = Time.now
     Timecop.freeze(t) do
       #assert Time.now < now, "If we had failed to freeze, time would have proceeded, which is what appears to have happened."
       new_t, new_d, new_dt = Time.now, Date.today, DateTime.now
@@ -252,7 +248,6 @@ class TestTimecop < Minitest::Test
 
   def test_travel_keeps_time_moving
     t = Time.local(2008, 10, 10, 10, 10, 10)
-    now = Time.now
     Timecop.travel(t) do
       new_now = Time.now
       assert_times_effectively_equal(new_now, t, 1, "Looks like we failed to actually travel time")

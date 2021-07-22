@@ -113,8 +113,8 @@ class TestTimeStackItem < Minitest::Test
   end
 
   def test_rational_to_utc_offset
-    assert_equal -14400, a_time_stack_item.send(:rational_to_utc_offset, Rational(-1, 6))
-    assert_equal -18000, a_time_stack_item.send(:rational_to_utc_offset, Rational(-5, 24))
+    assert_equal(-14400, a_time_stack_item.send(:rational_to_utc_offset, Rational(-1, 6)))
+    assert_equal(-18000, a_time_stack_item.send(:rational_to_utc_offset, Rational(-5, 24)))
     assert_equal 0,      a_time_stack_item.send(:rational_to_utc_offset, Rational(0, 1))
     assert_equal 3600,   a_time_stack_item.send(:rational_to_utc_offset, Rational(1, 24))
   end
@@ -222,7 +222,7 @@ class TestTimeStackItem < Minitest::Test
 
   def test_parse_only_string_with_active_support
     Time.expects(:parse).never
-    Timecop.freeze(2011, 01, 02, hour=0, minute=0, second=0)
+    Timecop.freeze(2011, 1, 2, 0, 0, 0)
   end
 
   def test_parse_date
