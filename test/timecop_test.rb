@@ -290,6 +290,13 @@ class TestTimecop < Minitest::Test
     assert_times_effectively_equal t, Timecop.scale(4, t)
   end
 
+  def test_scale_raises_when_empty_string_supplied
+    err = assert_raises(TypeError) do
+      Timecop.scale("")
+    end
+    assert_match /String can't be coerced into Float/, err.message
+  end
+
   def test_freeze_with_utc_time
     each_timezone do
       t = Time.utc(2008, 10, 10, 10, 10, 10)
@@ -402,6 +409,13 @@ class TestTimecop < Minitest::Test
 
     assert_equal expected, actual
   end
+  
+  def test_travel_raises_when_empty_string_supplied
+    err = assert_raises(ArgumentError) do
+      Timecop.travel("")
+    end
+    assert_match /no time information in \"\"/, err.message
+  end
 
   def test_freeze_time_returns_now_if_no_block_given
     t_future = Time.local(2030, 10, 10, 10, 10, 10)
@@ -427,6 +441,13 @@ class TestTimecop < Minitest::Test
         assert_equal Time.now, current_time
       end
     end
+  end
+
+  def test_freeze_raises_when_empty_string_supplied
+    err = assert_raises(ArgumentError) do
+      Timecop.freeze("")
+    end
+     assert_match /no time information in \"\"/, err.message
   end
 
   def test_freeze_with_new_date
