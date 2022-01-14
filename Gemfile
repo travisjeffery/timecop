@@ -1,5 +1,7 @@
 source "https://rubygems.org"
-
+if RUBY_VERSION.start_with?('2.5')
+  gem 'psych', '~> 3.0'
+end
 gemspec
 
 group :development do
