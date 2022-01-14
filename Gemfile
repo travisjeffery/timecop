@@ -9,9 +9,8 @@ group :development do
   gem 'jeweler', '< 2.1.2'
   gem 'pry'
   gem 'mocha'
-  gem 'activesupport', '>= 4.0.0', '< 6.0.0'
+  gem 'activesupport'
   gem 'tzinfo'
-  gem 'i18n'
   gem 'minitest'
   gem 'minitest-rg'
 end
