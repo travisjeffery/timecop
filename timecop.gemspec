@@ -8,7 +8,6 @@ require File.expand_path('../lib/timecop/version', __FILE__)
 Gem::Specification.new do |s|
   s.name = %q{timecop}
   s.version = Timecop::VERSION
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.required_ruby_version = Gem::Requirement.new(">= 1.9.2")
   s.authors = ["Travis Jeffery", "John Trupiano"]
   s.date = Time.now.strftime("%Y-%m-%d")
@@ -45,15 +44,5 @@ Gem::Specification.new do |s|
      "test/timecop_without_date_test.rb",
      "test/timecop_without_date_but_with_time_test.rb"
   ]
-
-  if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
-    s.specification_version = 3
-
-    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-    else
-    end
-  else
-  end
 end
 
