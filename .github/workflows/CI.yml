@@ -25,6 +25,7 @@ jobs:
           - '2.2'
           - '2.1'
           - jruby
+          - truffleruby-head
     continue-on-error: ${{ matrix.ruby == 'head' }}
     name: Ruby ${{ matrix.ruby }}
     steps:
