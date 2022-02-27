@@ -50,11 +50,16 @@ class Date #:nodoc:
           "supports Date::ITALY for the start argument."
       end
 
-      d = Date._strptime(str, fmt) || Date.strptime_without_mock_date(str, fmt)
+      #If date is not valid the following line raises
+      Date.strptime_without_mock_date(str, fmt)
+
+      d = Date._strptime(str, fmt)
       now = Time.now.to_date
       year = d[:year] || now.year
       mon = d[:mon] || now.mon
-      if d[:mday]
+      if d.keys == [:year]
+        Date.new(year)
+      elsif d[:mday]
         Date.new(year, mon, d[:mday])
       elsif d[:wday]
         Date.new(year, mon, now.mday) + (d[:wday] - now.wday)
