@@ -1,6 +1,11 @@
 module DateStrptimeScenarios
 
   #calling freeze and travel tests are making the date Time.local(1984,2,28)
+
+  def test_date_strptime_with_year
+    assert_equal Date.strptime('1999', '%Y'), Date.new(1999, 1, 1)
+  end
+
   def test_date_strptime_without_year
     assert_equal Date.strptime('04-14', '%m-%d'), Date.new(1984, 4, 14)
   end
