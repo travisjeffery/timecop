@@ -9,7 +9,7 @@ A gem providing "time travel" and "time freezing" capabilities, making it dead s
 
 ## INSTALL
 
-`gem install timecop`
+`bundle add timecop`
 
 ## FEATURES
 
