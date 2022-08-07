@@ -604,6 +604,36 @@ class TestTimecop < Minitest::Test
     assert !Timecop.frozen?
   end
 
+  def test_not_frozen_inside_scale
+    Timecop.scale(2) do
+      assert !Timecop.frozen?
+    end
+  end
+
+  def test_not_frozen_inside_first_freeze_then_scale
+    Timecop.freeze do
+      assert Timecop.frozen?
+      Timecop.scale(2) do
+        assert !Timecop.frozen?
+      end
+    end
+  end
+
+  def test_not_frozen_inside_travel
+    Timecop.travel(60) do
+      assert !Timecop.frozen?
+    end
+  end
+
+  def test_not_frozen_inside_first_freeze_then_travel
+    Timecop.freeze do
+      assert Timecop.frozen?
+      Timecop.travel(60) do
+        assert !Timecop.frozen?
+      end
+    end
+  end
+
   def test_thread_safe_timecop_in_parallel
     Timecop.thread_safe = true
     date = Time.local(2011, 01, 02)
