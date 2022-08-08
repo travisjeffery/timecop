@@ -1,5 +1,9 @@
 # History
 
+## unreleased
+
+- Fix `frozen?` to return false when traveling or scaled (TKTK)
+
 ## v0.9.5
 
 - Date#strptime Fix %Y issues ([#379](https://github.com/travisjeffery/timecop/pull/379))
