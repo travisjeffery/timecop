@@ -45,36 +45,31 @@ class Date #:nodoc:
     alias_method :strptime_without_mock_date, :strptime
 
     def strptime_with_mock_date(str = '-4712-01-01', fmt = '%F', start = Date::ITALY)
-      unless start == Date::ITALY
-        raise ArgumentError, "Timecop's #{self}::#{__method__} only " +
-          "supports Date::ITALY for the start argument."
-      end
-
       #If date is not valid the following line raises
-      Date.strptime_without_mock_date(str, fmt)
+      Date.strptime_without_mock_date(str, fmt, start)
 
       d = Date._strptime(str, fmt)
       now = Time.now.to_date
       year = d[:year] || now.year
       mon = d[:mon] || now.mon
       if d.keys == [:year]
-        Date.new(year)
+        Date.new(year, 1, 1, start)
       elsif d[:mday]
-        Date.new(year, mon, d[:mday])
+        Date.new(year, mon, d[:mday], start)
       elsif d[:wday]
-        Date.new(year, mon, now.mday) + (d[:wday] - now.wday)
+        Date.new(year, mon, now.mday, start) + (d[:wday] - now.wday)
       elsif d[:yday]
-        Date.new(year).next_day(d[:yday] - 1)
+        Date.new(year, 1, 1, start).next_day(d[:yday] - 1)
       elsif d[:cwyear] && d[:cweek]
         if d[:cwday]
-          Date.commercial(d[:cwyear], d[:cweek], d[:cwday])
+          Date.commercial(d[:cwyear], d[:cweek], d[:cwday], start)
         else
-          Date.commercial(d[:cwyear], d[:cweek])
+          Date.commercial(d[:cwyear], d[:cweek], 1, start)
         end
       elsif d[:seconds]
         Time.at(d[:seconds]).to_date
       else
-        Date.new(year, mon)
+        Date.new(year, mon, 1, start)
       end
     end
 
