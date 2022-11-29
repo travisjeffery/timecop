@@ -8,7 +8,7 @@ group :development do
   gem 'jeweler', '< 2.1.3'
   gem 'pry'
   gem 'mocha'
-  gem 'activesupport', '>= 4.2'
+  gem 'activesupport'
   gem 'tzinfo'
   gem 'i18n'
   gem 'minitest'
