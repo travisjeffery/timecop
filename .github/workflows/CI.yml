@@ -35,5 +35,6 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+          cache-version: 1
       - run: |
           bundle exec rake
