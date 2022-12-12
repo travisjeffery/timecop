@@ -5,7 +5,6 @@ gemspec
 group :development do
   gem 'rake'
   gem 'nokogiri'
-  gem 'jeweler', '< 2.1.3'
   gem 'pry'
   gem 'mocha'
   gem 'activesupport'

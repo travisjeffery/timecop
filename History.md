@@ -4,6 +4,10 @@
 
 - Fix `frozen?` to return false when traveling or scaled (TKTK)
 
+## v0.9.6
+
+- Support other calendars besides the default ([#389](https://github.com/travisjeffery/timecop/pull/389))
+
 ## v0.9.5
 
 - Date#strptime Fix %Y issues ([#379](https://github.com/travisjeffery/timecop/pull/379))
