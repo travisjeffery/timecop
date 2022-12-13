@@ -123,7 +123,7 @@ class Timecop
 
     # Returns whether or not Timecop is currently frozen
     def frozen?
-      instance.stack.last&.mock_type == :freeze
+      !instance.stack.empty? && instance.stack.last.mock_type == :freeze
     end
 
     private
