@@ -388,6 +388,27 @@ class TestTimecop < Minitest::Test
     assert_nil Time.send(:mock_time)
   end
 
+  def test_recursive_freeze_then_travel_keeps_time_moving
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    Timecop.freeze do
+      Timecop.travel(t) do
+        new_now = Time.now
+        sleep(0.25)
+        assert_times_effectively_not_equal new_now, Time.now, 0.24, "Travel failed to unfreeze time"
+      end
+    end
+  end
+
+  def test_recursive_freeze_then_scale_keeps_time_moving
+    Timecop.freeze do
+      Timecop.scale(1) do
+        new_now = Time.now
+        sleep(0.25)
+        assert_times_effectively_not_equal new_now, Time.now, 0.24, "Scale failed to unfreeze time"
+      end
+    end
+  end
+
   def test_travel_time_returns_now_if_no_block_given
     t_future = Time.local(2030, 10, 10, 10, 10, 10)
     assert_times_effectively_equal t_future, Timecop.travel(t_future)
@@ -581,6 +602,36 @@ class TestTimecop < Minitest::Test
     Timecop.freeze
     Timecop.return
     assert !Timecop.frozen?
+  end
+
+  def test_not_frozen_inside_scale
+    Timecop.scale(2) do
+      assert !Timecop.frozen?
+    end
+  end
+
+  def test_not_frozen_inside_first_freeze_then_scale
+    Timecop.freeze do
+      assert Timecop.frozen?
+      Timecop.scale(2) do
+        assert !Timecop.frozen?
+      end
+    end
+  end
+
+  def test_not_frozen_inside_travel
+    Timecop.travel(60) do
+      assert !Timecop.frozen?
+    end
+  end
+
+  def test_not_frozen_inside_first_freeze_then_travel
+    Timecop.freeze do
+      assert Timecop.frozen?
+      Timecop.travel(60) do
+        assert !Timecop.frozen?
+      end
+    end
   end
 
   def test_thread_safe_timecop_in_parallel
