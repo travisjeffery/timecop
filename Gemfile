@@ -11,5 +11,4 @@ group :development do
   gem 'tzinfo'
   gem 'i18n'
   gem 'minitest'
-  gem 'minitest-rg'
 end
