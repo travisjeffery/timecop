@@ -121,9 +121,9 @@ class Timecop
       instance.thread_safe
     end
 
-    # Returns whether or not Timecop is currently frozen/travelled
+    # Returns whether or not Timecop is currently frozen
     def frozen?
-      !instance.stack.empty?
+      !instance.stack.empty? && instance.stack.last.mock_type == :freeze
     end
 
     private
