@@ -32,8 +32,23 @@ module DateStrptimeScenarios
   end
 
   def test_date_strptime_with_commercial_week_date_and_day_of_week_from_sunday
+    #2/27/1984 is a monday. wed the 29th is the last day of march.
+
+    #1984-09 is 9th commercial week of 1984 starting on monday 2/27
+    #specifying day of week = 0 with non-commercial day of week means
+    #we jump to sunday, so 6 days after monday 2/27 which is 3/4
     assert_equal Date.strptime('1984-09-0', '%G-%V-%w'), Date.new(1984, 3, 04)
+    assert_equal Date.strptime('1984-09-1', '%G-%V-%w'), Date.new(1984, 2, 27)
+    assert_equal Date.strptime('1984-09-2', '%G-%V-%w'), Date.new(1984, 2, 28)
+    assert_equal Date.strptime('1984-09-3', '%G-%V-%w'), Date.new(1984, 2, 29)
+    assert_equal Date.strptime('1984-09-6', '%G-%V-%w'), Date.new(1984, 3, 03)
+
+    #1984-09 is 9th commercial week of 1984 starting on a monday
+    #specifying day of week = 1 with commercial day of week means stay at the 27th
     assert_equal Date.strptime('1984-09-1', '%G-%V-%u'), Date.new(1984, 2, 27)
+    assert_equal Date.strptime('1984-09-2', '%G-%V-%u'), Date.new(1984, 2, 28)
+    assert_equal Date.strptime('1984-09-3', '%G-%V-%u'), Date.new(1984, 2, 29)
+    assert_equal Date.strptime('1984-09-7', '%G-%V-%u'), Date.new(1984, 3, 04)
   end
 
   def test_date_strptime_with_iso_8601_week_date
