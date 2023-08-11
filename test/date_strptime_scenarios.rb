@@ -114,24 +114,21 @@ module DateStrptimeScenarios
       [
         '%Y %m %d',
         '%C %y %m %d',
-
         '%Y %j',
         '%C %y %j',
-
+        '%G %V %w',
+        '%G %V %u',
+        '%C %g %V %w',
+        '%C %g %V %u',
+        '%Y %W %w',
+        '%Y %W %u',
+        '%C %y %W %w',
+        '%C %y %W %u',
         #TODO Support these formats
-        # '%G %V %w',
-        # '%G %V %u',
-        # '%C %g %V %w',
-        # '%C %g %V %u',
-
         # '%Y %U %w',
         # '%Y %U %u',
-        # '%Y %W %w',
-        # '%Y %W %u',
         # '%C %y %U %w',
         # '%C %y %U %u',
-        # '%C %y %W %w',
-        # '%C %y %W %u',
       ].each do |fmt|
         s = d.strftime(fmt)
         d2 = Date.strptime(s, fmt)
