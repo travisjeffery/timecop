@@ -52,7 +52,7 @@ class Date #:nodoc:
       now = Time.now.to_date
       year = d[:year] || now.year
       mon = d[:mon] || now.mon
-      the_date = if d.keys == [:year]
+      if d.keys == [:year]
         Date.new(year, 1, 1, start)
       elsif d[:mday]
         Date.new(year, mon, d[:mday], start)
