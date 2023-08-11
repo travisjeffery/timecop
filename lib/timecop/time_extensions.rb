@@ -50,24 +50,22 @@ class Date #:nodoc:
 
       d = Date._strptime(str, fmt)
       now = Time.now.to_date
-      year = d[:year] || now.year
+      year = d[:year] || d[:cwyear] || now.year
       mon = d[:mon] || now.mon
       if d.keys == [:year]
         Date.new(year, 1, 1, start)
       elsif d[:mday]
         Date.new(year, mon, d[:mday], start)
-      elsif d[:wday]
-        Date.new(year, mon, now.mday, start) + (d[:wday] - now.wday)
       elsif d[:yday]
         Date.new(year, 1, 1, start).next_day(d[:yday] - 1)
-      elsif d[:cwyear] && d[:cweek]
-        if d[:cwday]
-          Date.commercial(d[:cwyear], d[:cweek], d[:cwday], start)
-        else
-          Date.commercial(d[:cwyear], d[:cweek], 1, start)
-        end
-      elsif d[:wnum1]
-        Date.commercial(year, d[:wnum1], 1, start)
+      elsif d[:cwyear] || d[:cweek] || d[:wnum1] || d[:wday] || d[:cwday]
+        day_of_week_from_monday = if d[:wday]
+                                    (d[:wday] + 6)%7 + 1
+                                  else
+                                    d[:cwday] || 1
+                                  end
+        week = d[:cweek] || d[:wnum1] || now.strftime('%W').to_i
+        Date.commercial(year, week, day_of_week_from_monday, start)
       elsif d[:seconds]
         Time.at(d[:seconds]).to_date
       else

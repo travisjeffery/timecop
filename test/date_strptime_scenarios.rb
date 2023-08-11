@@ -31,6 +31,11 @@ module DateStrptimeScenarios
     assert_equal Date.strptime('1984-09', '%G-%V'), Date.new(1984, 2, 27)
   end
 
+  def test_date_strptime_with_commercial_week_date_and_day_of_week_from_sunday
+    assert_equal Date.strptime('1984-09-0', '%G-%V-%w'), Date.new(1984, 3, 04)
+    assert_equal Date.strptime('1984-09-1', '%G-%V-%u'), Date.new(1984, 2, 27)
+  end
+
   def test_date_strptime_with_iso_8601_week_date
     assert_equal Date.strptime('1984-W09-1', '%G-W%V-%u'), Date.new(1984, 2, 27)
   end
@@ -39,8 +44,16 @@ module DateStrptimeScenarios
     assert_equal Date.strptime('201810', '%Y%W'), Date.new(2018, 3, 5)
   end
 
+  def test_date_strptime_with_year_and_week_number_of_year_and_day_of_week_from_monday
+    assert_equal Date.strptime('2018107', '%Y%W%u'), Date.new(2018, 3, 11)
+  end
+
   def test_date_strptime_with_just_week_number_of_year
     assert_equal Date.strptime('14', '%W'), Date.new(1984, 4, 02)
+  end
+
+  def test_date_strptime_week_of_year_and_day_of_week_from_sunday
+    assert_equal Date.strptime('140', '%W%w'), Date.new(1984, 4, 8)
   end
 
   def test_date_strptime_with_seconds_since_epoch
