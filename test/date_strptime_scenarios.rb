@@ -25,7 +25,6 @@ module DateStrptimeScenarios
   def test_date_strptime_with_day_of_week
     assert_equal Date.strptime('Thursday', '%A'), Date.new(1984, 3, 1)
     assert_equal Date.strptime('Monday', '%A'), Date.new(1984, 2, 27)
-    assert_equal Date.strptime('Monday', '%A'), Date.new(1984, 2, 27)
   end
 
   def test_date_strptime_with_commercial_week_date
