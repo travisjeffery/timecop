@@ -52,8 +52,7 @@ class Date #:nodoc:
       now = Time.now.to_date
       year = d[:year] || now.year
       mon = d[:mon] || now.mon
-      leftover = d[:leftover] || 0
-      if d.keys == [:year]
+      the_date = if d.keys == [:year]
         Date.new(year, 1, 1, start)
       elsif d[:mday]
         Date.new(year, mon, d[:mday], start)
@@ -68,8 +67,7 @@ class Date #:nodoc:
           Date.commercial(d[:cwyear], d[:cweek], 1, start)
         end
       elsif d[:wnum1]
-        fraction_of_a_day = Rational(leftover, 60*60*24)
-        Date.commercial(year, d[:wnum1], 1, start) + fraction_of_a_day
+        Date.commercial(year, d[:wnum1], 1, start)
       elsif d[:seconds]
         Time.at(d[:seconds]).to_date
       else
