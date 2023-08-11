@@ -35,6 +35,14 @@ module DateStrptimeScenarios
     assert_equal Date.strptime('1984-W09-1', '%G-W%V-%u'), Date.new(1984, 2, 27)
   end
 
+  def test_date_strptime_with_week_number_of_year
+    assert_equal Date.strptime('201810', '%Y%W'), Date.new(2018, 3, 5)
+  end
+
+  def test_date_strptime_with_just_week_number_of_year
+    assert_equal Date.strptime('14', '%W'), Date.new(1984, 4, 02)
+  end
+
   def test_date_strptime_with_seconds_since_epoch
     assert_equal Date.strptime('446731200', '%s'), Date.new(1984, 2, 27)
   end
