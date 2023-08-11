@@ -36,7 +36,7 @@ module DateStrptimeScenarios
     assert_equal Date.strptime('1984-W09-1', '%G-W%V-%u'), Date.new(1984, 2, 27)
   end
 
-  def test_date_strptime_with_week_number_of_year
+  def test_date_strptime_with_year_and_week_number_of_year
     assert_equal Date.strptime('201810', '%Y%W'), Date.new(2018, 3, 5)
   end
 
