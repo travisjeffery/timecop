@@ -51,6 +51,10 @@ module DateStrptimeScenarios
     assert_equal Date.strptime('1984-09-7', '%G-%V-%u'), Date.new(1984, 3, 04)
   end
 
+  def test_date_strptime_week_number_of_year_day_of_week_sunday_start
+    assert_equal Date.strptime('1984 09 0', '%Y %U %w'), Date.new(1984, 2, 26)
+  end
+
   def test_date_strptime_with_iso_8601_week_date
     assert_equal Date.strptime('1984-W09-1', '%G-W%V-%u'), Date.new(1984, 2, 27)
   end
@@ -124,11 +128,10 @@ module DateStrptimeScenarios
         '%Y %W %u',
         '%C %y %W %w',
         '%C %y %W %u',
-        #TODO Support these formats
-        # '%Y %U %w',
-        # '%Y %U %u',
-        # '%C %y %U %w',
-        # '%C %y %U %u',
+        '%Y %U %w',
+        '%Y %U %u',
+        '%C %y %U %w',
+        '%C %y %U %u',
       ].each do |fmt|
         s = d.strftime(fmt)
         d2 = Date.strptime(s, fmt)

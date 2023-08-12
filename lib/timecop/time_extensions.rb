@@ -58,14 +58,21 @@ class Date #:nodoc:
         Date.new(year, mon, d[:mday], start)
       elsif d[:yday]
         Date.new(year, 1, 1, start).next_day(d[:yday] - 1)
-      elsif d[:cwyear] || d[:cweek] || d[:wnum1] || d[:wday] || d[:cwday]
-        day_of_week_from_monday = if d[:wday]
-                                    (d[:wday] + 6)%7 + 1
-                                  else
-                                    d[:cwday] || 1
-                                  end
-        week = d[:cweek] || d[:wnum1] || now.strftime('%W').to_i
-        Date.commercial(year, week, day_of_week_from_monday, start)
+      elsif d[:cwyear] || d[:cweek] || d[:wnum0] || d[:wnum1] || d[:wday] || d[:cwday]
+        week = d[:cweek] || d[:wnum1] || d[:wnum0] || now.strftime('%W').to_i
+        if d[:wnum0] #Week of year where week starts on sunday
+          if d[:cwday] #monday based day of week
+            Date.strptime_without_mock_date("#{year} #{week} #{d[:cwday]}", '%Y %U %u', start)
+          else
+            Date.strptime_without_mock_date("#{year} #{week} #{d[:wday] || 0}", '%Y %U %w', start)
+          end
+        else #Week of year where week starts on monday
+          if d[:wday] #sunday based day of week
+            Date.strptime_without_mock_date("#{year} #{week} #{d[:wday]}", '%Y %W %w', start)
+          else
+            Date.strptime_without_mock_date("#{year} #{week} #{d[:cwday] || 1}", '%Y %W %u', start)
+          end
+        end
       elsif d[:seconds]
         Time.at(d[:seconds]).to_date
       else
