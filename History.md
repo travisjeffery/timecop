@@ -1,5 +1,10 @@
 # History
 
+## v0.9.8
+
+- Revert Reduce memory usage ([#404](https://github.com/travisjeffery/timecop/pull/404))
+- More better support for commercial and week-based date formats([#408](https://github.com/travisjeffery/timecop/pull/408))
+
 ## v0.9.7
 
 - Fix `frozen?` to return false when traveling or scaled (TKTK)
