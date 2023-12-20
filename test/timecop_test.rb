@@ -605,6 +605,39 @@ class TestTimecop < Minitest::Test
     end
   end
 
+  def test_not_travelled_and_not_scaled_inside_freeze
+    Timecop.freeze do
+      assert !Timecop.travelled?
+      assert !Timecop.scaled?
+    end
+  end
+
+  def test_travelled_and_not_scaled_inside_travel
+    Timecop.travel(3) do
+      assert Timecop.travelled?
+      assert !Timecop.scaled?
+    end
+  end
+
+  def test_scaled_and_not_travelled_inside_scale
+    Timecop.scale(4) do
+      assert Timecop.scaled?
+      assert !Timecop.travelled?
+    end
+  end
+
+  def test_not_scaled_after_scale
+    Timecop.scale(5)
+    Timecop.return
+    assert !Timecop.scaled?
+  end
+
+  def test_not_travelled_after_travel
+    Timecop.travel(6)
+    Timecop.return
+    assert !Timecop.travelled?
+  end
+
   def test_not_frozen_inside_first_freeze_then_scale
     Timecop.freeze do
       assert Timecop.frozen?

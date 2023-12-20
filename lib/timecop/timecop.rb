@@ -126,6 +126,16 @@ class Timecop
       !instance.stack.empty? && instance.stack.last.mock_type == :freeze
     end
 
+    # Returns whether or not Timecop is currently travelled
+    def travelled?
+      !instance.stack.empty? && instance.stack.last.mock_type == :travel
+    end
+
+    # Returns whether or not Timecop is currently scaled
+    def scaled?
+      !instance.stack.empty? && instance.stack.last.mock_type == :scale
+    end
+
     private
     def send_travel(mock_type, *args, &block)
       val = instance.travel(mock_type, *args, &block)
