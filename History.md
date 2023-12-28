@@ -1,5 +1,10 @@
 # History
 
+## Unreleased
+
+- Add `travelled?` and `scaled?` methods to allow checking if Timecop is in their respective states ([#414](https://github.com/travisjeffery/timecop/pull/414))
+
+
 ## v0.9.8
 
 - Revert Reduce memory usage ([#404](https://github.com/travisjeffery/timecop/pull/404))
