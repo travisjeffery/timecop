@@ -65,7 +65,7 @@ module DateTimeParseScenarios
   end
 
   def test_date_time_parse_wday_with_hour
-    assert_equal DateTime.parse("2008-09-06T12:00:00"), DateTime.parse('Saturday 12:00')
+    assert_equal DateTime.parse("2008-09-06T13:00:00"), DateTime.parse('Saturday 13:00')
   end
 
   def test_date_time_parse_non_string_raises_expected_error
