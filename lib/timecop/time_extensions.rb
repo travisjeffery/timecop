@@ -143,6 +143,13 @@ class DateTime #:nodoc:
         DateTime.new(mocked_time_stack_item.year, date_hash[:mon], date_hash[:mday])
       when date_hash[:mday]
         DateTime.new(mocked_time_stack_item.year, mocked_time_stack_item.month, date_hash[:mday])
+      when date_hash[:wday] && date_hash[:hour] && date_hash[:min]
+        closest_date = Date.closest_wday(date_hash[:wday]).to_datetime
+
+        DateTime.new(
+          closest_date.year, closest_date.month, closest_date.day,
+          date_hash[:hour], date_hash[:min]
+        )
       when date_hash[:wday]
         Date.closest_wday(date_hash[:wday]).to_datetime
       else
