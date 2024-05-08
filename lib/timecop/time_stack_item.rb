@@ -9,7 +9,7 @@ class Timecop
       @travel_offset  = @scaling_factor = nil
       @scaling_factor = args.shift if mock_type == :scale
       @mock_type      = mock_type
-      @monotonic      = current_monotonic if RUBY_VERSION >= '2.1.0'
+      @monotonic      = current_monotonic_with_mock if RUBY_VERSION >= '2.1.0'
       @time           = parse_time(*args)
       @time_was       = Time.now_without_mock_time
       @travel_offset  = compute_travel_offset
@@ -68,6 +68,10 @@ class Timecop
 
       def current_monotonic
         Process.clock_gettime_without_mock(Process::CLOCK_MONOTONIC, :nanosecond)
+      end
+
+      def current_monotonic_with_mock
+        Process.clock_gettime_mock_time(Process::CLOCK_MONOTONIC, :nanosecond)
       end
     end
 

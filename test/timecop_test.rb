@@ -701,6 +701,19 @@ class TestTimecop < Minitest::Test
       end
     end
 
+    def test_process_clock_gettime_monotonic_nested
+      Timecop.freeze do
+        parent = monotonic
+
+        sleep(0.1)
+
+        Timecop.freeze(0.5) do
+          child = monotonic
+          assert_times_effectively_equal(child, parent + 0.5, 0.001, "Nested freeze not working for monotonic time")
+        end
+      end
+    end
+
     def test_process_clock_gettime_monotonic_travel
       current = monotonic
       Timecop.travel do
