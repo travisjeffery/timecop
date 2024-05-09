@@ -697,7 +697,7 @@ class TestTimecop < Minitest::Test
 
       initial_time = monotonic
       Timecop.freeze(-0.5) do
-        assert monotonic < initial_time, "CLOCK_MONOTONIC is not traveling back in time"
+        assert_operator(monotonic, :<, initial_time, "CLOCK_MONOTONIC is not traveling back in time")
       end
     end
 
@@ -746,7 +746,7 @@ class TestTimecop < Minitest::Test
 
       initial_time = realtime
       Timecop.freeze(-20) do
-        assert realtime < initial_time, "CLOCK_REALTIME is not traveling back in time"
+        assert_operator(realtime, :<, initial_time, "CLOCK_REALTIME is not traveling back in time")
       end
     end
 
@@ -754,7 +754,7 @@ class TestTimecop < Minitest::Test
       initial_time = realtime
       Timecop.travel do
         refute_equal realtime, realtime, "CLOCK_REALTIME is frozen"
-        assert realtime > initial_time, "CLOCK_REALTIME is not moving forward"
+        assert_operator(realtime, :>, initial_time, "CLOCK_REALTIME is not moving forward")
       end
 
       Timecop.travel(Time.now - 0.1) do
@@ -771,7 +771,7 @@ class TestTimecop < Minitest::Test
       Timecop.scale(scale) do
         initial_time = realtime
         sleep(sleep_length)
-        assert initial_time + scale * sleep_length < realtime, "CLOCK_REALTIME is not scaling"
+        assert_operator(initial_time + scale * sleep_length, :<, realtime, "CLOCK_REALTIME is not scaling")
       end
     end
   end
