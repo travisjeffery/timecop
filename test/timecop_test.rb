@@ -705,11 +705,12 @@ class TestTimecop < Minitest::Test
       Timecop.freeze do
         parent = monotonic
 
-        sleep(0.1)
+        sleep(0.01)
 
-        Timecop.freeze(0.5) do
+        delta = 0.5
+        Timecop.freeze(delta) do
           child = monotonic
-          assert_times_effectively_equal(child, parent + 0.5, 0.001, "Nested freeze not working for monotonic time")
+          assert_equal(child, parent + delta, "Nested freeze not working for monotonic time")
         end
       end
     end
@@ -718,14 +719,12 @@ class TestTimecop < Minitest::Test
       current = monotonic
       Timecop.travel do
         refute_same monotonic, monotonic, "CLOCK_MONOTONIC is frozen"
-        sleep 0.5
-        assert monotonic > current, "CLOCK_MONOTONIC is not moving forward"
+        assert_operator(monotonic, :>, current, "CLOCK_MONOTONIC is not moving forward")
       end
 
       Timecop.travel(-0.5) do
         refute_same monotonic, monotonic, "CLOCK_MONOTONIC is frozen"
-        sleep 0.5
-        assert monotonic > current, "CLOCK_MONOTONIC is not traveling properly"
+        assert_operator(monotonic, :<, current, "CLOCK_MONOTONIC is not traveling properly")
       end
     end
 
