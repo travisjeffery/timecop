@@ -296,4 +296,11 @@ class TestTimeStackItem < Minitest::Test
       assert_equal dt, now, "#{dt.to_f}, #{now.to_f}"
     end
   end
+
+  def test_travel_offset_aligns_to_nanoseconds
+    t = Time.now
+    stack_item = Timecop::TimeStackItem.new(:travel, t)
+    travel_offset_denom = stack_item.travel_offset.to_r.denominator
+    assert_equal 1_000_000_000.modulo(travel_offset_denom), 0
+  end
 end
