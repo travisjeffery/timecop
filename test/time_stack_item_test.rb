@@ -297,10 +297,11 @@ class TestTimeStackItem < Minitest::Test
     end
   end
 
-  def test_travel_offset_aligns_to_nanoseconds
+  def test_travel_offset_aligns_to_clock
     t = Time.now
     stack_item = Timecop::TimeStackItem.new(:travel, t)
     travel_offset_denom = stack_item.travel_offset.to_r.denominator
-    assert_equal 1_000_000_000.modulo(travel_offset_denom), 0
+    clock_resolution = Process.clock_getres(:CLOCK_REALTIME, :hertz)
+    assert_equal clock_resolution.modulo(travel_offset_denom), 0
   end
 end
