@@ -302,6 +302,7 @@ class TestTimeStackItem < Minitest::Test
     stack_item = Timecop::TimeStackItem.new(:travel, t)
     travel_offset_denom = stack_item.travel_offset.to_r.denominator
     clock_resolution = Process.clock_getres(:CLOCK_REALTIME, :hertz)
-    assert_equal clock_resolution.modulo(travel_offset_denom), 0
+    assert_equal 0, clock_resolution.modulo(travel_offset_denom),
+      "travel offset precision (#{travel_offset_denom}) does not align with clock resolution (#{clock_resolution})"
   end
 end
