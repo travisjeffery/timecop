@@ -759,10 +759,11 @@ class TestTimecop < Minitest::Test
         assert_operator(realtime, :>, initial_time, "CLOCK_REALTIME is not moving forward")
       end
 
-      Timecop.travel(Time.now - 0.1) do
+      delta = 0.1
+      Timecop.travel(Time.now - delta) do
         refute_equal consecutive_realtime, "CLOCK_REALTIME is frozen"
         assert_operator(realtime, :<, initial_time, "CLOCK_REALTIME is not traveling properly")
-        sleep 0.1
+        sleep(delta)
         assert_operator(realtime, :>, initial_time, "CLOCK_REALTIME is not traveling properly")
       end
     end
