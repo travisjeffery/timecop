@@ -20,6 +20,34 @@ class TestTimecopWithProcessClock < Minitest::Test
       end
     end
 
+    def test_process_clock_gettime_units_integer
+      Timecop.freeze do
+        time_in_nanoseconds = Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
+        time_in_microseconds = Process.clock_gettime(Process::CLOCK_MONOTONIC, :microsecond)
+        time_in_milliseconds = Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
+        time_in_seconds = Process.clock_gettime(Process::CLOCK_MONOTONIC, :second)
+
+        assert_equal(time_in_microseconds, (time_in_nanoseconds / 10**3).to_i)
+        assert_equal(time_in_milliseconds, (time_in_nanoseconds / 10**6).to_i)
+        assert_equal(time_in_seconds, (time_in_nanoseconds / 10**9).to_i)
+      end
+    end
+
+    def test_process_clock_gettime_units_float
+      Timecop.freeze do
+        time_in_nanoseconds = Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond).to_f
+
+        float_microseconds = Process.clock_gettime(Process::CLOCK_MONOTONIC, :float_microsecond)
+        float_milliseconds = Process.clock_gettime(Process::CLOCK_MONOTONIC, :float_millisecond)
+        float_seconds = Process.clock_gettime(Process::CLOCK_MONOTONIC, :float_second)
+
+        delta = 0.000001
+        assert_in_delta(float_microseconds, time_in_nanoseconds / 10**3, delta)
+        assert_in_delta(float_milliseconds, time_in_nanoseconds / 10**6, delta)
+        assert_in_delta(float_seconds, time_in_nanoseconds / 10**9, delta)
+      end
+    end
+
     def test_process_clock_gettime_monotonic_nested
       Timecop.freeze do
         parent = monotonic
