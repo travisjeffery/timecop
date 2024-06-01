@@ -2,7 +2,7 @@ require_relative "test_helper"
 require 'timecop'
 
 class TestTimecop < Minitest::Test
-  TIME_EPSILON = 0.001
+  TIME_EPSILON = 0.001 # seconds - represents enough time for Process.clock_gettime to have advanced if not frozen
 
   def teardown
     Timecop.return
@@ -707,7 +707,7 @@ class TestTimecop < Minitest::Test
       Timecop.freeze do
         parent = monotonic
 
-        sleep(0.01)
+        sleep(TIME_EPSILON)
 
         delta = 0.5
         Timecop.freeze(delta) do
