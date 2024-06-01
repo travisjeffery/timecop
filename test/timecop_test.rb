@@ -2,6 +2,8 @@ require_relative "test_helper"
 require 'timecop'
 
 class TestTimecop < Minitest::Test
+  TIME_EPSILON = 0.001
+
   def teardown
     Timecop.return
   end
@@ -692,7 +694,7 @@ class TestTimecop < Minitest::Test
   if RUBY_VERSION >= '2.1.0'
     def test_process_clock_gettime_monotonic
       Timecop.freeze do
-        assert_same monotonic, monotonic, "CLOCK_MONOTONIC is not frozen"
+        assert_same(*consecutive_monotonic, "CLOCK_MONOTONIC is not frozen")
       end
 
       initial_time = monotonic
@@ -718,12 +720,12 @@ class TestTimecop < Minitest::Test
     def test_process_clock_gettime_monotonic_travel
       initial_time = monotonic
       Timecop.travel do
-        refute_same monotonic, monotonic, "CLOCK_MONOTONIC is frozen"
+        refute_same(*consecutive_monotonic, "CLOCK_MONOTONIC is frozen")
         assert_operator(monotonic, :>, initial_time, "CLOCK_MONOTONIC is not moving forward")
       end
 
       Timecop.travel(-0.5) do
-        refute_same monotonic, monotonic, "CLOCK_MONOTONIC is frozen"
+        refute_same(*consecutive_monotonic, "CLOCK_MONOTONIC is frozen")
         assert_operator(monotonic, :<, initial_time, "CLOCK_MONOTONIC is not traveling properly")
       end
     end
@@ -741,7 +743,7 @@ class TestTimecop < Minitest::Test
 
     def test_process_clock_gettime_realtime
       Timecop.freeze do
-        assert_same realtime, realtime, "CLOCK_REALTIME is not frozen"
+        assert_same(*consecutive_realtime, "CLOCK_REALTIME is not frozen")
       end
 
       initial_time = realtime
@@ -753,12 +755,12 @@ class TestTimecop < Minitest::Test
     def test_process_clock_gettime_realtime_travel
       initial_time = realtime
       Timecop.travel do
-        refute_equal realtime, realtime, "CLOCK_REALTIME is frozen"
+        refute_equal consecutive_realtime, "CLOCK_REALTIME is frozen"
         assert_operator(realtime, :>, initial_time, "CLOCK_REALTIME is not moving forward")
       end
 
       Timecop.travel(Time.now - 0.1) do
-        refute_equal realtime, realtime, "CLOCK_REALTIME is frozen"
+        refute_equal consecutive_realtime, "CLOCK_REALTIME is frozen"
         assert_operator(realtime, :<, initial_time, "CLOCK_REALTIME is not traveling properly")
         sleep 0.1
         assert_operator(realtime, :>, initial_time, "CLOCK_REALTIME is not traveling properly")
@@ -785,6 +787,22 @@ class TestTimecop < Minitest::Test
 
     def realtime
       Process.clock_gettime(Process::CLOCK_REALTIME)
+    end
+
+    def consecutive_monotonic
+      consecutive_times(:monotonic)
+    end
+
+    def consecutive_realtime
+      consecutive_times(:realtime)
+    end
+
+    def consecutive_times(time_method)
+      t1 = send(time_method)
+      sleep(TIME_EPSILON)
+      t2 = send(time_method)
+
+      [t1, t2]
     end
   end
 
