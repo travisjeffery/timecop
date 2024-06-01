@@ -20,6 +20,22 @@ class TestTimecopWithProcessClock < Minitest::Test
       end
     end
 
+    def test_process_clock_gettime_monotonic_with_date_freeze
+      date = Date.new(2024, 6, 1)
+      monotonic1 = Timecop.freeze(date) { monotonic }
+      monotonic2 = Timecop.freeze(date) { monotonic }
+
+      refute_equal(monotonic1, monotonic2, "CLOCK_MONOTONIC is not expected to freeze deterministically with a date")
+    end
+
+    def test_process_clock_gettime_realtime_with_date_freeze
+      date = Date.new(2024, 6, 1)
+      realtime_1 = Timecop.freeze(date) { realtime }
+      realtime_2 = Timecop.freeze(date) { realtime }
+
+      assert_equal(realtime_1, realtime_2, "CLOCK_REALTIME is expected to support freezing with a date")
+    end
+
     def test_process_clock_gettime_units_integer
       Timecop.freeze do
         time_in_nanoseconds = Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
