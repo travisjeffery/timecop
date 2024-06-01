@@ -284,7 +284,7 @@ class TestTimecop < Minitest::Test
     t = Time.local(2008, 10, 10, 10, 10, 10)
     assert_times_effectively_equal t, Timecop.scale(4, t)
   end
-
+  
   def test_scaling_returns_now_if_nil_supplied
     assert_times_effectively_equal Time.now, Timecop.scale(nil)
   end
@@ -421,7 +421,7 @@ class TestTimecop < Minitest::Test
     end
     assert_times_effectively_equal(time_after_travel, Time.now)
   end
-
+  
   def test_travel_returns_now_if_nil_supplied
     assert_times_effectively_equal Time.now, Timecop.travel(nil)
   end
@@ -433,7 +433,7 @@ class TestTimecop < Minitest::Test
 
     assert_equal expected, actual
   end
-
+  
   def test_travel_raises_when_empty_string_supplied
     err = assert_raises(ArgumentError) do
       Timecop.travel("")
@@ -466,7 +466,7 @@ class TestTimecop < Minitest::Test
       end
     end
   end
-
+  
    def test_freeze_returns_now_if_nil_supplied
     assert_times_effectively_equal Time.now, Timecop.freeze(nil)
   end
