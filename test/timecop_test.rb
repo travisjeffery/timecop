@@ -689,6 +689,8 @@ class TestTimecop < Minitest::Test
     Timecop.thread_safe = false
   end
 
+  private
+
   def with_safe_mode(enabled=true)
     mode = Timecop.safe_mode?
     Timecop.safe_mode = enabled
