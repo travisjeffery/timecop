@@ -181,7 +181,7 @@ if RUBY_VERSION >= '2.1.0'
                       mock_time_realtime
                     end
 
-        return clock_gettime_without_mock(clock_id, unit) unless mock_time
+        return clock_gettime_without_mock(clock_id, unit) unless Timecop.mock_process_clock? && mock_time
 
         divisor = case unit
                   when :float_second

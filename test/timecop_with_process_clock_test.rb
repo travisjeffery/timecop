@@ -4,11 +4,24 @@ require 'timecop'
 class TestTimecopWithProcessClock < Minitest::Test
   TIME_EPSILON = 0.001 # seconds - represents enough time for Process.clock_gettime to have advanced if not frozen
 
+  def setup
+    Timecop.mock_process_clock = true
+  end
+
   def teardown
     Timecop.return
+    Timecop.mock_process_clock = false
   end
 
   if RUBY_VERSION >= '2.1.0'
+    def test_process_clock_mock_disabled
+      Timecop.mock_process_clock = false
+
+      Timecop.freeze do
+        refute_same(*consecutive_monotonic, "CLOCK_MONOTONIC is frozen")
+      end
+    end
+
     def test_process_clock_gettime_monotonic
       Timecop.freeze do
         assert_same(*consecutive_monotonic, "CLOCK_MONOTONIC is not frozen")
