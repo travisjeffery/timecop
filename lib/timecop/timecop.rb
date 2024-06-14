@@ -142,6 +142,14 @@ class Timecop
       !instance.stack.empty? && instance.stack.last.mock_type == :scale
     end
 
+    def mock_process_clock=(mock)
+      @mock_process_clock = mock
+    end
+
+    def mock_process_clock?
+      @mock_process_clock ||= false
+    end
+
     private
     def send_travel(mock_type, *args, &block)
       val = instance.travel(mock_type, *args, &block)
