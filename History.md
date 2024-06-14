@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## v0.9.10
+
+- Make Process.clock_gettime configurable and turned off by default (for backwards compatability) ([#427](https://github.com/travisjeffery/timecop/pull/427))
 
 ## v0.9.9
 
