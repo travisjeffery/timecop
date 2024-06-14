@@ -129,6 +129,15 @@ Timecop.freeze
 # => Timecop::SafeModeException: Safe mode is enabled, only calls passing a block are allowed.
 ```
 
+### Configuring Mocking Process.clock_gettime
+
+By default Timecop does not mock Process.clock_gettime. You must enable it like this:
+
+``` ruby
+# turn on
+Timecop.mock_process_clock = true
+```
+
 ### Rails v Ruby Date/Time libraries
 
 Sometimes [Rails Date/Time methods don't play nicely with Ruby Date/Time methods.](https://rails.lighthouseapp.com/projects/8994/tickets/6410-dateyesterday-datetoday)
