@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Calculate travel_offset to align with the precision of argument to Timecop.travel ([#421](https://github.com/travisjeffery/timecop/pull/421))
+
 ## v0.9.10
 
 - Make Process.clock_gettime configurable and turned off by default (for backwards compatability) ([#427](https://github.com/travisjeffery/timecop/pull/427))
