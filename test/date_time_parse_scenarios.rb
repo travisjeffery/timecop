@@ -60,8 +60,16 @@ module DateTimeParseScenarios
     assert_equal DateTime.parse("2008-10-10"), DateTime.parse('Date 10/10')
   end
 
+  def test_date_time_parse_time_only_scenario
+    assert_equal DateTime.parse("2008-09-01T15:00:00"), DateTime.parse('15:00:00')
+  end
+
   def test_date_time_parse_month_year
     assert_equal DateTime.parse("2012-12-01"), DateTime.parse('DEC 2012')
+  end
+
+  def test_date_time_parse_wday_with_hour
+    assert_equal DateTime.parse("2008-09-06T13:00:00"), DateTime.parse('Saturday 13:00')
   end
 
   def test_date_time_parse_non_string_raises_expected_error

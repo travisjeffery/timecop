@@ -9,6 +9,7 @@ class Timecop
       @travel_offset  = @scaling_factor = nil
       @scaling_factor = args.shift if mock_type == :scale
       @mock_type      = mock_type
+      @monotonic      = parse_monotonic_time(*args) if RUBY_VERSION >= '2.1.0'
       @time           = parse_time(*args)
       @time_was       = Time.now_without_mock_time
       @travel_offset  = compute_travel_offset
@@ -54,6 +55,26 @@ class Timecop
       @scaling_factor
     end
 
+    if RUBY_VERSION >= '2.1.0'
+      def monotonic
+        if travel_offset.nil?
+          @monotonic
+        elsif scaling_factor.nil?
+          current_monotonic + travel_offset * (10 ** 9)
+        else
+          (@monotonic + (current_monotonic - @monotonic) * scaling_factor).to_i
+        end
+      end
+
+      def current_monotonic
+        Process.clock_gettime_without_mock(Process::CLOCK_MONOTONIC, :nanosecond)
+      end
+
+      def current_monotonic_with_mock
+        Process.clock_gettime_mock_time(Process::CLOCK_MONOTONIC, :nanosecond)
+      end
+    end
+
     def time(time_klass = Time) #:nodoc:
       if @time.respond_to?(:in_time_zone)
         time = time_klass.at(@time.dup.localtime)
@@ -95,6 +116,16 @@ class Timecop
 
     def utc_offset_to_rational(utc_offset)
       Rational(utc_offset, 24 * 60 * 60)
+    end
+
+    def parse_monotonic_time(*args)
+      arg = args.shift
+      offset_in_nanoseconds = if args.empty? && (arg.kind_of?(Integer) || arg.kind_of?(Float))
+        arg * 1_000_000_000
+      else
+        0
+      end
+      current_monotonic_with_mock + offset_in_nanoseconds
     end
 
     def parse_time(*args)

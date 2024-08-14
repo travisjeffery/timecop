@@ -2,8 +2,16 @@
 
 ## Unreleased
 
-- Add `travelled?` and `scaled?` methods to allow checking if Timecop is in their respective states ([#414](https://github.com/travisjeffery/timecop/pull/414))
+## v0.9.10
 
+- Make Process.clock_gettime configurable and turned off by default (for backwards compatability) ([#427](https://github.com/travisjeffery/timecop/pull/427))
+
+## v0.9.9
+
+- Add `travelled?` and `scaled?` methods to allow checking if Timecop is in their respective states ([#414](https://github.com/travisjeffery/timecop/pull/414))
+- Fix cases with DateTime parse not working right ([#415](https://github.com/travisjeffery/timecop/pull/415))
+- Fix another case where DateTime parse not working right ([#417](https://github.com/travisjeffery/timecop/pull/417))
+- Support travel and freeze for Process.clock_gettime ([#419](https://github.com/travisjeffery/timecop/pull/419))
 
 ## v0.9.8
 

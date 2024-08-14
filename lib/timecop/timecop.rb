@@ -38,6 +38,12 @@ class Timecop
     # previous values after the block has finished executing.  This allows us to nest multiple
     # calls to Timecop.travel and have each block maintain it's concept of "now."
     #
+    # The Process.clock_gettime call mocks both CLOCK::MONOTIC and CLOCK::REALTIME
+    #
+    # CLOCK::MONOTONIC works slightly differently than other clocks. This clock cannot move to a
+    # particular date/time. So the only option that changes this clock is #4 which will move the
+    # clock the requested offset. Otherwise the clock is frozen to the current tick.
+    #
     # * Note: Timecop.freeze will actually freeze time.  This can cause unanticipated problems if
     #   benchmark or other timing calls are executed, which implicitly expect Time to actually move
     #   forward.
@@ -134,6 +140,14 @@ class Timecop
     # Returns whether or not Timecop is currently scaled
     def scaled?
       !instance.stack.empty? && instance.stack.last.mock_type == :scale
+    end
+
+    def mock_process_clock=(mock)
+      @mock_process_clock = mock
+    end
+
+    def mock_process_clock?
+      @mock_process_clock ||= false
     end
 
     private

@@ -5,7 +5,7 @@
 
 ## DESCRIPTION
 
-A gem providing "time travel" and "time freezing" capabilities, making it dead simple to test time-dependent code.  It provides a unified method to mock `Time.now`, `Date.today`, and `DateTime.now` in a single call.
+A gem providing "time travel" and "time freezing" capabilities, making it dead simple to test time-dependent code. It provides a unified method to mock `Time.now`, `Date.today`, `DateTime.now`, and `Process.clock_gettime` in a single call.
 
 ## INSTALL
 
@@ -127,6 +127,15 @@ Timecop.safe_mode?
 # using method without block
 Timecop.freeze
 # => Timecop::SafeModeException: Safe mode is enabled, only calls passing a block are allowed.
+```
+
+### Configuring Mocking Process.clock_gettime
+
+By default Timecop does not mock Process.clock_gettime. You must enable it like this:
+
+``` ruby
+# turn on
+Timecop.mock_process_clock = true
 ```
 
 ### Rails v Ruby Date/Time libraries
