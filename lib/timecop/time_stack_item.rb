@@ -157,7 +157,7 @@ class Timecop
     end
 
     def compute_travel_offset
-      time.to_r - Time.now_without_mock_time.to_r
+      time - Time.now_without_mock_time
     end
 
     def times_are_equal_within_epsilon t1, t2, epsilon_in_seconds
