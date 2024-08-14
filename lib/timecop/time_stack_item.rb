@@ -96,7 +96,9 @@ class Timecop
     end
 
     def date(date_klass = Date)
-      date_klass.jd(time.__send__(:to_date).jd)
+      t = time
+      t = t.respond_to?(:in_time_zone) ? t.in_time_zone : t
+      date_klass.jd(t.__send__(:to_date).jd)
     end
 
     def datetime(datetime_klass = DateTime)
