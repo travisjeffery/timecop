@@ -72,6 +72,14 @@ module DateTimeParseScenarios
     assert_equal DateTime.parse("2008-09-06T13:00:00"), DateTime.parse('Saturday 13:00')
   end
 
+  def test_date_time_parse_cweek_date
+    assert_equal DateTime.parse("1977-01-01T00:00:00"), DateTime.parse('1976-W53-6')
+  end
+
+  def test_date_time_parse_cweek_date_time
+    assert_equal DateTime.parse("1977-01-01T13:00:01"), DateTime.parse('1976-W53-6 13:00:01')
+  end
+
   def test_date_time_parse_non_string_raises_expected_error
     assert_raises(TypeError) { DateTime.parse(Object.new) }
   end
