@@ -46,11 +46,12 @@ class Date #:nodoc:
 
     def strptime_with_mock_date(str = '-4712-01-01', fmt = '%F', start = Date::ITALY)
       #If date is not valid the following line raises
-      Date.strptime_without_mock_date(str, fmt, start)
+      unmocked_result = Date.strptime_without_mock_date(str, fmt, start)
+      year_offset = Time.now_with_mock_time.year - Time.now_without_mock_time.year
 
       d = Date._strptime(str, fmt)
       now = Time.now.to_date
-      year = d[:year] || d[:cwyear] || now.year
+      year = d[:year] || d[:cwyear] || unmocked_result.year + year_offset
       mon = d[:mon] || now.mon
       if d.keys == [:year]
         Date.new(year, 1, 1, start)
