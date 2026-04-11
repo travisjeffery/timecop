@@ -12,3 +12,6 @@ group :development do
   gem 'i18n'
   gem 'minitest'
 end
+
+gem 'rdoc'
+gem 'concurrent-ruby', '< 1.3.5' if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.7')

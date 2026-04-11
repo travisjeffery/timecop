@@ -64,6 +64,24 @@ module DateTimeParseScenarios
     assert_equal DateTime.parse("2008-09-01T15:00:00"), DateTime.parse('15:00:00')
   end
 
+  def test_date_time_parse_hhmm_uses_frozen_date_not_real_clock
+    real_now = Time.now_without_mock_time.utc
+    offset = 12 * 3600 + 30
+    freeze_time = real_now.hour >= 12 ? real_now - offset : real_now + offset
+
+    Timecop.freeze(freeze_time) do
+      expected = DateTime.new(freeze_time.year, freeze_time.month, freeze_time.day, 1, 0, 0, 0)
+      assert_equal expected, DateTime.parse('01:00')
+    end
+  end
+
+  def test_date_time_parse_hhmm_format_returns_correct_time
+    assert_equal DateTime.new(2008, 9, 1, 0, 0, 0), DateTime.parse('00:00')
+    assert_equal DateTime.new(2008, 9, 1, 1, 0, 0), DateTime.parse('01:00')
+    assert_equal DateTime.new(2008, 9, 1, 12, 30, 0), DateTime.parse('12:30')
+    assert_equal DateTime.new(2008, 9, 1, 23, 59, 0), DateTime.parse('23:59')
+  end
+
   def test_date_time_parse_month_year
     assert_equal DateTime.parse("2012-12-01"), DateTime.parse('DEC 2012')
   end
