@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## v0.9.11
+
+- Fix time-only DateTime.parse (HH:MM format) incorrectly using host clock under freeze ([#440](https://github.com/travisjeffery/timecop/pull/440))
+- Require Ruby >= 2.1.0 ([#423](https://github.com/travisjeffery/timecop/pull/423))
+- Revert travel_offset precision change ([#430](https://github.com/travisjeffery/timecop/pull/430))
+
 ## v0.9.10
 
 - Make Process.clock_gettime configurable and turned off by default (for backwards compatability) ([#427](https://github.com/travisjeffery/timecop/pull/427))
