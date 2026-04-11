@@ -3,23 +3,34 @@ require 'date'
 
 class Time #:nodoc:
   class << self
-    def mock_time
+    def mock_time(*args)
       mocked_time_stack_item = Timecop.top_stack_item
-      mocked_time_stack_item.nil? ? nil : mocked_time_stack_item.time(self)
+      return nil if mocked_time_stack_item.nil?
+      time = mocked_time_stack_item.time(self)
+      if args.size == 1 && args[0].is_a?(Hash) && !args[0][:in].nil?
+        time = time.localtime(args[0][:in])
+      end
+      time
     end
 
     alias_method :now_without_mock_time, :now
 
-    def now_with_mock_time
-      mock_time || now_without_mock_time
+    def now_with_mock_time(*args)
+      mock_time(*args) || now_without_mock_time(*args)
     end
 
     alias_method :now, :now_with_mock_time
 
+    ruby2_keywords :now_with_mock_time if Module.private_method_defined?(:ruby2_keywords)
+
     alias_method :new_without_mock_time, :new
 
     def new_with_mock_time(*args)
-      args.size <= 0 ? now : new_without_mock_time(*args)
+      if args.size == 0 || args.size == 1 && args[0].is_a?(Hash) && !args[0].compact.empty?
+        now(*args)
+      else
+        new_without_mock_time(*args)
+      end
     end
 
     ruby2_keywords :new_with_mock_time if Module.private_method_defined?(:ruby2_keywords)
