@@ -520,14 +520,20 @@ class TestTimecop < Minitest::Test
   end
 
   def test_time_new_with_keyword_arguments
+    skip "Time.new with in: keyword requires Ruby 3.1+" if RUBY_VERSION < "3.1"
     Timecop.freeze(2011, 1, 2) do
-      # Time.new with keyword args (Ruby 3.1+)
       t = Time.new(2020, 1, 1, 0, 0, 0, in: "+05:00")
       assert_equal 2020, t.year
       assert_equal 18000, t.utc_offset
     end
-  rescue ArgumentError
-    # Ruby < 3.1 doesn't support `in:` keyword — skip gracefully
+  end
+
+  def test_time_new_with_only_keyword_arguments
+    skip "Time.new with in: keyword requires Ruby 3.1+" if RUBY_VERSION < "3.1"
+    Timecop.freeze(2011, 1, 2) do
+      t = Time.new(in: "+05:00")
+      assert_equal 18000, t.utc_offset
+    end
   end
 
   def test_time_new_with_positional_args_still_works
