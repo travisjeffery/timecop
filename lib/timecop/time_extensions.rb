@@ -149,6 +149,8 @@ class DateTime #:nodoc:
       case
       when date_hash[:year] && date_hash[:mon]
         parsed_date
+      when date_hash[:cwyear] && date_hash[:cweek]
+        parsed_date
       when date_hash[:mon] && date_hash[:mday]
         DateTime.new(mocked_time_stack_item.year, date_hash[:mon], date_hash[:mday])
       when date_hash[:mday]
