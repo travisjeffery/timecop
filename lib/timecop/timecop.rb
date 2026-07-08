@@ -89,7 +89,7 @@ class Timecop
       instance.baseline = baseline
     end
 
-    # Reverts back to system's Time.now, Date.today and DateTime.now (if it exists) permamently when
+    # Reverts back to system's Time.now, Date.today and DateTime.now (if it exists) permanently when
     # no block argument is given, or temporarily reverts back to the system's time temporarily for
     # the given block.
     def return(&block)
