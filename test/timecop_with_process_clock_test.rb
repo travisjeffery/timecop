@@ -114,6 +114,20 @@ class TestTimecopWithProcessClock < Minitest::Test
     end
   end
 
+  CLOCK_UNITS = [
+    :nanosecond, :microsecond, :millisecond, :second,
+    :float_microsecond, :float_millisecond, :float_second
+  ]
+
+  def test_process_clock_gettime_monotonic_unit_types_while_traveling
+    Timecop.travel(Time.now + 100) do
+      CLOCK_UNITS.each do |unit|
+        assert_kind_of Float, Process.clock_gettime(Process::CLOCK_MONOTONIC, unit),
+          "CLOCK_MONOTONIC in #{unit} should be a Float while traveling"
+      end
+    end
+  end
+
   def test_process_clock_gettime_realtime
     Timecop.freeze do
       assert_same(*consecutive_realtime, "CLOCK_REALTIME is not frozen")

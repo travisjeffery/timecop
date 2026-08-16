@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Calculate travel_offset to align with the precision of argument to Timecop.travel ([#447](https://github.com/travisjeffery/timecop/pull/447))
+
 ## v0.9.11
 
 - Fix Time.new keyword arguments on JRuby 10 ([#443](https://github.com/travisjeffery/timecop/pull/443))

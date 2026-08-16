@@ -59,7 +59,7 @@ class Timecop
       if travel_offset.nil?
         @monotonic
       elsif scaling_factor.nil?
-        current_monotonic + travel_offset * (10 ** 9)
+        current_monotonic + (travel_offset * (10 ** 9)).to_f
       else
         (@monotonic + (current_monotonic - @monotonic) * scaling_factor).to_i
       end
@@ -83,7 +83,7 @@ class Timecop
       if travel_offset.nil?
         time
       elsif scaling_factor.nil?
-        time_klass.at(Time.now_without_mock_time + travel_offset)
+        time_klass.at(Time.now_without_mock_time.to_r + travel_offset)
       else
         time_klass.at(scaled_time)
       end
@@ -155,7 +155,7 @@ class Timecop
     end
 
     def compute_travel_offset
-      time - Time.now_without_mock_time
+      time.to_r - Time.now_without_mock_time.to_r
     end
 
     def times_are_equal_within_epsilon t1, t2, epsilon_in_seconds
