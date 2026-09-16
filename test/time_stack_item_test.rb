@@ -296,4 +296,22 @@ class TestTimeStackItem < Minitest::Test
       assert_equal dt, now, "#{dt.to_f}, #{now.to_f}"
     end
   end
+
+  def test_travel_offset_aligns_to_clock
+    clock_resolution = Process.clock_getres(:CLOCK_REALTIME, :hertz).to_i
+    Time.stubs(:now_without_mock_time).returns(Time.at(1_500_000_000))
+    t = Time.at(Rational(4_000_000_000 * clock_resolution + clock_resolution - 1, clock_resolution))
+    stack_item = Timecop::TimeStackItem.new(:travel, t)
+    travel_offset_denom = stack_item.travel_offset.to_r.denominator
+    assert_equal 0, clock_resolution.modulo(travel_offset_denom),
+      "travel offset precision (#{travel_offset_denom}) does not align with clock resolution (#{clock_resolution})"
+  end
+
+  def test_travel_offset_aligns_to_travel_time
+    Time.stubs(:now_without_mock_time).returns(Time.at(Rational(1_500_000_000_123_456_789, 1_000_000_000)))
+    t = Time.at(4_000_000_000) + 0.001_002_003_004
+    stack_item = Timecop::TimeStackItem.new(:travel, t)
+    assert_equal t, stack_item.time
+    assert_equal t.nsec, stack_item.time.nsec
+  end
 end
