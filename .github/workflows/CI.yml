@@ -31,7 +31,7 @@ jobs:
     continue-on-error: ${{ matrix.ruby == 'head' }}
     name: Ruby ${{ matrix.ruby }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
