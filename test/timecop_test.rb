@@ -715,6 +715,19 @@ class TestTimecop < Minitest::Test
     Timecop.thread_safe = false
   end
 
+  def test_date_strptime_with_iso_week_date_without_freeze
+    assert_equal Date.new(2020, 2, 24), Date.strptime('202009', '%G%V')
+  end
+
+  def test_date_strptime_with_iso_week_uses_iso_year_of_mocked_date
+    # 2021-01-01 belongs to ISO week 53 of 2020
+    Timecop.freeze(Date.new(2021, 1, 1)) do
+      assert_equal Date.new(2020, 12, 28), Date.strptime('53', '%V')
+      assert_equal Date.new(2021, 1, 1), Date.strptime('53 5', '%V %u')
+      assert_equal Date.new(2019, 12, 30), Date.strptime('1', '%V')
+    end
+  end
+
   private
 
   def with_safe_mode(enabled=true)

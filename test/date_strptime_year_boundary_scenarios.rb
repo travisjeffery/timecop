@@ -25,11 +25,9 @@ module DateStrptimeYearBoundaryScenarios
     assert_equal Date.strptime('1', '%U'), Date.strptime('1992-1', '%Y-%U')
   end
 
-  # Test for cweek
-  # Note: ISO week (%V) near year boundaries is a known limitation — the values below reflect
-  # current behavior, not the correct ISO dates (which would use %G-%V for the year component)
+  # Test for cweek: without %G the ISO week-based year of the current date (1992) is used
   def test_date_strptime_year_boundary_with_cweek
-    assert_equal Date.strptime('52', '%V'), Date.new(1992, 12, 28)
-    assert_equal Date.strptime('1', '%V'), Date.new(1992, 01, 6)
+    assert_equal Date.strptime('52', '%V'), Date.new(1992, 12, 21)
+    assert_equal Date.strptime('1', '%V'), Date.new(1991, 12, 30)
   end
 end

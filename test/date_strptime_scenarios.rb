@@ -64,6 +64,32 @@ module DateStrptimeScenarios
     assert_equal Date.strptime('1984-W09-1', '%G-W%V-%u'), Date.new(1984, 2, 27)
   end
 
+  # 2020 does not start on a Monday, so ISO weeks (%V) differ from %W weeks
+  def test_date_strptime_with_iso_week_based_year_and_week_number
+    assert_equal Date.strptime('202009', '%G%V'), Date.new(2020, 2, 24)
+  end
+
+  def test_date_strptime_with_iso_8601_week_date_in_year_not_starting_on_monday
+    assert_equal Date.strptime('2020-W09-1', '%G-W%V-%u'), Date.new(2020, 2, 24)
+  end
+
+  def test_date_strptime_with_iso_week_and_sunday_based_day_of_week
+    assert_equal Date.strptime('2020-09-0', '%G-%V-%w'), Date.new(2020, 3, 1)
+  end
+
+  def test_date_strptime_with_iso_week_one_starting_in_previous_year
+    assert_equal Date.strptime('2020-01', '%G-%V'), Date.new(2019, 12, 30)
+  end
+
+  def test_date_strptime_with_iso_week_53
+    assert_equal Date.strptime('2020-53-5', '%G-%V-%u'), Date.new(2021, 1, 1)
+    assert_equal Date.strptime('2020-W53-5', '%G-W%V-%u'), Date.new(2021, 1, 1)
+  end
+
+  def test_date_strptime_with_nonexistent_iso_week_53
+    assert_raises(ArgumentError) { Date.strptime('2021-W53-1', '%G-W%V-%u') }
+  end
+
   def test_date_strptime_with_year_and_week_number_of_year
     assert_equal Date.strptime('201810', '%Y%W'), Date.new(2018, 3, 5)
   end

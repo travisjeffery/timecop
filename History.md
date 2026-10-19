@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fix `Date.strptime` with ISO 8601 week dates (`%G`/`%V`) ([#445](https://github.com/travisjeffery/timecop/issues/445))
 - Calculate travel_offset to align with the precision of argument to Timecop.travel ([#447](https://github.com/travisjeffery/timecop/pull/447))
 
 ## v0.9.11
