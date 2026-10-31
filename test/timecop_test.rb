@@ -293,7 +293,7 @@ class TestTimecop < Minitest::Test
     err = assert_raises(TypeError) do
       Timecop.scale("")
     end
-    assert_match /String can't be coerced into Float/, err.message
+    assert_match /String can't be coerced into Rational/, err.message
   end
 
   def test_freeze_with_utc_time

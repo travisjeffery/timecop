@@ -90,7 +90,7 @@ class Timecop
     end
 
     def scaled_time
-      (@time + (Time.now_without_mock_time - @time_was) * scaling_factor).to_f
+      @time.to_r + ((Time.now_without_mock_time.to_r - @time_was.to_r) * scaling_factor).to_r
     end
 
     def date(date_klass = Date)

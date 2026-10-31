@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Calculate travel_offset to align with the precision of argument to Timecop.travel ([#447](https://github.com/travisjeffery/timecop/pull/447))
+- Retain nanosecond precision under Timecop.scale ([#450](https://github.com/travisjeffery/timecop/pull/450))
 
 ## v0.9.11
 
