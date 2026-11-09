@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Calculate travel_offset to align with the precision of argument to Timecop.travel ([#447](https://github.com/travisjeffery/timecop/pull/447))
+- Return Integer from mocked Process.clock_gettime(CLOCK_MONOTONIC) for the integer units, matching the unmocked clock ([#449](https://github.com/travisjeffery/timecop/pull/449))
 
 ## v0.9.11
 

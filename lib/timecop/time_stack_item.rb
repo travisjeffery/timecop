@@ -59,7 +59,7 @@ class Timecop
       if travel_offset.nil?
         @monotonic
       elsif scaling_factor.nil?
-        current_monotonic + (travel_offset * (10 ** 9)).to_f
+        current_monotonic + (travel_offset * (10 ** 9)).round
       else
         (@monotonic + (current_monotonic - @monotonic) * scaling_factor).to_i
       end
@@ -119,7 +119,7 @@ class Timecop
     def parse_monotonic_time(*args)
       arg = args.shift
       offset_in_nanoseconds = if args.empty? && (arg.kind_of?(Integer) || arg.kind_of?(Float))
-        arg * 1_000_000_000
+        (arg * 1_000_000_000).round
       else
         0
       end

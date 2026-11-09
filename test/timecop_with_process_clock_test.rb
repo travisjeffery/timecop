@@ -114,17 +114,24 @@ class TestTimecopWithProcessClock < Minitest::Test
     end
   end
 
-  CLOCK_UNITS = [
-    :nanosecond, :microsecond, :millisecond, :second,
-    :float_microsecond, :float_millisecond, :float_second
-  ]
+  INTEGER_UNITS = [:nanosecond, :microsecond, :millisecond, :second]
+  FLOAT_UNITS   = [:float_microsecond, :float_millisecond, :float_second]
 
   def test_process_clock_gettime_monotonic_unit_types_while_traveling
     Timecop.travel(Time.now + 100) do
-      CLOCK_UNITS.each do |unit|
-        assert_kind_of Float, Process.clock_gettime(Process::CLOCK_MONOTONIC, unit),
-          "CLOCK_MONOTONIC in #{unit} should be a Float while traveling"
-      end
+      assert_monotonic_unit_types
+    end
+  end
+
+  def test_process_clock_gettime_monotonic_unit_types_while_frozen_with_a_float
+    Timecop.freeze(0.5) do
+      assert_monotonic_unit_types
+    end
+  end
+
+  def test_process_clock_gettime_monotonic_unit_types_while_scaled
+    Timecop.scale(4) do
+      assert_monotonic_unit_types
     end
   end
 
@@ -166,6 +173,18 @@ class TestTimecopWithProcessClock < Minitest::Test
   end
 
   private
+
+  def assert_monotonic_unit_types
+    INTEGER_UNITS.each do |unit|
+      assert_kind_of Integer, Process.clock_gettime(Process::CLOCK_MONOTONIC, unit),
+        "CLOCK_MONOTONIC in #{unit} should be an Integer, as it is without mocking"
+    end
+
+    FLOAT_UNITS.each do |unit|
+      assert_kind_of Float, Process.clock_gettime(Process::CLOCK_MONOTONIC, unit),
+        "CLOCK_MONOTONIC in #{unit} should be a Float, as it is without mocking"
+    end
+  end
 
   def monotonic
     Process.clock_gettime(Process::CLOCK_MONOTONIC)
