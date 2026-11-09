@@ -314,4 +314,24 @@ class TestTimeStackItem < Minitest::Test
     assert_equal t, stack_item.time
     assert_equal t.nsec, stack_item.time.nsec
   end
+
+  def test_scaled_time_retains_nanosecond_precision
+    Time.stubs(:now_without_mock_time).returns(Time.at(1_500_000_000))
+    t = Time.at(Rational(1_793_000_000_987_654_321, 1_000_000_000))
+    stack_item = Timecop::TimeStackItem.new(:scale, 4, t)
+    assert_equal t, stack_item.time
+    assert_equal t.nsec, stack_item.time.nsec
+  end
+
+  def test_scaled_time_retains_nanosecond_precision_with_a_float_scaling_factor
+    started_at = Time.at(1_500_000_000)
+    Time.stubs(:now_without_mock_time).returns(started_at)
+    t = Time.at(Rational(1_793_000_000_987_654_321, 1_000_000_000))
+    stack_item = Timecop::TimeStackItem.new(:scale, 2.5, t)
+
+    two_nanoseconds_later = Time.at(started_at.to_r + Rational(2, 1_000_000_000))
+    Time.stubs(:now_without_mock_time).returns(two_nanoseconds_later)
+
+    assert_equal t.nsec + 5, stack_item.time.nsec
+  end
 end
