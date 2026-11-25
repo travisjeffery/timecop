@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Calculate travel_offset to align with the precision of argument to Timecop.travel ([#447](https://github.com/travisjeffery/timecop/pull/447))
+- Accept Rational offsets in Timecop.freeze, travel, and scale ([#452](https://github.com/travisjeffery/timecop/pull/452))
 
 ## v0.9.11
 
