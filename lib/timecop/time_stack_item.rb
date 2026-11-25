@@ -118,12 +118,17 @@ class Timecop
 
     def parse_monotonic_time(*args)
       arg = args.shift
-      offset_in_nanoseconds = if args.empty? && (arg.kind_of?(Integer) || arg.kind_of?(Float))
-        arg * 1_000_000_000
+      offset_in_nanoseconds = if args.empty? && offset?(arg)
+        ns = arg * 1_000_000_000
+        arg.kind_of?(Rational) ? ns.round : ns
       else
         0
       end
       current_monotonic_with_mock + offset_in_nanoseconds
+    end
+
+    def offset?(arg)
+      arg.kind_of?(Integer) || arg.kind_of?(Float) || arg.kind_of?(Rational)
     end
 
     def parse_time(*args)
@@ -134,7 +139,7 @@ class Timecop
         time_klass.at(arg.to_time.to_f).getlocal
       elsif Object.const_defined?(:Date) && arg.is_a?(Date)
         time_klass.local(arg.year, arg.month, arg.day, 0, 0, 0)
-      elsif args.empty? && (arg.kind_of?(Integer) || arg.kind_of?(Float))
+      elsif args.empty? && offset?(arg)
         time_klass.now + arg
       elsif arg.nil?
         time_klass.now
