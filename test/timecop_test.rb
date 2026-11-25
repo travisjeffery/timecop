@@ -212,6 +212,24 @@ class TestTimecop < Minitest::Test
     assert Date.new(2008, 10, 10) != Date.today
   end
 
+  def test_freeze_with_rational_offset
+    t = Time.at(1764000000)
+    Timecop.freeze(t) do
+      Timecop.freeze(29.999r) do
+        assert_equal t + 29.999r, Time.now
+      end
+    end
+  end
+
+  def test_travel_with_rational_offset
+    t = Time.local(2008, 10, 10, 10, 10, 10)
+    Timecop.freeze(t) do
+      Timecop.travel(1/3r) do
+        assert_in_delta t + 1/3r, Time.now, 1
+      end
+    end
+  end
+
   def test_exception_thrown_in_freeze_block_properly_resets_time
     t = Time.local(2008, 10, 10, 10, 10, 10)
     begin

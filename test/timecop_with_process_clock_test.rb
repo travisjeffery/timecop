@@ -90,6 +90,18 @@ class TestTimecopWithProcessClock < Minitest::Test
     end
   end
 
+  def test_process_clock_gettime_monotonic_rational_offset
+    Timecop.freeze do
+      parent = Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
+
+      Timecop.freeze(1/2r) do
+        child = Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
+        assert_equal(parent + 500_000_000, child)
+        assert_kind_of(Integer, child)
+      end
+    end
+  end
+
   def test_process_clock_gettime_monotonic_travel
     initial_time = monotonic
     Timecop.travel do
